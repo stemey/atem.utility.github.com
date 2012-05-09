@@ -1,39 +1,48 @@
-<!--
-  Stefan Meyer, 2012
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-    http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!-- Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the 
+	"License"); you may not use this file except in compliance with the License. 
+	You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<groupId>org.atemsource</groupId>
 	<artifactId>atem-utility</artifactId>
-	<version>0.0.23-SNAPSHOT</version>
+	<version>0.0.23</version>
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
-	<name>SinnerSchrader Atem Implementation</name>
+	<name>Atem utilities</name>
+	<description>Atem utilities for cloning, comparing and transforming </description>
+	<url>https://github.com/stemey/atem.utility.github.com</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<pom.siteAddress>ftp://ftp.atemsource.org:21</pom.siteAddress>
+		<pom.siteDirectory>maven/site/utility</pom.siteDirectory>
+	</properties>
 
 	<scm>
-		<connection>scm:git:git@github.com:stemey/atem.utility.github.com.git</connection>
+		<connection>scm:git://github.com/stemey/atem.utility.github.com.git</connection>
 		<developerConnection>scm:git:git@github.com:stemey/atem.utility.github.com.git</developerConnection>
-		<url>http://svn/ZS2_SinnerSchrader/25-Meta/50-Entwicklung/impl/trunk</url>
+		<url>https://stemey@github.com/stemey/atem.utility.github.com.git</url>
 	</scm>
 
 	<distributionManagement>
 		<repository>
-			<id>s2-repository</id>
-			<name>S2 Repository</name>
-			<url>scpexe://maven/home/maven/repository</url>
+			<id>sonatype-nexus-staging</id>
+			<name>sonatype-nexus-staging</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 
 
 
@@ -103,13 +112,54 @@
 					</delimiters>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>2.4</version>
+							<configuration>
+								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+							</configuration>
+							<!-- simpler configuration without reportSets available for usual 
+								cases -->
+							<reports>
+								<report>dependencies</report>
+								<report>scm</report>
+								<report>license</report>
+								<report>index</report>
+							</reports>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.8</version>
+						</plugin>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>cobertura-maven-plugin</artifactId>
+							<configuration>
+								<formats>
+									<format>html</format>
+									<format>xml</format>
+								</formats>
+							</configuration>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<developers>
 		<developer>
 			<id>stefan</id>
 			<name>Stefan Meyer</name>
-			<email>s.meyer@s2neueinformatik.de</email>
+			<email>stefan.meyer@sinnerschrader.com</email>
 			<organization>SinnerSchrader</organization>
 		</developer>
 	</developers>
@@ -141,12 +191,12 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-api</artifactId>
-			<version>0.0.21</version>
+			<version>0.0.29</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.0.23</version>
+			<version>0.0.24</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-resources</groupId>
@@ -240,18 +290,5 @@
 
 
 	</dependencies>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<configuration>
-					<formats>
-						<format>html</format>
-						<format>xml</format>
-					</formats>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+
 </project>

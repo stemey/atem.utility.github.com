@@ -18,7 +18,7 @@ package org.atemsource.atem.utility.transform.api;
 
 import javax.inject.Inject;
 
-import org.atemsource.atem.impl.infrastructure.BeanLocator;
+import org.atemsource.atem.api.BeanLocator;
 
 
 public class TransformationBuilderFactory

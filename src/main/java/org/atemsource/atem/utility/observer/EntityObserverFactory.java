@@ -19,7 +19,7 @@ package org.atemsource.atem.utility.observer;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.impl.infrastructure.BeanLocator;
+import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.ComparisonBuilder;
 import org.atemsource.atem.utility.compare.ComparisonBuilderFactory;

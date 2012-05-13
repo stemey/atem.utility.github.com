@@ -16,8 +16,8 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
 
-import org.atemsource.atem.api.EntityTypeBuilder;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.utility.transform.api.Transformation;
 
 

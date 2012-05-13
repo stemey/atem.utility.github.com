@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<!--
-  Stefan Meyer, 2012
-  
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-    http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-=======
->>>>>>> daad8c2fe815cbe8895049ec35ccbeb56416cd19
+
+<!-- Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the 
+	"License"); you may not use this file except in compliance with the License. 
+	You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
@@ -34,11 +24,7 @@
 
 
 	<bean id="entityTypeRepository"
-<<<<<<< HEAD
 		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
-=======
-		class="de.sinnerschrader.fue.meta.impl.common.EntityTypeRepositoryImpl"
->>>>>>> daad8c2fe815cbe8895049ec35ccbeb56416cd19
 		init-method="init">
 		<property name="repositories">
 			<list>
@@ -54,8 +40,5 @@
 
 
 
-<<<<<<< HEAD
+
 </beans>
-=======
-</beans>
->>>>>>> daad8c2fe815cbe8895049ec35ccbeb56416cd19

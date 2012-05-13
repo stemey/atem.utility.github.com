@@ -21,7 +21,7 @@ import java.util.List;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.impl.infrastructure.BeanLocator;
+import org.atemsource.atem.api.BeanLocator;
 
 
 public class EntityUtils

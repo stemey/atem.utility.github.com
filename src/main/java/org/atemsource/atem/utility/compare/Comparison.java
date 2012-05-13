@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.atemsource.atem.impl.infrastructure.BeanLocator;
+import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.utility.common.EntityOperation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

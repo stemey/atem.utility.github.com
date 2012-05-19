@@ -36,8 +36,6 @@ public class EntityUtils
 
 	public static <T, S extends T, U extends T> void merge(S from, U to, EntityType<T> entityType)
 	{
-		do
-		{
 			List<Attribute> attributes = entityType.getAttributes();
 			for (Attribute attribute : attributes)
 			{
@@ -49,9 +47,6 @@ public class EntityUtils
 
 				}
 			}
-			entityType = entityType.getSuperEntityType();
-		}
-		while (entityType != null);
 
 	}
 

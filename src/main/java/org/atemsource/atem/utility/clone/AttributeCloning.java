@@ -16,7 +16,7 @@
 package org.atemsource.atem.utility.clone;
 
 
-import org.atemsource.atem.api.attribute.primitive.PrimitiveType;
+import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.utility.common.AttributeOperation;
 
 

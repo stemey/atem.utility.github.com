@@ -30,10 +30,6 @@ public class AttributeUtils
 		Attribute attribute = type.getAttribute(attributeCode);
 		if (attribute == null)
 		{
-			attribute = findAttributeInSuperType(attributeCode, type.getSuperEntityType());
-		}
-		if (attribute == null)
-		{
 			attribute = findAttributeInSubType(attributeCode, type.getSubEntityTypes(true));
 		}
 		return attribute;
@@ -64,20 +60,5 @@ public class AttributeUtils
 		return null;
 	}
 
-	private static Attribute findAttributeInSuperType(String attributeCode, EntityType entityType)
-	{
-		if (entityType == null)
-		{
-			return null;
-		}
-		Attribute attribute = entityType.getAttribute(attributeCode);
-		if (attribute == null)
-		{
-			return attribute;
-		}
-		else
-		{
-			return findAttributeInSuperType(attributeCode, entityType.getSuperEntityType());
-		}
-	}
+	
 }

@@ -25,6 +25,9 @@
 
 
 
+	<import resource="classpath:/meta/utility/transform.xml" />
+	<import resource="classpath:/meta/utility/compare.xml" />
+	<import resource="classpath:/meta/utility/snapshot.xml" />
 	
 
 	<context:component-scan base-package="org.atemsource.atem.utility.observer">

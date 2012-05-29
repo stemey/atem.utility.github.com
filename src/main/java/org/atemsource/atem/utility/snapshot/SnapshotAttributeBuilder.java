@@ -35,7 +35,6 @@ public class SnapshotAttributeBuilder
 
 	private boolean useId;
 
-	@Inject
 	private SnapshotBuilderFactory snapshotBuilderFactory;
 
 	private SnapshotBuilder subBuilder;
@@ -72,6 +71,15 @@ public class SnapshotAttributeBuilder
 	{
 		this.useId = true;
 		return this;
+	}
+
+	public SnapshotBuilderFactory getSnapshotBuilderFactory() {
+		return snapshotBuilderFactory;
+	}
+
+	public void setSnapshotBuilderFactory(
+			SnapshotBuilderFactory snapshotBuilderFactory) {
+		this.snapshotBuilderFactory = snapshotBuilderFactory;
 	}
 
 }

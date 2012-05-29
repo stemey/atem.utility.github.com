@@ -37,9 +37,6 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	private Map<String, A> includedAttributes = new HashMap<String, A>();
 
-	@Inject
-	private ViewBuilderFactory viewBuilderFactory;
-
 	public EntityTypeOperationBuilder()
 	{
 	}

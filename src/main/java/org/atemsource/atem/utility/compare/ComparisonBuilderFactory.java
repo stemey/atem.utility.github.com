@@ -15,22 +15,34 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare;
 
-
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.BeanLocator;
 
+public class ComparisonBuilderFactory {
 
-public class ComparisonBuilderFactory
-{
+	private String beanName;
+
+	public String getBeanName() {
+		return beanName;
+	}
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
 
 	@Inject
 	private BeanLocator beanLocator;
 
-	public ComparisonBuilder create(EntityType<?> entityType)
-	{
-		ComparisonBuilder instance = beanLocator.getInstance(ComparisonBuilder.class);
+	public ComparisonBuilder create(EntityType<?> entityType) {
+		ComparisonBuilder instance;
+
+		if (beanName != null) {
+			instance = beanLocator.getInstance(beanName);
+		} else {
+			instance = beanLocator.getInstance(ComparisonBuilder.class);
+		}
 		instance.setEntityType(entityType);
 		return instance;
 	}

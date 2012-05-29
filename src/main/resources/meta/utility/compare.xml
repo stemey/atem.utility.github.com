@@ -29,6 +29,7 @@
 	<import resource="path.xml"/>
 	
 	<bean id="meta-utility-comparisonBuilderFactory" class="org.atemsource.atem.utility.compare.ComparisonBuilderFactory">
+		<property name="beanName"><idref local="meta-utility-comparisonBuilder"></idref></property>
 	</bean>
 
 	<bean id="meta-utility-comparisonBuilder" scope="prototype" class="org.atemsource.atem.utility.compare.ComparisonBuilder">

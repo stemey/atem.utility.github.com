@@ -86,6 +86,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
+				<configuration>
+					<useAgent>true</useAgent>
+				</configuration>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -203,7 +206,7 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-api</artifactId>
-			<version>0.0.30-SNAPSHOT</version>
+			<version>0.0.32-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>

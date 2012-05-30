@@ -30,8 +30,6 @@
 	<context:component-scan base-package="org.atemsource.atem.utility.path">
 	</context:component-scan>
 	
-	<bean id="attributePathBuilderFactory" class="org.atemsource.atem.utility.path.AttributePathBuilderFactory"/>
-	
 
 
 

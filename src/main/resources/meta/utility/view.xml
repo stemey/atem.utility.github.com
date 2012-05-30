@@ -29,10 +29,6 @@
 
 	<context:component-scan base-package="org.atemsource.atem.utility.view">
 	</context:component-scan>
-	
-	<bean id="meta-utility-viewBuilderFactory"  class="org.atemsource.atem.utility.view.ViewBuilderFactory"/>
-	
-
 
 
 

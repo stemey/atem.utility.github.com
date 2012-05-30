@@ -24,33 +24,10 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 
+	<import resource="clone.xml"/>
 
-	<!-- Scans for application @Components to deploy -->
-
-	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
-	<import resource="classpath:/meta/utility/transform-example.xml" />
-	<import resource="classpath:/meta/dynamic/entitytype.xml" />
-	
-	<bean id="dynamic-entityType-repository"
-		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
+	<bean id="meta-utility-cloningBuilderFactory" class="org.atemsource.atem.utility.clone.CloningBuilderFactory">
 	</bean>
-
-
-	<bean id="entityTypeRepository"
-		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
-		init-method="init">
-		<property name="repositories">
-			<list>
-				<ref bean="entityType-repository" />
-				<ref bean="attribute-repository" />
-				<ref bean="pojo-entityType-repository" />
-				<ref bean="dynamic-entityType-repository" />
-			</list>
-		</property>
-	</bean>
-
-
-
 
 
 

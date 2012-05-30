@@ -12,27 +12,52 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
+import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
+import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 
-
-public class SnapshotBuilderFactory
-{
+public class SnapshotBuilderFactory {
 
 	private DynamicEntityTypeSubrepository<?> dynamicEntityTypeRepository;
+
+	private TransformationBuilderFactory transformationBuilderFactory;
+
+	public TransformationBuilderFactory getTransformationBuilderFactory() {
+		return transformationBuilderFactory;
+	}
+
+	public void setTransformationBuilderFactory(
+			TransformationBuilderFactory transformationBuilderFactory) {
+		this.transformationBuilderFactory = transformationBuilderFactory;
+	}
+
+	public AttributePathBuilderFactory getAttributePathBuilderFactory() {
+		return attributePathBuilderFactory;
+	}
+
+	public void setAttributePathBuilderFactory(
+			AttributePathBuilderFactory attributePathBuilderFactory) {
+		this.attributePathBuilderFactory = attributePathBuilderFactory;
+	}
+
+	private AttributePathBuilderFactory attributePathBuilderFactory;
 
 	@Inject
 	protected BeanLocator beanLocator;
 
-	public SnapshotBuilder create(EntityType<?> entityType)
-	{
-		SnapshotBuilder builder = beanLocator.getInstance(SnapshotBuilder.class);
+	public SnapshotBuilder create(EntityType<?> entityType) {
+		SnapshotBuilder builder = beanLocator
+				.getInstance(SnapshotBuilder.class);
 		builder.setEntityType(entityType);
 		builder.setDynamicEntityTypeRepository(dynamicEntityTypeRepository);
+		builder.setTransformationBuilderFactory(transformationBuilderFactory);
+		builder.setAttributePathBuilderFactory(attributePathBuilderFactory);
+		builder.setFactory(this);
 		builder.initialize();
 		return builder;
 	}
 
-	public void setDynamicEntityTypeRepository(DynamicEntityTypeSubrepository<?> dynamicEntityTypeRepository)
-	{
+	public void setDynamicEntityTypeRepository(
+			DynamicEntityTypeSubrepository<?> dynamicEntityTypeRepository) {
 		this.dynamicEntityTypeRepository = dynamicEntityTypeRepository;
 	}
 }

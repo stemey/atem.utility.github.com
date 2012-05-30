@@ -34,10 +34,26 @@ public class EntityObserverFactory
 	@Inject
 	private BeanLocator beanLocator;
 
-	@Inject
 	private SnapshotBuilderFactory snapshotBuilderFactory;
 
-	@Inject
+	public SnapshotBuilderFactory getSnapshotBuilderFactory() {
+		return snapshotBuilderFactory;
+	}
+
+	public void setSnapshotBuilderFactory(
+			SnapshotBuilderFactory snapshotBuilderFactory) {
+		this.snapshotBuilderFactory = snapshotBuilderFactory;
+	}
+
+	public ComparisonBuilderFactory getComparisonBuilderFactory() {
+		return comparisonBuilderFactory;
+	}
+
+	public void setComparisonBuilderFactory(
+			ComparisonBuilderFactory comparisonBuilderFactory) {
+		this.comparisonBuilderFactory = comparisonBuilderFactory;
+	}
+
 	private ComparisonBuilderFactory comparisonBuilderFactory;
 
 	public EntityObserver create(Comparison comparison)

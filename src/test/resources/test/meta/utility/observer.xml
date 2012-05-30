@@ -28,16 +28,7 @@
 	<!-- Scans for application @Components to deploy -->
 
 	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
-	<import resource="classpath:/meta/utility/transform.xml" />
-	<import resource="classpath:/meta/utility/compare.xml" />
-	<import resource="classpath:/meta/utility/snapshot.xml" />
-	<import resource="classpath:/meta/utility/observer.xml" />
-	<import resource="classpath:/meta/dynamic/entitytype.xml" />
-
-	<bean id="dynamic-entityType-repository"
-		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
-		<property name="serializingPrimitiveValues" value="true" />
-	</bean>
+	<import resource="classpath:/meta/utility/observer-example.xml" />
 
 
 	<bean id="entityTypeRepository"
@@ -48,17 +39,9 @@
 				<ref bean="entityType-repository" />
 				<ref bean="attribute-repository" />
 				<ref bean="pojo-entityType-repository" />
-				<ref bean="dynamic-entityType-repository" />
+				<ref bean="snapshot-entityType-repository" />
 			</list>
 		</property>
-	</bean>
-
-	<bean
-		class="org.atemsource.atem.utility.snapshot.SnapshotBuilderFactory">
-		<property name="dynamicEntityTypeRepository" ref="dynamic-entityType-repository"></property>
-	</bean>
-	<bean
-		class="org.atemsource.atem.utility.observer.EntityObserverFactory">
 	</bean>
 
 

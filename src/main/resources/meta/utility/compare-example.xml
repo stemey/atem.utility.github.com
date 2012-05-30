@@ -25,33 +25,23 @@
 
 
 
-	<!-- Scans for application @Components to deploy -->
-
-	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
-	<import resource="classpath:/meta/utility/transform-example.xml" />
-	<import resource="classpath:/meta/dynamic/entitytype.xml" />
+	<import resource="compare.xml"/>
+	<import resource="path-example.xml"/>
 	
-	<bean id="dynamic-entityType-repository"
-		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
+	<bean id="meta-utility-comparisonBuilderFactory" class="org.atemsource.atem.utility.compare.ComparisonBuilderFactory">
+		<property name="beanName"><idref local="meta-utility-comparisonBuilder"></idref></property>
 	</bean>
 
-
-	<bean id="entityTypeRepository"
-		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
-		init-method="init">
-		<property name="repositories">
+	<bean id="meta-utility-comparisonBuilder" scope="prototype" class="org.atemsource.atem.utility.compare.ComparisonBuilder">
+		<property name="attributeFactories">
 			<list>
-				<ref bean="entityType-repository" />
-				<ref bean="attribute-repository" />
-				<ref bean="pojo-entityType-repository" />
-				<ref bean="dynamic-entityType-repository" />
+				<bean class="org.atemsource.atem.utility.compare.builder.SingleAttributeBuilderFactory"/>
+				<bean class="org.atemsource.atem.utility.compare.builder.MapAttributeBuilderFactory"/>
+				<bean class="org.atemsource.atem.utility.compare.builder.OrderableCollectionAttributeBuilderFactory"/>
+				<bean class="org.atemsource.atem.utility.compare.builder.CollectionAttributeBuilderFactory"/>
 			</list>
 		</property>
 	</bean>
-
-
-
-
 
 
 </beans>

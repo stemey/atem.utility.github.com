@@ -206,12 +206,12 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-api</artifactId>
-			<version>0.0.32-SNAPSHOT</version>
+			<version>0.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.0.25-SNAPSHOT</version>
+			<version>0.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

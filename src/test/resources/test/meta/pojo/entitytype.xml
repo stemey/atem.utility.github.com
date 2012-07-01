@@ -20,17 +20,17 @@
 
 	<!-- Scans for application @Components to deploy -->
 
-	<import resource="classpath:/meta/pojo/entitytype.xml" />
+	<import resource="classpath:/atem/pojo/entitytype-example.xml" />
 
 
-	<bean id="entityTypeRepository"
+	<bean id="atem-repository"
 		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
 		init-method="init">
 		<property name="repositories">
 			<list>
-				<ref bean="pojo-entityType-repository" />
-				<ref bean="entityType-repository" />
-				<ref bean="attribute-repository" />
+				<ref bean="atem-pojo-repository" />
+				<ref bean="atem-entityType-repository" />
+				<ref bean="atem-attribute-repository" />
 			</list>
 		</property>
 	</bean>

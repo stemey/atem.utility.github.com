@@ -38,7 +38,7 @@ public abstract class AttributeOperationBuilder<P extends AttributeOperation, O 
 	{
 		this.entityOperation = entityOperation;
 	}
-
+	
 	protected abstract P createOperation();
 
 	public Attribute getAttribute()

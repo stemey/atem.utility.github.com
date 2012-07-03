@@ -23,7 +23,7 @@
 	<import resource="classpath:/meta/utility/snapshot-example.xml" />
 	<import resource="observer.xml" />
 
-	<bean id="meta-utility-entityObserverFactoryBuilderFactory"
+	<bean id="atem-utility-entityObserverFactoryBuilderFactory"
 		class="org.atemsource.atem.utility.observer.EntityObserverFactory">
 		<property name="comparisonBuilderFactory" ref="meta-utility-comparisonBuilderFactory" />
 		<property name="snapshotBuilderFactory" ref="meta-utility-snapshotBuilderFactory" />

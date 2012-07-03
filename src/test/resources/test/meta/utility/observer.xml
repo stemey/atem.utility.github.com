@@ -31,15 +31,15 @@
 	<import resource="classpath:/meta/utility/observer-example.xml" />
 
 
-	<bean id="entityTypeRepository"
+	<bean id="atem-repository"
 		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
 		init-method="init">
 		<property name="repositories">
 			<list>
-				<ref bean="entityType-repository" />
-				<ref bean="attribute-repository" />
-				<ref bean="pojo-entityType-repository" />
-				<ref bean="snapshot-entityType-repository" />
+				<ref bean="atem-entityType-repository" />
+				<ref bean="atem-attribute-repository" />
+				<ref bean="atem-pojo-repository" />
+				<ref bean="atem-snapshot-repository" />
 			</list>
 		</property>
 	</bean>

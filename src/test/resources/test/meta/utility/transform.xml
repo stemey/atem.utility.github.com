@@ -29,22 +29,22 @@
 
 	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
 	<import resource="classpath:/meta/utility/transform-example.xml" />
-	<import resource="classpath:/meta/dynamic/entitytype.xml" />
+	<import resource="classpath:/atem/dynamic/entitytype.xml" />
 	
-	<bean id="dynamic-entityType-repository"
+	<bean id="atem-dynamicEntity-repository"
 		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
 	</bean>
 
 
-	<bean id="entityTypeRepository"
+	<bean id="atem-repository"
 		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
 		init-method="init">
 		<property name="repositories">
 			<list>
-				<ref bean="entityType-repository" />
-				<ref bean="attribute-repository" />
-				<ref bean="pojo-entityType-repository" />
-				<ref bean="dynamic-entityType-repository" />
+				<ref bean="atem-entityType-repository" />
+				<ref bean="atem-attribute-repository" />
+				<ref bean="atem-pojo-repository" />
+				<ref bean="atem-dynamicEntity-repository" />
 			</list>
 		</property>
 	</bean>

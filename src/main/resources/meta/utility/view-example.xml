@@ -29,7 +29,7 @@
 
 	<import resource="view.xml"/>
 	
-	<bean id="meta-utility-viewBuilderFactory"  class="org.atemsource.atem.utility.view.ViewBuilderFactory"/>
+	<bean id="atem-utility-viewBuilderFactory"  class="org.atemsource.atem.utility.view.ViewBuilderFactory"/>
 	
 
 

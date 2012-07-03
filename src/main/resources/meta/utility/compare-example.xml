@@ -28,11 +28,11 @@
 	<import resource="compare.xml"/>
 	<import resource="path-example.xml"/>
 	
-	<bean id="meta-utility-comparisonBuilderFactory" class="org.atemsource.atem.utility.compare.ComparisonBuilderFactory">
-		<property name="beanName"><idref local="meta-utility-comparisonBuilder"></idref></property>
+	<bean id="atem-utility-comparisonBuilderFactory" class="org.atemsource.atem.utility.compare.ComparisonBuilderFactory">
+		<property name="beanName"><idref local="atem-utility-comparisonBuilder"></idref></property>
 	</bean>
 
-	<bean id="meta-utility-comparisonBuilder" scope="prototype" class="org.atemsource.atem.utility.compare.ComparisonBuilder">
+	<bean id="atem-utility-comparisonBuilder" scope="prototype" class="org.atemsource.atem.utility.compare.ComparisonBuilder">
 		<property name="attributeFactories">
 			<list>
 				<bean class="org.atemsource.atem.utility.compare.builder.SingleAttributeBuilderFactory"/>

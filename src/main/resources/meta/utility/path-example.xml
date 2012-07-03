@@ -29,7 +29,7 @@
 
 	<import resource="path.xml"/>
 	
-	<bean id="meta-utility-attributePathBuilderFactory" class="org.atemsource.atem.utility.path.AttributePathBuilderFactory"/>
+	<bean id="atem-utility-attributePathBuilderFactory" class="org.atemsource.atem.utility.path.AttributePathBuilderFactory"/>
 	
 
 

@@ -19,21 +19,21 @@
 
 	<!-- Scans for application @Components to deploy -->
 
-	<import resource="classpath:/meta/dynamic/entitytype.xml" />
+	<import resource="classpath:/atem/dynamic/entitytype.xml" />
 	<import resource="classpath:/meta/utility/path-example.xml" />
 	<import resource="classpath:/meta/utility/transform-example.xml" />
 	<import resource="classpath:/meta/utility/snapshot.xml" />
 
-	<bean id="snapshot-entityType-repository"
+	<bean id="atem-snapshot-repository"
 		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
 		<property name="serializingPrimitiveValues" value="true" />
 	</bean>
 
 
-	<bean id="meta-utility-snapshotBuilderFactory" class="org.atemsource.atem.utility.snapshot.SnapshotBuilderFactory">
-		<property name="dynamicEntityTypeRepository" ref="snapshot-entityType-repository"></property>
-		<property name="transformationBuilderFactory" ref="meta-utility-transformationBuilderFactory"></property>
-		<property name="attributePathBuilderFactory" ref="meta-utility-attributePathBuilderFactory"></property>
+	<bean id="atem-utility-snapshotBuilderFactory" class="org.atemsource.atem.utility.snapshot.SnapshotBuilderFactory">
+		<property name="dynamicEntityTypeRepository" ref="atem-snapshot-repository"></property>
+		<property name="transformationBuilderFactory" ref="atem-utility-transformationBuilderFactory"></property>
+		<property name="attributePathBuilderFactory" ref="atem-utility-attributePathBuilderFactory"></property>
 	</bean>
 
 

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
-import org.atemsource.atem.api.type.Type;
 
 
 public interface UniTransformation<A, B> extends UniConverter<A, B>
@@ -24,9 +23,8 @@ public interface UniTransformation<A, B> extends UniConverter<A, B>
 	/**
 	 * @param a the value to transform
 	 * @param b the value to be transformed. If the type needs to be adjusted than a different instance is returned
-	 * @param typeB optionally specify the type to convert to
 	 * @return the transfomed value, if no type change is necessary this will be the same instance as parameter b
 	 */
-	public B merge(A a, B b, Type<B> typeB);
+	public B merge(A a, B b);
 
 }

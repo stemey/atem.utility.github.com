@@ -65,7 +65,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends Abstract
 				Object valueB;
 				if (converter != null)
 				{
-					valueB = converter.convert(valueA, attributeB.getTargetType());
+					valueB = converter.convert(valueA);
 				}
 				else
 				{

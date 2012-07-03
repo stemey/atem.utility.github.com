@@ -1,57 +1,35 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.converter;
 
-
-import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.impl.JavaTypeConverter;
-import org.springframework.stereotype.Component;
 
 
-@Component
-public class EnumToStringConverter extends JavaTypeConverter<Enum, String>
+public class EnumToStringConverter extends JavaTypeConverter<Enum<?>, String>
 {
 
-	EnumToStringConverter()
+	private Class<Enum> enumClass;
+
+	EnumToStringConverter(Class<Enum> enumClass)
 	{
-		super();
+		this.enumClass = enumClass;
 	}
 
-	public Enum convertToA(String b, Type typeB, Type typeA)
+	@Override
+	public String convertAB(Enum<?> a)
 	{
-		if (b == null)
-		{
-			return null;
-		}
-		else
-		{
-			return Enum.valueOf(typeA.getJavaType(), b);
-		}
+		return a.name();
 	}
 
-	public String convertToB(Enum a, Type typeA, Type typeB)
+	@Override
+	public Enum<?> convertBA(String b)
 	{
-		if (a == null)
-		{
-			return null;
-		}
-		else
-		{
-			return a.name();
-		}
+		return Enum.valueOf(enumClass, b);
 	}
 
 }

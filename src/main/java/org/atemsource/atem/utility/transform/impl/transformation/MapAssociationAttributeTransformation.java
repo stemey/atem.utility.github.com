@@ -1,20 +1,11 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.transformation;
-
 
 import java.util.Iterator;
 import java.util.Map;
@@ -42,18 +33,18 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 
 	private Type keyType;
 
+	@Override
 	public UniTransformation<A, B> getAB()
 	{
-		return new UniTransformation<A, B>()
-		{
+		return new UniTransformation<A, B>() {
 
 			@Override
-			public B convert(A a, Type<?> typeB)
+			public B convert(A a)
 			{
 				if (MapAssociationAttributeTransformation.this.getTypeB() instanceof EntityType)
 				{
 					B b = ((EntityType<B>) MapAssociationAttributeTransformation.this.getTypeB()).createEntity();
-					return merge(a, b, MapAssociationAttributeTransformation.this.getTypeB());
+					return merge(a, b);
 				}
 				else
 				{
@@ -74,7 +65,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 			}
 
 			@Override
-			public B merge(A a, B b, Type<B> typeB)
+			public B merge(A a, B b)
 			{
 				UniConverter abConverter = getConverter() == null ? null : getConverter().getAB();
 				UniConverter<Object, Object> abKeyConverter = getKeyConverter() == null ? null : keyConverter.getAB();
@@ -86,18 +77,18 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 		};
 	}
 
+	@Override
 	public UniTransformation<B, A> getBA()
 	{
-		return new UniTransformation<B, A>()
-		{
+		return new UniTransformation<B, A>() {
 
 			@Override
-			public A convert(B b, Type<?> typeA)
+			public A convert(B b)
 			{
 				if (MapAssociationAttributeTransformation.this.getTypeA() instanceof EntityType)
 				{
 					A a = ((EntityType<A>) MapAssociationAttributeTransformation.this.getTypeA()).createEntity();
-					return merge(b, a, MapAssociationAttributeTransformation.this.getTypeA());
+					return merge(b, a);
 				}
 				else
 				{
@@ -118,7 +109,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 			}
 
 			@Override
-			public A merge(B b, A a, Type<A> typeA)
+			public A merge(B b, A a)
 			{
 				MapAssociationAttributeTransformation.this.transformInternally(b, a, getAttributeB(), getAttributeA(),
 					getConverter().getBA(), keyConverter.getBA());
@@ -193,7 +184,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 				Object keyB = next.getKey();
 				if (keyConverter != null)
 				{
-					keyB = keyConverter.convert(next.getKey(), attributeB.getKeyType());
+					keyB = keyConverter.convert(next.getKey());
 
 				}
 				Object elementB = attributeB.getElement(b, keyB);
@@ -201,7 +192,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 				{
 					if (converter != null)
 					{
-						elementB = converter.convert(elementA, attributeB.getTargetType());
+						elementB = converter.convert(elementA);
 					}
 					else
 					{

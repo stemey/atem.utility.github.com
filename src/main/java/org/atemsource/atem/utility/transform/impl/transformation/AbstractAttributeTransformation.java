@@ -1,20 +1,11 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.transformation;
-
 
 import java.util.Map;
 
@@ -33,8 +24,6 @@ import org.atemsource.atem.utility.transform.api.UniTransformation;
 public abstract class AbstractAttributeTransformation<A, B> implements Transformation<A, B>
 {
 
-	private Map<String, Object> meta;
-
 	private AttributePath attributeA;
 
 	private AttributePath attributeB;
@@ -43,6 +32,8 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 
 	@Inject
 	protected EntityTypeRepository entityTypeRepository;
+
+	private Map<String, Object> meta;
 
 	private EntityType typeA;
 
@@ -55,16 +46,15 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 
 	public UniTransformation<A, B> getAB()
 	{
-		return new UniTransformation<A, B>()
-		{
+		return new UniTransformation<A, B>() {
 
 			@Override
-			public B convert(A a, Type<?> typeB)
+			public B convert(A a)
 			{
 				if (AbstractAttributeTransformation.this.typeB instanceof EntityType)
 				{
 					B b = ((EntityType<B>) AbstractAttributeTransformation.this.typeB).createEntity();
-					return merge(a, b, AbstractAttributeTransformation.this.typeB);
+					return merge(a, b);
 				}
 				else
 				{
@@ -85,7 +75,7 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 			}
 
 			@Override
-			public B merge(A a, B b, Type<B> typeB)
+			public B merge(A a, B b)
 			{
 				UniConverter abConverter = converter == null ? null : converter.getAB();
 				AbstractAttributeTransformation.this.transformInternally(a, b, attributeA, attributeB, abConverter);
@@ -107,16 +97,15 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 
 	public UniTransformation<B, A> getBA()
 	{
-		return new UniTransformation<B, A>()
-		{
+		return new UniTransformation<B, A>() {
 
 			@Override
-			public A convert(B b, Type<?> typeA)
+			public A convert(B b)
 			{
 				if (AbstractAttributeTransformation.this.typeA instanceof EntityType)
 				{
 					A a = ((EntityType<A>) AbstractAttributeTransformation.this.typeA).createEntity();
-					return merge(b, a, AbstractAttributeTransformation.this.typeA);
+					return merge(b, a);
 				}
 				else
 				{
@@ -137,7 +126,7 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 			}
 
 			@Override
-			public A merge(B b, A a, Type<A> typeA)
+			public A merge(B b, A a)
 			{
 				UniConverter baConverter = converter == null ? null : converter.getBA();
 				AbstractAttributeTransformation.this.transformInternally(b, a, attributeB, attributeA, baConverter);

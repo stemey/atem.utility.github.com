@@ -22,10 +22,9 @@ public interface UniConverter<A, B>
 {
 	/**
 	 * @param a the value to transform
-	 * @param typeB optionally specify the type to convert to
 	 * @return the transformed instance
 	 */
-	B convert(A a, Type<?> typeB);
+	B convert(A a);
 
 	Type<A> getSourceType();
 

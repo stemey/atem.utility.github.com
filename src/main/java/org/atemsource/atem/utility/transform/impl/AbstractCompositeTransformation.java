@@ -41,7 +41,7 @@ public class AbstractCompositeTransformation<A, B>
 	{
 		for (Transformation<A, B> transformation : embeddedTransformations)
 		{
-			transformation.getAB().merge(valueA, valueB, null);
+			transformation.getAB().merge(valueA, valueB);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class AbstractCompositeTransformation<A, B>
 	{
 		for (Transformation<A, B> transformation : embeddedTransformations)
 		{
-			transformation.getBA().merge(valueB, valueA, null);
+			transformation.getBA().merge(valueB, valueA);
 		}
 	}
 

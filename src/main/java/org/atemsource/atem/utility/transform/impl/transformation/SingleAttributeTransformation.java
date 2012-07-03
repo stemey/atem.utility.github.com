@@ -29,7 +29,7 @@ public class SingleAttributeTransformation<A, B> extends AbstractAttributeTransf
 			Object valueA = attributeA.getValue(a);
 			if (converter != null)
 			{
-				valueA = converter.convert(valueA, attributeB.getAttribute(b).getTargetType());
+				valueA = converter.convert(valueA);
 			}
 			// MetaLogs.LOG.debug("transform  " + attributeA + " to " + attributeB + " : " + valueA);
 			attributeB.setValue(b, valueA);

@@ -37,24 +37,113 @@ import org.springframework.stereotype.Component;
 public class TypeTransformationBuilder<A, B>
 {
 
+	private final class TypeCreator<A, B> implements Transformation<A, B>
+	{
+		private EntityType sourceType;
+
+		private EntityType targetType;
+
+		private TypeCreator(EntityType sourceType, EntityType targetType)
+		{
+			super();
+			this.sourceType = sourceType;
+			this.targetType = targetType;
+		}
+
+		@Override
+		public UniTransformation<A, B> getAB()
+		{
+			return new UniTransformation<A, B>() {
+
+				@Override
+				public B convert(A a)
+				{
+					return (B) targetType.createEntity();
+				}
+
+				@Override
+				public Type<A> getSourceType()
+				{
+					return sourceType;
+				}
+
+				@Override
+				public Type<B> getTargetType()
+				{
+					return targetType;
+				}
+
+				@Override
+				public B merge(A a, B b)
+				{
+					return (B) targetType.createEntity();
+				}
+			};
+		}
+
+		@Override
+		public UniTransformation<B, A> getBA()
+		{
+			return new UniTransformation<B, A>() {
+
+				@Override
+				public A convert(B a)
+				{
+					return (A) sourceType.createEntity();
+				}
+
+				@Override
+				public Type<B> getSourceType()
+				{
+					return targetType;
+				}
+
+				@Override
+				public Type<A> getTargetType()
+				{
+					return sourceType;
+				}
+
+				@Override
+				public A merge(B a, A b)
+				{
+					return (A) sourceType.createEntity();
+				}
+			};
+		}
+
+		@Override
+		public Type getTypeA()
+		{
+			return sourceType;
+		}
+
+		@Override
+		public Type getTypeB()
+		{
+			return targetType;
+		}
+
+	}
+
 	@Inject
 	private BeanLocator beanLocator;
 
-	private List<TransformationBuilder> transformations = new ArrayList<TransformationBuilder>();
+	private Map<String, Converter> defaultConverters = new HashMap<String, Converter>();
+
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
+
+	@Inject
+	private AttributePathBuilderFactory pathFactory;
 
 	private EntityType sourceType;
 
 	private EntityTypeBuilder targetTypeBuilder;
 
-	@Inject
-	private AttributePathBuilderFactory pathFactory;
-
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
-
-	private Map<String, Converter> defaultConverters = new HashMap<String, Converter>();
-
 	private Transformation<A, B> transformation;
+
+	private List<TransformationBuilder> transformations = new ArrayList<TransformationBuilder>();
 
 	public TypeTransformationBuilder()
 	{
@@ -163,96 +252,5 @@ public class TypeTransformationBuilder<A, B>
 		builder.setSourceType(sourceType);
 		transformations.add(builder);
 		return builder;
-	}
-
-	private final class TypeCreator<A, B> implements Transformation<A, B>
-	{
-		private EntityType sourceType;
-
-		private EntityType targetType;
-
-		private TypeCreator(EntityType sourceType, EntityType targetType)
-		{
-			super();
-			this.sourceType = sourceType;
-			this.targetType = targetType;
-		}
-
-		@Override
-		public UniTransformation<A, B> getAB()
-		{
-			return new UniTransformation<A, B>()
-			{
-
-				@Override
-				public B convert(A a, Type<?> typeB)
-				{
-					return (B) targetType.createEntity();
-				}
-
-				@Override
-				public Type<A> getSourceType()
-				{
-					return sourceType;
-				}
-
-				@Override
-				public Type<B> getTargetType()
-				{
-					return targetType;
-				}
-
-				@Override
-				public B merge(A a, B b, Type<B> typeB)
-				{
-					return (B) targetType.createEntity();
-				}
-			};
-		}
-
-		@Override
-		public UniTransformation<B, A> getBA()
-		{
-			return new UniTransformation<B, A>()
-			{
-
-				@Override
-				public A convert(B a, Type<?> typeB)
-				{
-					return (A) sourceType.createEntity();
-				}
-
-				@Override
-				public Type<B> getSourceType()
-				{
-					return targetType;
-				}
-
-				@Override
-				public Type<A> getTargetType()
-				{
-					return sourceType;
-				}
-
-				@Override
-				public A merge(B a, A b, Type<A> typeB)
-				{
-					return (A) sourceType.createEntity();
-				}
-			};
-		}
-
-		@Override
-		public Type getTypeA()
-		{
-			return sourceType;
-		}
-
-		@Override
-		public Type getTypeB()
-		{
-			return targetType;
-		}
-
 	}
 }

@@ -61,9 +61,9 @@ public class SnapshotBuilderTest
 
 		Transformation<EntityA, DynamicEntity> snapshotting = (Transformation<EntityA, DynamicEntity>) builder.create();
 
-		DynamicEntity snapshot = snapshotting.getAB().convert(entityA, null);
+		DynamicEntity snapshot = snapshotting.getAB().convert(entityA);
 
-		EntityA restored = snapshotting.getBA().convert(snapshot, null);
+		EntityA restored = snapshotting.getBA().convert(snapshot);
 
 		Assert.assertFalse(((List) snapshot.get("list")).get(0) instanceof EntityB);
 		Assert.assertEquals(100, restored.getIntP());

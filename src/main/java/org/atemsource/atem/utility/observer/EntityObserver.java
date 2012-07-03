@@ -60,7 +60,7 @@ public class EntityObserver
 	public void check()
 	{
 		Object entity = handle.getEntity();
-		Object snapshot = snapshotting.convert(entity, null);
+		Object snapshot = snapshotting.convert(entity);
 		if (previousSnapshot != null)
 		{
 			EntityObserverContext ctx = beanLocator.getInstance(EntityObserverContext.class);

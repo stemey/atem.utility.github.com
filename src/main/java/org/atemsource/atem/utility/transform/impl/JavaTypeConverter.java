@@ -7,9 +7,6 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.infrastructure.util.ReflectionUtils;
@@ -25,23 +22,58 @@ public abstract class JavaTypeConverter<A, B> implements Converter<A, B>
 
 	private Type<B> typeB;
 
-	private EntityTypeRepository entityTypeRepository;
+	public abstract B convertAB(A a);
 
-	@Inject
-	private BeanLocator beanLocator;
+	public abstract A convertBA(B b);
 
 	@Override
 	public UniConverter<A, B> getAB()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new UniConverter<A, B>() {
+
+			@Override
+			public B convert(A a)
+			{
+				return convertAB(a);
+			}
+
+			@Override
+			public Type<A> getSourceType()
+			{
+				return typeA;
+			}
+
+			@Override
+			public Type<B> getTargetType()
+			{
+				return typeB;
+			}
+		};
 	}
 
 	@Override
 	public UniConverter<B, A> getBA()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new UniConverter<B, A>() {
+
+			@Override
+			public A convert(B a)
+			{
+				return convertBA(a);
+			}
+
+			@Override
+			public Type<B> getSourceType()
+			{
+				return typeB;
+			}
+
+			@Override
+			public Type<A> getTargetType()
+			{
+				return typeA;
+			}
+		};
 	}
 
 	@Override
@@ -56,12 +88,11 @@ public abstract class JavaTypeConverter<A, B> implements Converter<A, B>
 		return typeB;
 	}
 
-	@PostConstruct
-	public void initialize()
+	public void JavaTypeConverter()
 	{
-		entityTypeRepository = beanLocator.getInstance(EntityTypeRepository.class);
-		Class[] actualTypeParameters = ReflectionUtils.getActualTypeParameters(getClass(), Converter.class);
-		typeA = entityTypeRepository.getType(actualTypeParameters[0]);
-		typeB = entityTypeRepository.getType(actualTypeParameters[1]);
+		Class[] actualTypeParameters = ReflectionUtils.getActualTypeParameters(getClass(), JavaTypeConverter.class);
+		EntityTypeRepository repository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);
+		typeA = repository.getType(actualTypeParameters[0]);
+		typeB = repository.getType(actualTypeParameters[1]);
 	}
 }

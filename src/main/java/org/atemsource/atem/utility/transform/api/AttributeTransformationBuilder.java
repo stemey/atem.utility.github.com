@@ -15,14 +15,16 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
-public interface AttributeTransformationBuilder
+public interface AttributeTransformationBuilder<A,B>
 {
-	AttributeTransformationBuilder convert(Converter<?, ?> converter);
+	AttributeTransformationBuilder<A,B> convert(Converter<A,B> converter);
 
-	AttributeTransformationBuilder from(String attributePath);
+	AttributeTransformationBuilder<A,B> from(String attributePath);
 
-	AttributeTransformationBuilder metaValue(String name, Object metaData);
+	A fromMethod();
 
-	AttributeTransformationBuilder to(String attributePath);
+	AttributeTransformationBuilder<A,B> metaValue(String name, Object metaData);
+
+	AttributeTransformationBuilder<A,B> to(String attributePath);
 
 }

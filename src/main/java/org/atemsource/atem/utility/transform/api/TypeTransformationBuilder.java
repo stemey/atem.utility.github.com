@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
@@ -21,6 +22,7 @@ import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.MapAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
+import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
@@ -137,7 +139,7 @@ public class TypeTransformationBuilder<A, B>
 	@Inject
 	private AttributePathBuilderFactory pathFactory;
 
-	private EntityType sourceType;
+	private EntityType<A> sourceType;
 
 	private EntityTypeBuilder targetTypeBuilder;
 
@@ -182,7 +184,7 @@ public class TypeTransformationBuilder<A, B>
 		return entityTypeTransformation;
 	}
 
-	public EntityType getSourceType()
+	public EntityType<A> getSourceType()
 	{
 		return sourceType;
 	}
@@ -212,7 +214,7 @@ public class TypeTransformationBuilder<A, B>
 		this.transformation = transformation;
 	}
 
-	public AttributeTransformationBuilder transform()
+	public AttributeTransformationBuilder<A,B> transform()
 	{
 		SingleAttributeTransformationBuilder builder =
 			beanLocator.getInstance(SingleAttributeTransformationBuilder.class);
@@ -221,7 +223,7 @@ public class TypeTransformationBuilder<A, B>
 		return builder;
 	}
 
-	public AttributeTransformationBuilder transform(Class<? extends Attribute> attributeClass)
+	public AttributeTransformationBuilder<A,B> transform(Class<? extends Attribute> attributeClass)
 	{
 		if (CollectionAttribute.class.isAssignableFrom(attributeClass))
 		{
@@ -237,9 +239,9 @@ public class TypeTransformationBuilder<A, B>
 		}
 	}
 
-	public CollectionAttributeTransformationBuilder transformCollection()
+	public CollectionAttributeTransformationBuilder<A,B> transformCollection()
 	{
-		CollectionAttributeTransformationBuilder builder =
+		CollectionAttributeTransformationBuilder<A,B> builder =
 			beanLocator.getInstance(CollectionAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
 		transformations.add(builder);
@@ -252,5 +254,19 @@ public class TypeTransformationBuilder<A, B>
 		builder.setSourceType(sourceType);
 		transformations.add(builder);
 		return builder;
+	}
+
+	public void transformPrimitives(String... excludedAttributes) {
+		for (Attribute<?,?> attribute : getSourceType().getAttributes()) {
+			if (ArrayUtils.contains(excludedAttributes,attribute.getCode()) && attribute.getTargetType() instanceof PrimitiveType<?>) {
+				// TODO add conversion from local and global standard transformers
+				Converter converter = defaultConverters.get(attribute.getTargetType());
+				AttributeTransformationBuilder<A, B> transform = transform();
+				transform.from(attribute.getCode()).to(attribute.getCode());//.convert(converter);
+				if (converter !=null) {
+					transform.convert(converter);
+				}
+			}
+		}
 	}
 }

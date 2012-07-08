@@ -19,6 +19,8 @@ package org.atemsource.atem.utility.transform.api;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.api.type.EntityTypeBuilder;
 
 
 public class TransformationBuilderFactory
@@ -26,9 +28,17 @@ public class TransformationBuilderFactory
 	@Inject
 	private BeanLocator beanLocator;
 
-	public TypeTransformationBuilder<?, ?> create()
+	public <A,B> TypeTransformationBuilder<A,?> create(Class<A> sourceType,EntityTypeBuilder targetTypeBuilder)
 	{
-		TypeTransformationBuilder transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
+		TypeTransformationBuilder<A,B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
+		transformationBuilder.setSourceType(sourceType);
+		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
+		return transformationBuilder;
+	}
+	@Deprecated
+	public <A,B> TypeTransformationBuilder<A,?> create()
+	{
+		TypeTransformationBuilder<A,B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		return transformationBuilder;
 	}
 }

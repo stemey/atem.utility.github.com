@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class CollectionAttributeTransformationBuilder extends AbstractAttributeTransformationBuilder implements
-	TransformationBuilder, AttributeTransformationBuilder
+public class CollectionAttributeTransformationBuilder<A,B> extends AbstractAttributeTransformationBuilder<A,B> implements
+	TransformationBuilder, AttributeTransformationBuilder<A,B>
 {
 	private CollectionSortType collectionSortType;
 

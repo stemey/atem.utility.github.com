@@ -36,7 +36,7 @@ public class AttributePathBuilder
 
 	private List<AttributePathElement> newPath = new ArrayList<AttributePathElement>();
 
-	public AttributePathBuilder addAttribute(Attribute<?, ?> attribute)
+	public AttributePathBuilder addAttribute(Attribute<?,?> attribute)
 	{
 		newPath.add(new AttributeAttributePathElement(attribute));
 		return this;
@@ -143,7 +143,7 @@ public class AttributePathBuilder
 		}
 	}
 
-	private Type<?> getTargetType()
+	public Type<?> getTargetType()
 	{
 		AttributePathElement element = newPath.get(newPath.size() - 1);
 		return element.getTargetType().getType();

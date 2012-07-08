@@ -12,23 +12,28 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import net.sf.cglib.proxy.Enhancer;
+
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.springframework.beans.factory.support.CglibSubclassingInstantiationStrategy;
 
 
-public class AbstractAttributeTransformationBuilder implements AttributeTransformationBuilder
+public class AbstractAttributeTransformationBuilder<A,B> implements AttributeTransformationBuilder<A,B>
 {
 
-	protected Converter<?, ?> converter;
+	protected Converter<A,B> converter;
 
-	protected EntityType<?> sourceType;
+	protected EntityType<A> sourceType;
 
 	@Inject
 	protected BeanLocator beanLocator;
-
+	
+	
 	@Inject
 	protected AttributePathBuilderFactory attributePathBuilderFactory;
 
@@ -38,42 +43,59 @@ public class AbstractAttributeTransformationBuilder implements AttributeTransfor
 
 	protected Map<String, Object> meta = new HashMap<String, Object>();
 
+	private AttributePathBuilder attributePathBuilder;
+
 	public AbstractAttributeTransformationBuilder()
 	{
 		super();
 	}
 
 	@Override
-	public AttributeTransformationBuilder convert(Converter<?, ?> converter)
+	public AttributeTransformationBuilder<A,B> convert(Converter<A,B> converter)
 	{
 		this.converter = converter;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformationBuilder from(String sourceAttribute)
+	public AttributeTransformationBuilder<A,B> from(String sourceAttribute)
 	{
 		this.sourceAttribute = sourceAttribute;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformationBuilder metaValue(String name, Object metaData)
+	public A fromMethod()
+	{
+		Enhancer enhancer = new Enhancer(); 
+		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(this));
+	}
+
+	@Override
+	public AttributeTransformationBuilder<A,B> metaValue(String name, Object metaData)
 	{
 		this.meta.put(name, metaData);
 		return this;
 	}
 
-	public void setSourceType(EntityType<?> sourceType)
+	public void setSourceType(EntityType<A> sourceType)
 	{
 		this.sourceType = sourceType;
 	}
 
 	@Override
-	public AttributeTransformationBuilder to(String targetAttribute)
+	public AttributeTransformationBuilder<A,B> to(String targetAttribute)
 	{
 		this.targetAttribute = targetAttribute;
 		return this;
+	}
+
+	public AttributePathBuilder getSourcePathBuilder() {
+		if (attributePathBuilder==null) {
+			attributePathBuilder=attributePathBuilderFactory.createBuilder();
+			attributePathBuilder.start(null, sourceType);
+		}
+		return attributePathBuilder;
 	}
 
 }

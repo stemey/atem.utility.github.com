@@ -13,7 +13,7 @@ public class RecordBuilder
 		{
 			builder.append("<");
 			builder.append("port");
-			builder.append(">");
+			builder.append(">+ ");
 		}
 		builder.append(label);
 	}

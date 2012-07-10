@@ -17,6 +17,8 @@ public class DotGenerator
 
 	}
 
+	private String basePackage;
+
 	private Set<EntityType<?>> processedTypes = new HashSet<EntityType<?>>();
 
 	private EntityType<?> root;
@@ -41,7 +43,7 @@ public class DotGenerator
 			return;
 		}
 		processedTypes.add(entityType);
-		NodeBuilder nodeBuilder = builder.createNode(normalize(entityType));
+		NodeBuilder nodeBuilder = builder.createNode(normalizeId(entityType), getLabel(entityType));
 		for (Attribute<?, ?> attribute : entityType.getDeclaredAttributes())
 		{
 			if (attribute.getTargetType() instanceof PrimitiveType<?>)
@@ -60,7 +62,7 @@ public class DotGenerator
 				else
 				{
 					ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
-					connectionBuilder.target(normalize(attribute.getTargetType()));
+					connectionBuilder.target(normalizeId(attribute.getTargetType()));
 					connectionBuilder.label(attribute.getCode());
 					createDot(builder, (EntityType<?>) attribute.getTargetType());
 				}
@@ -70,15 +72,34 @@ public class DotGenerator
 		if (superEntityType != null)
 		{
 			ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
-			connectionBuilder.target(normalize(superEntityType));
-			connectionBuilder.label("superType");
+			connectionBuilder.target(normalizeId(superEntityType));
+			connectionBuilder.label("extends");
+			connectionBuilder.arrowType("empty");
 			createDot(builder, superEntityType);
 		}
 
 	}
 
-	private String normalize(Type<?> type)
+	private String getLabel(Type<?> type)
+	{
+		String name = type.getCode();
+		if (basePackage != null && name.startsWith(basePackage))
+		{
+			return name.substring(basePackage.length() + 1);
+		}
+		else
+		{
+			return name;
+		}
+	}
+
+	private String normalizeId(Type<?> type)
 	{
 		return type.getCode().replace('.', '_').replace('$', '_');
+	}
+
+	public void setBasePackage(String basePackage)
+	{
+		this.basePackage = basePackage;
 	}
 }

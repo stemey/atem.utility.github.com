@@ -13,27 +13,30 @@ public class NodeBuilder
 
 	private String id;
 
+	private String label;
+
 	private List<RecordBuilder> records = new ArrayList<RecordBuilder>();
 
-	public NodeBuilder(String id)
+	public NodeBuilder(String id, String label)
 	{
 		this.id = id;
+		this.label = label;
 	}
 
 	public void create(StringBuilder builder)
 	{
 		builder.append(id);
 		builder.append(" [label=\"{");
-		builder.append(id);
+		builder.append(label);
 		for (int index = 0; index < records.size(); index++)
 		{
 			if (index < records.size() - 1)
 			{
-				builder.append("|");
+				builder.append("\\l|");
 				records.get(index).create(builder);
 			}
 		}
-		builder.append("}\"]\r\n");
+		builder.append("\\l}\"]\r\n");
 	}
 
 	public ConnectionBuilder createConnection()

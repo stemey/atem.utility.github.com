@@ -12,7 +12,7 @@ public class DotBuilder
 	public String create()
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append("digraph{\r\n");
+		builder.append("digraph{\r\nrankdir=BT\r\nnode [shape=record]\r\n");
 		Set<ConnectionBuilder> connections = new HashSet<ConnectionBuilder>();
 		for (NodeBuilder node : nodes)
 		{
@@ -27,9 +27,9 @@ public class DotBuilder
 		return builder.toString();
 	}
 
-	public NodeBuilder createNode(String id)
+	public NodeBuilder createNode(String id, String label)
 	{
-		NodeBuilder nodeBuilder = new NodeBuilder(id);
+		NodeBuilder nodeBuilder = new NodeBuilder(id, label);
 		nodes.add(nodeBuilder);
 		return nodeBuilder;
 	}

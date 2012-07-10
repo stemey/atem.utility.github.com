@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.6.0.201103160035-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
+	<configs>
+		<config>src/main/resources/meta/utility/clone-example.xml</config>
+		<config>src/main/resources/meta/utility/clone.xml</config>
+		<config>src/main/resources/meta/utility/compare-example.xml</config>
+		<config>src/main/resources/meta/utility/compare.xml</config>
+		<config>src/main/resources/meta/utility/observer-example.xml</config>
+		<config>src/main/resources/meta/utility/observer.xml</config>
+		<config>src/main/resources/meta/utility/path-example.xml</config>
+		<config>src/main/resources/meta/utility/path.xml</config>
+		<config>src/main/resources/meta/utility/snapshot-example.xml</config>
+		<config>src/main/resources/meta/utility/snapshot.xml</config>
+		<config>src/main/resources/meta/utility/transform-example.xml</config>
+		<config>src/main/resources/meta/utility/transform.xml</config>
+		<config>src/main/resources/meta/utility/view-example.xml</config>
+		<config>src/main/resources/meta/utility/view.xml</config>
+		<config>src/test/resources/test/meta/pojo/entitytype.xml</config>
+		<config>src/test/resources/test/meta/utility/observer.xml</config>
+		<config>src/test/resources/test/meta/utility/snapshot.xml</config>
+		<config>src/test/resources/test/meta/utility/transform.xml</config>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

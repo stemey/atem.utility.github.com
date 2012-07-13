@@ -3,7 +3,7 @@ package org.atemsource.atem.impl.json;
 import javax.annotation.Resource;
 
 import org.atemsource.atem.api.type.EntityTypeBuilder;
-import org.atemsource.atem.impl.json.type.JsonSchema;
+import org.atemsource.atem.impl.json.schema.JsonSchema;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Transformation;

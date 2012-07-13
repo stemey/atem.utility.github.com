@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class CollectionAttributeTransformationBuilder<A,B> extends AbstractAttributeTransformationBuilder<A,B> implements
-	TransformationBuilder, AttributeTransformationBuilder<A,B>
+public class CollectionAttributeTransformationBuilder<A, B> extends AbstractAttributeTransformationBuilder<A, B>
+	implements TransformationBuilder, AttributeTransformationBuilder<A, B>
 {
 	private CollectionSortType collectionSortType;
 
@@ -34,9 +34,9 @@ public class CollectionAttributeTransformationBuilder<A,B> extends AbstractAttri
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (converter != null)
+		if (getConverter(sourcePath.getTargetType().getType()) != null)
 		{
-			attributeTargetType = converter.getTypeB();
+			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
 		}
 		else
 		{
@@ -64,11 +64,12 @@ public class CollectionAttributeTransformationBuilder<A,B> extends AbstractAttri
 			beanLocator.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setConverter(converter);
+		transformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
+		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
 

@@ -15,50 +15,69 @@ import javax.inject.Inject;
 import net.sf.cglib.proxy.Enhancer;
 
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
-import org.springframework.beans.factory.support.CglibSubclassingInstantiationStrategy;
+import org.atemsource.atem.utility.transform.api.ConverterFactory;
+import org.atemsource.atem.utility.transform.api.DerivedAttribute;
+import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
 
-public class AbstractAttributeTransformationBuilder<A,B> implements AttributeTransformationBuilder<A,B>
+public class AbstractAttributeTransformationBuilder<A, B> implements AttributeTransformationBuilder<A, B>
 {
 
-	protected Converter<A,B> converter;
+	private AttributePathBuilder attributePathBuilder;
 
-	protected EntityType<A> sourceType;
-
-	@Inject
-	protected BeanLocator beanLocator;
-	
-	
 	@Inject
 	protected AttributePathBuilderFactory attributePathBuilderFactory;
 
-	protected String sourceAttribute;
+	@Inject
+	protected BeanLocator beanLocator;
 
-	protected String targetAttribute;
+	private Converter<A, B> converter;
+
+	private ConverterFactory converterFactory;
+
+	@Inject
+	protected EntityTypeRepository entityTypeRepository;
 
 	protected Map<String, Object> meta = new HashMap<String, Object>();
 
-	private AttributePathBuilder attributePathBuilder;
+	protected String sourceAttribute;
+
+	protected EntityType<A> sourceType;
+
+	protected String targetAttribute;
 
 	public AbstractAttributeTransformationBuilder()
 	{
 		super();
 	}
 
+	protected void addDerivation(Transformation<?, ?> transformation, Attribute newAttribute, Attribute sourceAttribute)
+	{
+		DerivedAttribute derivedAttribute = new DerivedAttribute();
+		derivedAttribute.setOriginalAttribute(sourceAttribute);
+		derivedAttribute.setTransformation(transformation);
+		entityTypeRepository.getEntityType(Attribute.class)
+			.getMetaAttribute(DerivationMetaAttributeRegistrar.DERIVED_FROM).setValue(newAttribute, derivedAttribute);
+	}
+
 	@Override
-	public AttributeTransformationBuilder<A,B> convert(Converter<A,B> converter)
+	public AttributeTransformationBuilder<A, B> convert(Converter<A, B> converter)
 	{
 		this.converter = converter;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A,B> from(String sourceAttribute)
+	public AttributeTransformationBuilder<A, B> from(String sourceAttribute)
 	{
 		this.sourceAttribute = sourceAttribute;
 		return this;
@@ -67,15 +86,47 @@ public class AbstractAttributeTransformationBuilder<A,B> implements AttributeTra
 	@Override
 	public A fromMethod()
 	{
-		Enhancer enhancer = new Enhancer(); 
+		Enhancer enhancer = new Enhancer();
 		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(this));
 	}
 
+	protected Converter<A, B> getConverter(Type<?> type)
+	{
+		if (converter != null)
+		{
+			return converter;
+		}
+		else
+		{
+			return (Converter<A, B>) converterFactory.get(type);
+		}
+	}
+
+	public ConverterFactory getConverterFactory()
+	{
+		return converterFactory;
+	}
+
+	public AttributePathBuilder getSourcePathBuilder()
+	{
+		if (attributePathBuilder == null)
+		{
+			attributePathBuilder = attributePathBuilderFactory.createBuilder();
+			attributePathBuilder.start(null, sourceType);
+		}
+		return attributePathBuilder;
+	}
+
 	@Override
-	public AttributeTransformationBuilder<A,B> metaValue(String name, Object metaData)
+	public AttributeTransformationBuilder<A, B> metaValue(String name, Object metaData)
 	{
 		this.meta.put(name, metaData);
 		return this;
+	}
+
+	public void setConverterFactory(ConverterFactory converterFactory)
+	{
+		this.converterFactory = converterFactory;
 	}
 
 	public void setSourceType(EntityType<A> sourceType)
@@ -84,18 +135,10 @@ public class AbstractAttributeTransformationBuilder<A,B> implements AttributeTra
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A,B> to(String targetAttribute)
+	public AttributeTransformationBuilder<A, B> to(String targetAttribute)
 	{
 		this.targetAttribute = targetAttribute;
 		return this;
-	}
-
-	public AttributePathBuilder getSourcePathBuilder() {
-		if (attributePathBuilder==null) {
-			attributePathBuilder=attributePathBuilderFactory.createBuilder();
-			attributePathBuilder.start(null, sourceType);
-		}
-		return attributePathBuilder;
 	}
 
 }

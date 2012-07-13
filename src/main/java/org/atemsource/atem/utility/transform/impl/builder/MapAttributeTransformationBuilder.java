@@ -40,9 +40,9 @@ public class MapAttributeTransformationBuilder extends AbstractAttributeTransfor
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (converter != null)
+		if (getConverter(sourcePath.getTargetType().getType()) != null)
 		{
-			attributeTargetType = converter.getTypeB();
+			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
 		}
 		else
 		{
@@ -81,12 +81,13 @@ public class MapAttributeTransformationBuilder extends AbstractAttributeTransfor
 			beanLocator.getInstance(MapAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setConverter(converter);
+		transformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
 		transformation.setKeyConverter(keyConverter);
+		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
 

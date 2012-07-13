@@ -1,28 +1,32 @@
 package org.atemsource.atem.utility.transform.impl.converter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.EntityTypeRepository;
-import org.atemsource.atem.api.infrastructure.util.ReflectionUtils;
+import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.ConverterFactory;
+import org.atemsource.atem.utility.transform.api.InternalConverterFactory;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
-public class ConverterFactoryImpl
+public class ConverterFactoryImpl implements ConverterFactory
 {
 
 	private static class ClassTuple
 	{
-		Class<?> a;
+		String a;
 
-		Class<?> b;
+		String b;
 
-		public ClassTuple(Class<?> a, Class<?> b)
+		public ClassTuple(String a, String b)
 		{
 			super();
 			this.a = a;
@@ -65,35 +69,89 @@ public class ConverterFactoryImpl
 			result = prime * result + ((b == null) ? 0 : b.hashCode());
 			return result;
 		}
+
 	}
 
-	private Map<ClassTuple, Converter> converters = new HashMap<ClassTuple, Converter>();
+	private List<Converter<?, ?>> converters;
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
 
+	private Map<String, Converter> entityTypeToConverters = new HashMap<String, Converter>();
+
+	private List<InternalConverterFactory> factories;
+
+	private List<JavaConverter<?, ?>> javaConverters;
+
+	private Map<ClassTuple, Converter> tupleToConverters = new HashMap<ClassTuple, Converter>();
+
 	public Converter<?, ?> create(JavaConverter<?, ?> javaConverter)
 	{
-		Class[] actualTypeParameters =
-			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
-		Type typeB = entityTypeRepository.getType(actualTypeParameters[1]);
-		Type typeA = entityTypeRepository.getType(actualTypeParameters[0]);
-		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
-		return localConverter;
+		return ConverterUtils.create(javaConverter);
+	}
+
+	private ClassTuple createClassTuple(Class<?> a, Class<?> b)
+	{
+		EntityType<?> entityTypeA = entityTypeRepository.getEntityType(a);
+		EntityType<?> entityTypeB = entityTypeRepository.getEntityType(b);
+		return new ClassTuple(entityTypeA.getCode(), entityTypeB.getCode());
+
+	}
+
+	@Override
+	public Converter<?, ?> get(Type<?> type)
+	{
+		Converter converter = entityTypeToConverters.get(type.getCode());
+		if (converter == null)
+		{
+			for (InternalConverterFactory factory : factories)
+			{
+				converter = factory.create(type);
+				if (converter != null)
+				{
+					register(converter);
+					return converter;
+				}
+
+			}
+			return null;
+		}
+		else
+		{
+			return converter;
+		}
 	}
 
 	public Converter<?, ?> getConverter(Class<?> a, Class<?> b)
 	{
-		return converters.get(new ClassTuple(a, b));
+		EntityType<?> entityTypeA = entityTypeRepository.getEntityType(a);
+		EntityType<?> entityTypeB = entityTypeRepository.getEntityType(b);
+		return tupleToConverters.get(new ClassTuple(entityTypeA.getCode(), entityTypeB.getCode()));
 
+	}
+
+	public List<Converter<?, ?>> getConverters()
+	{
+		return converters;
+	}
+
+	public List<InternalConverterFactory> getFactories()
+	{
+		return factories;
+	}
+
+	public List<JavaConverter<?, ?>> getJavaConverters()
+	{
+		return javaConverters;
 	}
 
 	public UniConverter<?, ?> getUniConverter(Class<?> a, Class<?> b)
 	{
-		Converter converter = converters.get(new ClassTuple(a, b));
+		ClassTuple classTuple = createClassTuple(a, b);
+		Converter converter = tupleToConverters.get(classTuple);
 		if (converter == null)
 		{
-			converter = converters.get(new ClassTuple(b, a));
+			converter = tupleToConverters.get(classTuple);
 			if (converter == null)
 			{
 				return null;
@@ -109,15 +167,53 @@ public class ConverterFactoryImpl
 		}
 	}
 
+	@PostConstruct
+	public void initialize()
+	{
+		if (converters != null)
+		{
+			for (Converter<?, ?> converter : converters)
+			{
+				register(converter);
+			}
+		}
+		if (javaConverters != null)
+		{
+			for (JavaConverter<?, ?> converter : javaConverters)
+			{
+				register(converter);
+			}
+		}
+
+	}
+
+	@Override
+	public void register(Converter<?, ?> converter)
+	{
+		tupleToConverters.put(new ClassTuple(converter.getTypeA().getCode(), converter.getTypeB().getCode()), converter);
+		entityTypeToConverters.put(converter.getTypeA().getCode(), converter);
+	}
+
 	public Converter<?, ?> register(JavaConverter<?, ?> javaConverter)
 	{
-		Class[] actualTypeParameters =
-			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
-		Type typeB = entityTypeRepository.getType(actualTypeParameters[1]);
-		Type typeA = entityTypeRepository.getType(actualTypeParameters[0]);
-		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
-		converters.put(new ClassTuple(actualTypeParameters[0], actualTypeParameters[1]), localConverter);
-		return localConverter;
+		Converter<?, ?> converter = create(javaConverter);
+		register(converter);
+		return converter;
+	}
+
+	public void setConverters(List<Converter<?, ?>> converters)
+	{
+		this.converters = converters;
+	}
+
+	public void setFactories(List<InternalConverterFactory> factories)
+	{
+		this.factories = factories;
+	}
+
+	public void setJavaConverters(List<JavaConverter<?, ?>> javaConverters)
+	{
+		this.javaConverters = javaConverters;
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Stack;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
@@ -40,12 +41,19 @@ public class TransformationContext
 		transformationBuilders.push(transformationBuilder);
 		visitor.visit(this);
 		TypeTransformationBuilder<?, ?> typeTransformationBuilder = transformationBuilders.pop();
-		transformations.put(entityType.getCode(), typeTransformationBuilder.buildTypeTransformation());
+		EntityTypeTransformation<?, ?> transformation = typeTransformationBuilder.buildTypeTransformation();
+		transformations.put(entityType.getCode(), transformation);
+		manager.onTypeCreated((EntityType<?>) transformation.getTypeB());
 	}
 
 	public TypeTransformationBuilder<?, ?> getCurrent()
 	{
 		return transformationBuilders.peek();
+	}
+
+	public DerivedType getDerivedType(EntityType<?> targetType)
+	{
+		return manager.getDerivedType(targetType);
 	}
 
 	public <A, B> Converter<A, B> getTransformation(EntityType<A> entityType)

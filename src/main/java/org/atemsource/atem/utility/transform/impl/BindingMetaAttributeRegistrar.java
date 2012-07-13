@@ -11,35 +11,37 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.EntityTypeRepository;
-import org.atemsource.atem.api.attribute.Attribute;
-import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.extension.MetaAttributeService;
-import org.atemsource.atem.utility.transform.api.DerivationAttribute;
+import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.utility.transform.api.Binding;
 
 
-public class DerivationAttributeRegistrar
+public class BindingMetaAttributeRegistrar
 {
-	@Inject
-	private MetaAttributeService metaAttributeService;
 
-	private SingleAttribute<DerivationAttribute> derivationAttribute;
+	public static final String BINDING = "binding";
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
 
-	public SingleAttribute<DerivationAttribute> getDerivationAttribute()
+	private MetaAttributeService metaAttributeService;
+
+	public MetaAttributeService getMetaAttributeService()
 	{
-		return derivationAttribute;
+		return metaAttributeService;
 	}
 
 	@PostConstruct
 	public void initialize()
 	{
-		derivationAttribute =
-			metaAttributeService.addSingleMetaAttribute("derivationAttribute",
-				entityTypeRepository.getEntityType(Attribute.class),
-				entityTypeRepository.getEntityType(DerivationAttribute.class));
+		metaAttributeService.addSingleMetaAttribute(BINDING, entityTypeRepository.getEntityType(EntityType.class),
+			entityTypeRepository.getEntityType(Binding.class));
 
+	}
+
+	public void setMetaAttributeService(MetaAttributeService metaAttributeService)
+	{
+		this.metaAttributeService = metaAttributeService;
 	}
 
 }

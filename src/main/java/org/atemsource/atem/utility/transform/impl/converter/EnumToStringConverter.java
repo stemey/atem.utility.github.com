@@ -7,10 +7,10 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.converter;
 
-import org.atemsource.atem.utility.transform.impl.JavaTypeConverter;
+import org.atemsource.atem.utility.transform.api.JavaConverter;
 
 
-public class EnumToStringConverter extends JavaTypeConverter<Enum<?>, String>
+public class EnumToStringConverter implements JavaConverter<Enum<?>, String>
 {
 
 	private Class<Enum> enumClass;
@@ -23,13 +23,27 @@ public class EnumToStringConverter extends JavaTypeConverter<Enum<?>, String>
 	@Override
 	public String convertAB(Enum<?> a)
 	{
-		return a.name();
+		if (a == null)
+		{
+			return null;
+		}
+		else
+		{
+			return a.name();
+		}
 	}
 
 	@Override
 	public Enum<?> convertBA(String b)
 	{
-		return Enum.valueOf(enumClass, b);
+		if (b == null || b.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			return Enum.valueOf(enumClass, b);
+		}
 	}
 
 }

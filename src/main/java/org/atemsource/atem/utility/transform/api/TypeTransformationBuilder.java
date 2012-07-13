@@ -8,9 +8,7 @@
 package org.atemsource.atem.utility.transform.api;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,6 +23,7 @@ import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
+import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
@@ -131,7 +130,7 @@ public class TypeTransformationBuilder<A, B>
 	@Inject
 	private BeanLocator beanLocator;
 
-	private Map<String, Converter> defaultConverters = new HashMap<String, Converter>();
+	private ConverterFactory converterFactory;
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -151,11 +150,13 @@ public class TypeTransformationBuilder<A, B>
 	{
 	}
 
-	private void addDerivation(Attribute newAttribute, Attribute sourceAttribute)
+	private void addDerivation(Transformation<?, ?> transformation, EntityType<?> newType, EntityType<?> originalType)
 	{
-		DerivationAttribute derivationAttribute = new DerivationAttribute();
-		derivationAttribute.setOriginalAttribute(sourceAttribute);
-		// derivationAttributeRegistrar.getDerivationAttribute().setValue(newAttribute, derivationAttribute);
+		DerivedType deriveType = new DerivedType();
+		deriveType.setOriginalType(originalType);
+		deriveType.setTransformation(transformation);
+		entityTypeRepository.getEntityType(EntityType.class)
+			.getMetaAttribute(DerivationMetaAttributeRegistrar.DERIVED_FROM).setValue(newType, deriveType);
 	}
 
 	public EntityTypeTransformation<A, B> buildTypeTransformation()
@@ -181,7 +182,13 @@ public class TypeTransformationBuilder<A, B>
 		}
 		entityTypeTransformation.setEntityTypeB(targetType);
 		entityTypeTransformation.setEntityTypeA(sourceType);
+		addDerivation(entityTypeTransformation, targetType, sourceType);
 		return entityTypeTransformation;
+	}
+
+	public ConverterFactory getConverterFactory()
+	{
+		return converterFactory;
 	}
 
 	public EntityType<A> getSourceType()
@@ -189,9 +196,9 @@ public class TypeTransformationBuilder<A, B>
 		return sourceType;
 	}
 
-	public void putDefaultConverter(Converter typeTransformation)
+	public void setConverterFactory(ConverterFactory converterFactory)
 	{
-		defaultConverters.put(typeTransformation.getTypeA().getCode(), typeTransformation);
+		this.converterFactory = converterFactory;
 	}
 
 	public void setSourceType(Class sourceType)
@@ -214,16 +221,17 @@ public class TypeTransformationBuilder<A, B>
 		this.transformation = transformation;
 	}
 
-	public AttributeTransformationBuilder<A,B> transform()
+	public AttributeTransformationBuilder<A, B> transform()
 	{
 		SingleAttributeTransformationBuilder builder =
 			beanLocator.getInstance(SingleAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
+		builder.setConverterFactory(converterFactory);
 		transformations.add(builder);
 		return builder;
 	}
 
-	public AttributeTransformationBuilder<A,B> transform(Class<? extends Attribute> attributeClass)
+	public AttributeTransformationBuilder<A, B> transform(Class<? extends Attribute> attributeClass)
 	{
 		if (CollectionAttribute.class.isAssignableFrom(attributeClass))
 		{
@@ -239,11 +247,12 @@ public class TypeTransformationBuilder<A, B>
 		}
 	}
 
-	public CollectionAttributeTransformationBuilder<A,B> transformCollection()
+	public CollectionAttributeTransformationBuilder<A, B> transformCollection()
 	{
-		CollectionAttributeTransformationBuilder<A,B> builder =
+		CollectionAttributeTransformationBuilder<A, B> builder =
 			beanLocator.getInstance(CollectionAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
+		builder.setConverterFactory(converterFactory);
 		transformations.add(builder);
 		return builder;
 	}
@@ -252,18 +261,24 @@ public class TypeTransformationBuilder<A, B>
 	{
 		MapAttributeTransformationBuilder builder = beanLocator.getInstance(MapAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
+		builder.setConverterFactory(converterFactory);
 		transformations.add(builder);
 		return builder;
 	}
 
-	public void transformPrimitives(String... excludedAttributes) {
-		for (Attribute<?,?> attribute : getSourceType().getAttributes()) {
-			if (ArrayUtils.contains(excludedAttributes,attribute.getCode()) && attribute.getTargetType() instanceof PrimitiveType<?>) {
+	public void transformPrimitives(String... excludedAttributes)
+	{
+		for (Attribute<?, ?> attribute : getSourceType().getAttributes())
+		{
+			if (ArrayUtils.contains(excludedAttributes, attribute.getCode())
+				&& attribute.getTargetType() instanceof PrimitiveType<?>)
+			{
 				// TODO add conversion from local and global standard transformers
-				Converter converter = defaultConverters.get(attribute.getTargetType());
+				Converter converter = converterFactory.get(attribute.getTargetType());
 				AttributeTransformationBuilder<A, B> transform = transform();
-				transform.from(attribute.getCode()).to(attribute.getCode());//.convert(converter);
-				if (converter !=null) {
+				transform.from(attribute.getCode()).to(attribute.getCode());// .convert(converter);
+				if (converter != null)
+				{
 					transform.convert(converter);
 				}
 			}

@@ -17,6 +17,15 @@
 
 
 	<import resource="jackson.xml" />
+	
+	<bean id="atem-json-repository" class="org.atemsource.atem.impl.json.JsonEntityTypeRepository">
+		<property name="objectMapper">
+			<bean class="org.codehaus.jackson.map.ObjectMapper">
+			</bean>
+		</property>
+		<property name="typeProperty" value="ext_type" />
+	</bean>
+	
 
 	<bean id="atem-utility-jacksonBindingProcessor"
 		class="org.atemsource.atem.utility.jackson.JacksonBindingProcessor">

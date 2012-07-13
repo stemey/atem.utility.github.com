@@ -18,7 +18,7 @@ package org.atemsource.atem.utility.transform.api;
 import org.atemsource.atem.api.attribute.Attribute;
 
 
-public class DerivationAttribute
+public class DerivedAttribute
 {
 
 	private Transformation<?, ?> transformation;

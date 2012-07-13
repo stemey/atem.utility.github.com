@@ -2,13 +2,19 @@ package org.atemsource.atem.utility.jackson;
 
 import java.util.List;
 
+import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.JavaMetaData;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
+import org.atemsource.atem.utility.transform.api.Transformation;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -16,20 +22,57 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class TransformationVisitor implements ViewVisitor<TransformationContext>
 {
 
+	private EntityTypeRepository entityTypeRepository;
+
 	private List<AttributeFilter> filters;
 
 	private JavaUniConverter<String, String> nameConverter;
 
-	public TransformationVisitor(List<AttributeFilter> filters, JavaUniConverter<String, String> nameConverter)
+	public TransformationVisitor(EntityTypeRepository entityTypeRepository, List<AttributeFilter> filters,
+		JavaUniConverter<String, String> nameConverter)
 	{
 		super();
 		this.nameConverter = nameConverter;
 		this.filters = filters;
+		this.entityTypeRepository = entityTypeRepository;
 	}
 
 	public <A, B> Converter<A, B> cast(Converter<A, B> c)
 	{
 		return c;
+	}
+
+	private void convert(TransformationContext context, Attribute attribute, Transformation<?, ?> transformation,
+		JsonProperty jsonProperty)
+	{
+		String targetAttributeName;
+		if (jsonProperty == null)
+		{
+			targetAttributeName = getTargetAttributeName(attribute);
+		}
+		else
+		{
+			targetAttributeName = jsonProperty.value();
+		}
+		AttributeTransformationBuilder<?, ?> builder;
+		if (attribute instanceof SingleAttribute<?>)
+		{
+			builder = context.getCurrent().transform();
+		}
+		else if (attribute instanceof CollectionAttribute)
+		{
+			builder =
+				context.getCurrent().transformCollection().sort(((CollectionAttribute) attribute).getCollectionSortType());
+		}
+		else
+		{
+			return;
+		}
+		builder.from(attribute.getCode()).to(targetAttributeName);
+		if (transformation != null)
+		{
+			builder.convert(transformation);
+		}
 	}
 
 	private String getTargetAttributeName(Attribute attribute)
@@ -52,14 +95,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 		}
 		JavaMetaData javaAttribute = (JavaMetaData) attribute;
 		JsonProperty jsonProperty = javaAttribute.getAnnotation(JsonProperty.class);
-		if (jsonProperty == null)
-		{
-			context.getCurrent().transform().from(attribute.getCode()).to(getTargetAttributeName(attribute));
-		}
-		else
-		{
-			context.getCurrent().transform().from(attribute.getCode()).to(jsonProperty.value());
-		}
+		convert(context, attribute, null, jsonProperty);
 
 	}
 
@@ -71,22 +107,14 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 		if (javaAttribute.getAnnotation(JsonIgnore.class) == null)
 		{
 			EntityType<?> targetType = (EntityType<?>) attribute.getTargetType();
-			Converter transformation = context.getTransformation(targetType);
-			if (transformation == null)
+			DerivedType derivedType = context.getDerivedType(targetType);
+			if (derivedType == null)
 			{
 				context.cascade(targetType, attributeVisitor);
 			}
-			transformation = context.getTransformation(targetType);
+			Transformation<?, ?> transformation = context.getDerivedType(targetType).getTransformation();
 			JsonProperty jsonProperty = javaAttribute.getAnnotation(JsonProperty.class);
-			if (jsonProperty == null)
-			{
-				context.getCurrent().transform().from(attribute.getCode()).to(getTargetAttributeName(attribute))
-					.convert(transformation);
-			}
-			else
-			{
-				context.getCurrent().transform().from(attribute.getCode()).to(jsonProperty.value()).convert(transformation);
-			}
+			convert(context, attribute, transformation, jsonProperty);
 		}
 	}
 }

@@ -28,9 +28,9 @@ public class SingleAttributeTransformationBuilder extends AbstractAttributeTrans
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (converter != null)
+		if (getConverter(sourcePath.getTargetType().getType()) != null)
 		{
-			attributeTargetType = converter.getTypeB();
+			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
 		}
 		else
 		{
@@ -48,10 +48,11 @@ public class SingleAttributeTransformationBuilder extends AbstractAttributeTrans
 			beanLocator.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);
 		primitiveAttributeTransformation.setAttributeB(targetPath);
-		primitiveAttributeTransformation.setConverter(converter);
+		primitiveAttributeTransformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
 		primitiveAttributeTransformation.setTypeA(sourceType);
 		primitiveAttributeTransformation.setTypeB(targetType);
 		primitiveAttributeTransformation.setMeta(meta);
+		addDerivation(primitiveAttributeTransformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return primitiveAttributeTransformation;
 	}
 

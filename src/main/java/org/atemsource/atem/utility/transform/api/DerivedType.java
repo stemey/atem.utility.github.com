@@ -5,32 +5,36 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.atemsource.atem.utility.compare;
+package org.atemsource.atem.utility.transform.api;
 
-public class Addition extends Difference
+import org.atemsource.atem.api.type.EntityType;
+
+
+public class DerivedType
 {
 
-	private Object value;
+	private EntityType<?> originalType;
 
-	public Object getValue()
+	private Transformation<?, ?> transformation;
+
+	public EntityType<?> getOriginalType()
 	{
-		return value;
+		return originalType;
 	}
 
-	public void setValue(Object value)
+	public Transformation<?, ?> getTransformation()
 	{
-		this.value = value;
+		return transformation;
 	}
 
-	@Override
-	public String toString()
+	public void setOriginalType(EntityType<?> originalType)
 	{
-		StringBuilder builder = new StringBuilder();
-		builder.append("added ");
-		builder.append(value);
-		builder.append(" to ");
-		builder.append(this.getPath());
-		return builder.toString();
-
+		this.originalType = originalType;
 	}
+
+	public void setTransformation(Transformation<?, ?> transformation)
+	{
+		this.transformation = transformation;
+	}
+
 }

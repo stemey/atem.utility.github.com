@@ -19,6 +19,8 @@ public class TransformationBuilderFactory
 	@Inject
 	private BeanLocator beanLocator;
 
+	private ConverterFactory converterFactory;
+
 	@Deprecated
 	public <A, B> TypeTransformationBuilder<A, ?> create()
 	{
@@ -31,6 +33,7 @@ public class TransformationBuilderFactory
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		transformationBuilder.setSourceType(sourceType);
 		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
+		transformationBuilder.setConverterFactory(converterFactory);
 		return transformationBuilder;
 	}
 
@@ -39,6 +42,18 @@ public class TransformationBuilderFactory
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		transformationBuilder.setSourceType(sourceType);
 		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
+		transformationBuilder.setConverterFactory(converterFactory);
 		return transformationBuilder;
 	}
+
+	public ConverterFactory getConverterFactory()
+	{
+		return converterFactory;
+	}
+
+	public void setConverterFactory(ConverterFactory converterFactory)
+	{
+		this.converterFactory = converterFactory;
+	}
+
 }

@@ -70,9 +70,9 @@ public class EntityOperation<A extends AttributeOperation> implements View
 		for (A attributeViewing : attributeOperations)
 		{
 			Attribute attribute = attributeViewing.getAttribute();
-			if (attributeViewing.getEntityOperation() != null)
+			if (attributeViewing.getEntityOperation(attribute.getTargetType()) != null)
 			{
-				visitor.visit(context, attribute, new AttributeVisitor<C>(visitor, attributeViewing.getEntityOperation()));
+				visitor.visit(context, attribute, new AttributeVisitor<C>(visitor, attributeViewing.getEntityOperation(attribute.getTargetType())));
 			}
 			else
 			{

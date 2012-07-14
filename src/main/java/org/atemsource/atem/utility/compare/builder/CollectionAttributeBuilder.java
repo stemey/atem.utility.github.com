@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare.builder;
 
+import org.atemsource.atem.utility.common.EntityOperationSelector;
 import org.atemsource.atem.utility.compare.AttributeComparison;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.ComparisonAttributeBuilder;
@@ -29,10 +30,10 @@ public class CollectionAttributeBuilder extends ComparisonAttributeBuilder
 		CollectionAttributeComparison comparison = new CollectionAttributeComparison();
 		comparison.setAttribute(getAttribute());
 
-		Comparison subComparison = getEntityOperation();
-		if (comparison != null)
+		EntityOperationSelector<Comparison> selector = createEntityOperation();
+		if (selector != null)
 		{
-			comparison.setEntityOperation(subComparison);
+			comparison.setSelector(selector);
 		}
 		return comparison;
 	}

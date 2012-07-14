@@ -64,7 +64,7 @@ public class MapAttributeComparison extends AttributeComparison
 				{
 					differences.add(childItemContext.addAttributeChange(valueA, valueB));
 				}
-				else if (getEntityOperation() == null)
+				else if (getEntityOperation(targetType) == null)
 				{
 					if (!targetType.isEqual(valueA, valueB))
 					{
@@ -73,7 +73,7 @@ public class MapAttributeComparison extends AttributeComparison
 				}
 				else
 				{
-					differences.addAll(getEntityOperation().getDifferences(childItemContext, valueA, valueB));
+					differences.addAll(getEntityOperation(targetType).getDifferences(childItemContext, valueA, valueB));
 				}
 			}
 

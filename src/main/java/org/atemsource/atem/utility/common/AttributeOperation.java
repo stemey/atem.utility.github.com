@@ -16,22 +16,23 @@
 package org.atemsource.atem.utility.common;
 
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.type.Type;
 
 
 public class AttributeOperation<E extends EntityOperation>
 {
 	private Attribute attribute;
 
-	private E entityOperation;
+	private EntityOperationSelector<E> selector;
 
 	public Attribute getAttribute()
 	{
 		return attribute;
 	}
 
-	public E getEntityOperation()
+	public E getEntityOperation(Type<?> actualType)
 	{
-		return entityOperation;
+		return selector.select(actualType);
 	}
 
 	public void setAttribute(Attribute attribute)
@@ -39,10 +40,7 @@ public class AttributeOperation<E extends EntityOperation>
 		this.attribute = attribute;
 	}
 
-	public void setEntityOperation(E entityOperation)
-	{
-		this.entityOperation = entityOperation;
-	}
+
 
 	@Override
 	public String toString()
@@ -57,11 +55,19 @@ public class AttributeOperation<E extends EntityOperation>
 		builder.append("-");
 		builder.append(attribute);
 		builder.append("\n");
-		if (entityOperation != null)
+		if (selector != null)
 		{
-			builder.append(entityOperation.toString(indent + " "));
+			builder.append(selector.toString(indent + " "));
 		}
 		return builder.toString();
+	}
+
+	public EntityOperationSelector<E> getSelector() {
+		return selector;
+	}
+
+	public void setSelector(EntityOperationSelector<E> selector) {
+		this.selector = selector;
 	}
 
 }

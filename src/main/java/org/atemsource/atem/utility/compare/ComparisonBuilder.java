@@ -41,7 +41,7 @@ public class ComparisonBuilder extends
 	private BeanLocator beanLocator;
 
 	@Override
-	public Comparison create()
+	protected Comparison createInternally()
 	{
 		Set<AttributeComparison> operations = createOperations();
 		Comparison comparison = beanLocator.getInstance(Comparison.class);

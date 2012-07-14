@@ -16,6 +16,8 @@
 package org.atemsource.atem.utility.view;
 
 import org.atemsource.atem.utility.common.AttributeOperationBuilder;
+import org.atemsource.atem.utility.common.EntityOperationSelector;
+import org.atemsource.atem.utility.compare.Comparison;
 
 
 public class ViewAttributeBuilder extends
@@ -28,11 +30,12 @@ public class ViewAttributeBuilder extends
 		AttributeViewing attributeViewing = new AttributeViewing();
 		attributeViewing.setAttribute(getAttribute());
 
-		StandardView subView = getEntityOperation();
-		if (subView != null)
+		EntityOperationSelector<StandardView> selector = createEntityOperation();
+		if (selector != null)
 		{
-			attributeViewing.setEntityOperation(subView);
+			attributeViewing.setSelector(selector);
 		}
+		
 		return attributeViewing;
 
 	}

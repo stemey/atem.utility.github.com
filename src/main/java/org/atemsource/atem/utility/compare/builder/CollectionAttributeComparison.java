@@ -54,9 +54,10 @@ public class CollectionAttributeComparison extends AttributeComparison
 			{
 				Object valueB = ib.next();
 				Type targetType = associationAttribute.getTargetType(valueA);
-				if (targetType.equals(associationAttribute.getTargetType(valueB)) && getEntityOperation() != null)
+				Type compareType = associationAttribute.getTargetType(valueB);
+				if (targetType.equals(compareType) && getEntityOperation(compareType) != null)
 				{
-					Set<Difference> localDifferences = getEntityOperation().getDifferences(context, valueA, valueB);
+					Set<Difference> localDifferences = getEntityOperation(compareType).getDifferences(context, valueA, valueB);
 					if (localDifferences.size() == 0)
 					{
 

@@ -60,9 +60,9 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison
 					differences.add(childContext.addMotion(indexA, indexB, valueA));
 					break;
 				}
-				else
+				else if (getEntityOperation(targetType)!=null)
 				{
-					Set<Difference> childDifferences = getEntityOperation().getDifferences(childContext, valueA, valueB);
+					Set<Difference> childDifferences = getEntityOperation(targetType).getDifferences(childContext, valueA, valueB);
 					if (childDifferences.size() == 0)
 					{
 						movalsA.add(indexA);
@@ -138,7 +138,7 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison
 					{
 						differences.add(childItemContext.addAttributeChange(valueA, valueB));
 					}
-					else if (getEntityOperation() == null)
+					else if (getEntityOperation(targetTypeA) == null)
 					{
 						if (!targetTypeA.isEqual(valueA, valueB))
 						{
@@ -147,7 +147,7 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison
 					}
 					else
 					{
-						differences.addAll(getEntityOperation().getDifferences(childItemContext, valueA, valueB));
+						differences.addAll(getEntityOperation(targetTypeA).getDifferences(childItemContext, valueA, valueB));
 					}
 				}
 			}

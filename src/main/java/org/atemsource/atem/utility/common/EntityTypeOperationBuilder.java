@@ -24,6 +24,8 @@ import org.atemsource.atem.api.view.ViewVisitor;
 
 public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBuilder<P, O, A, ?>, V extends EntityTypeOperationBuilder, O extends EntityOperation, P extends AttributeOperation>
 {
+	
+	private EntityOperationReference<O> self;
 
 	private EntityType<?> entityType;
 
@@ -31,6 +33,13 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	public EntityTypeOperationBuilder()
 	{
+	}
+	
+	public EntityOperationReference<O> getReference() {
+		if (self==null) {
+			self= new EntityOperationReference<O>();
+		}
+		return self;
 	}
 
 	V cascade(AttributeOperationBuilder child)
@@ -40,9 +49,15 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 		return childViewBuilder;
 	}
 
-	public abstract O create();
+	public final O create(){
+		O operation=createInternally();
+		self.setOperation(operation);
+		return operation;
+	}
 
 	protected abstract A createAttributeOperationBuilder(Attribute attribute);
+
+	protected abstract O createInternally();
 
 	protected Set<P> createOperations()
 	{

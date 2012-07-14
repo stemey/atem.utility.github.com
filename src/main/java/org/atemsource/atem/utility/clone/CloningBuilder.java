@@ -44,7 +44,7 @@ public class CloningBuilder extends
 	protected CloningBuilderFactory factory;
 
 	@Override
-	public Cloning create()
+	protected Cloning createInternally()
 	{
 		Cloning cloning = new Cloning();
 		return cloning;

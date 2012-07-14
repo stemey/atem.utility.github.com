@@ -36,7 +36,7 @@ public class ViewBuilder extends
 	private ViewBuilderFactory viewBuilderFactory;
 
 	@Override
-	public StandardView create()
+	protected StandardView createInternally()
 	{
 		Set<AttributeViewing> operations = createOperations();
 		StandardView view = new StandardView(getEntityType());

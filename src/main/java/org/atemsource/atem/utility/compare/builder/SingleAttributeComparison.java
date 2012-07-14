@@ -49,9 +49,9 @@ public class SingleAttributeComparison extends AttributeComparison
 			// types are not the same
 			differences.add(childContext.addAttributeChange(a2, b2));
 		}
-		else if (getEntityOperation() != null)
+		else if (getEntityOperation(targetType) != null)
 		{
-			differences.addAll(getEntityOperation().getDifferences(childContext, a2, b2));
+			differences.addAll(getEntityOperation(targetType).getDifferences(childContext, a2, b2));
 		}
 		else if (!targetType.isEqual(a2, b2))
 		{

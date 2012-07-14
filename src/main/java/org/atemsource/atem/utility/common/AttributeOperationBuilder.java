@@ -15,7 +15,11 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.type.Type;
 
 
 public abstract class AttributeOperationBuilder<P extends AttributeOperation, O extends EntityOperation, A extends AttributeOperationBuilder<P, O, A, V>, V extends EntityTypeOperationBuilder<A, V, O, P>>
@@ -23,8 +27,9 @@ public abstract class AttributeOperationBuilder<P extends AttributeOperation, O 
 	private EntityTypeOperationBuilder<A, V, O, P> parent;
 
 	private Attribute attribute;
+	
+	private EntityOperationSelector<O> selector = new EntityOperationSelector<O>();
 
-	private O entityOperation;
 
 	private V entityOperationBuilder;
 
@@ -36,7 +41,17 @@ public abstract class AttributeOperationBuilder<P extends AttributeOperation, O 
 
 	public void cascade(O entityOperation)
 	{
-		this.entityOperation = entityOperation;
+		this.selector.setDefaultOperation(entityOperation);
+	}
+	
+	public void cascadeDynamically(Type<?> type,O entityOperation)
+	{
+		this.selector.put(type, entityOperation);
+	}
+	
+	public void cascadeDynamically(Type<?> type,EntityOperationReference<O> ref)
+	{
+		this.selector.put(type, ref);
 	}
 	
 	protected abstract P createOperation();
@@ -46,13 +61,13 @@ public abstract class AttributeOperationBuilder<P extends AttributeOperation, O 
 		return attribute;
 	}
 
-	protected O getEntityOperation()
+	protected EntityOperationSelector<O> createEntityOperation()
 	{
-		if (entityOperation == null && entityOperationBuilder != null)
-		{
-			entityOperation = entityOperationBuilder.create();
+		if (entityOperationBuilder!=null) {
+			O entityOperation = entityOperationBuilder.create();
+			selector.setDefaultOperation(entityOperation);
 		}
-		return entityOperation;
+		return selector;
 	}
 
 	public void setAttribute(Attribute attribute)

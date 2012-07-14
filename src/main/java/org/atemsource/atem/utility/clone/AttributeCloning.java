@@ -25,7 +25,7 @@ public abstract class AttributeCloning extends AttributeOperation<Cloning>
 
 	protected Object clone(Object value, CloningContext ctx)
 	{
-		Cloning cloning = getEntityOperation();
+		Cloning cloning = getEntityOperation(getAttribute().getTargetType(value));
 		Object clonedValue;
 		if (cloning != null)
 		{

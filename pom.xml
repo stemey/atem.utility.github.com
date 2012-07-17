@@ -215,6 +215,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.atemsource</groupId>
+			<artifactId>atem-api</artifactId>
+			<version>0.1.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2</version>

@@ -21,10 +21,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.atemsource.atem.api.attribute.Attribute;
-import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.infrastructure.util.ReflectionUtils;
+import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.common.EntityTypeOperationBuilder;
 
 

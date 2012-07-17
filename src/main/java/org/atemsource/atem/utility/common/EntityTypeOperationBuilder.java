@@ -24,22 +24,15 @@ import org.atemsource.atem.api.view.ViewVisitor;
 
 public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBuilder<P, O, A, ?>, V extends EntityTypeOperationBuilder, O extends EntityOperation, P extends AttributeOperation>
 {
-	
-	private EntityOperationReference<O> self;
 
 	private EntityType<?> entityType;
 
 	private Map<String, A> includedAttributes = new HashMap<String, A>();
 
+	private EntityOperationReference<O> self;
+
 	public EntityTypeOperationBuilder()
 	{
-	}
-	
-	public EntityOperationReference<O> getReference() {
-		if (self==null) {
-			self= new EntityOperationReference<O>();
-		}
-		return self;
 	}
 
 	V cascade(AttributeOperationBuilder child)
@@ -49,9 +42,13 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 		return childViewBuilder;
 	}
 
-	public final O create(){
-		O operation=createInternally();
-		self.setOperation(operation);
+	public final O create()
+	{
+		O operation = createInternally();
+		if (self != null)
+		{
+			self.setOperation(operation);
+		}
 		return operation;
 	}
 
@@ -76,6 +73,15 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 	public EntityType<?> getEntityType()
 	{
 		return entityType;
+	}
+
+	public EntityOperationReference<O> getReference()
+	{
+		if (self == null)
+		{
+			self = new EntityOperationReference<O>();
+		}
+		return self;
 	}
 
 	public A include(Attribute attribute)
@@ -108,6 +114,18 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 			{
 				EntityTypeOperationBuilder builder = context.include(attribute.getCode()).cascade();
 				attributeVisitor.visit(builder);
+			}
+
+			@Override
+			public void visitSubView(EntityTypeOperationBuilder context, View view)
+			{
+				return;
+			}
+
+			@Override
+			public void visitSuperView(EntityTypeOperationBuilder context, View view)
+			{
+				return;
 			}
 		}, this);
 		return (V) this;

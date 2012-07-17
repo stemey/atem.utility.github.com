@@ -110,6 +110,20 @@ public class ViewBuilderTest
 			{
 				Assert.fail("not a primitive " + attribute.getCode());
 			}
+
+			@Override
+			public void visitSubView(Object context, View view)
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void visitSuperView(Object context, View view)
+			{
+				// TODO Auto-generated method stub
+
+			}
 		};
 		view.visit(mockViewVisitor, null);
 		Assert.assertTrue(count.intValue() > 2);

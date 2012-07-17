@@ -18,6 +18,16 @@ public class ConverterUtils
 			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
 		Type typeB = entityTypeRepository.getType(actualTypeParameters[1]);
 		Type typeA = entityTypeRepository.getType(actualTypeParameters[0]);
+		if (typeA == null)
+		{
+			throw new IllegalArgumentException("cannot create converter. " + actualTypeParameters[0].getName()
+				+ " is not an atem type");
+		}
+		if (typeB == null)
+		{
+			throw new IllegalArgumentException("cannot create converter. " + actualTypeParameters[1].getName()
+				+ " is not an atem type");
+		}
 		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
 		return localConverter;
 	}

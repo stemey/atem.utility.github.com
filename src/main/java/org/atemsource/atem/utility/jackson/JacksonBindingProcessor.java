@@ -3,7 +3,10 @@ package org.atemsource.atem.utility.jackson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -67,6 +70,18 @@ public class JacksonBindingProcessor
 		}
 
 		@Override
+		public EntityType getEntityTypeReference(EntityType<?> originalType)
+		{
+			String derivedTypeName = typeNameConverter.convert(originalType.getCode());
+			return entityTypeRepository.getEntityType(derivedTypeName);
+		}
+
+		public JavaUniConverter<String, String> getTypeNameConverter()
+		{
+			return typeNameConverter;
+		}
+
+		@Override
 		public void onTypeCreated(EntityType<?> entityType)
 		{
 			JacksonBindingProcessor.this.addVersionAndExternalName(version, entityType);
@@ -74,6 +89,8 @@ public class JacksonBindingProcessor
 	}
 
 	private JavaUniConverter<String, String> attributeNameConverter;
+
+	private Map<String, EntityTypeBuilder> builders = new HashMap<String, EntityTypeBuilder>();
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -114,11 +131,12 @@ public class JacksonBindingProcessor
 		{
 			filters.add(new VersionFilter(version, versionResolver));
 		}
+		MetaLogs.LOG.debug("started to transform " + clazz.getName() + " version:" + version);
 		filters.add(new IgnoreFilter());
 		EntityType<?> entityType = entityTypeRepository.getEntityType(clazz);
 		String jsonTypeName = typeNameConverter.convert(entityType.getCode());
 		EntityType<?> jsonType = entityTypeRepository.getEntityType(jsonTypeName);
-		if (jsonType == null)
+		if (true)// jsonType == null)
 		{
 			TypeTransformationBuilder<?, ?> transformationBuilder = createTransformationBuilder(jsonTypeName, entityType);
 			TransformationContext context =
@@ -127,11 +145,13 @@ public class JacksonBindingProcessor
 			EntityTypeTransformation<?, ?> transformation = transformationBuilder.buildTypeTransformation();
 			addVersionAndExternalName(version, (EntityType<?>) transformation.getTypeB());
 		}
+
+		MetaLogs.LOG.debug("finished to transform " + clazz.getName() + " version:" + version);
 	}
 
 	public TypeTransformationBuilder<?, ?> createTransformationBuilder(String newtypeCode, EntityType<?> entityType)
 	{
-		EntityTypeBuilder builder = jsonRepository.createBuilder(newtypeCode);
+		EntityTypeBuilder builder = builders.get(newtypeCode);
 		return transformationBuilderFactory.create(entityType, builder);
 	}
 
@@ -202,17 +222,42 @@ public class JacksonBindingProcessor
 		try
 		{
 			Collection<Class<?>> classes = scanner.findClasses(includedPackage);
+			List<Class<?>> sortedClasses = new ArrayList<Class<?>>();
+			sortedClasses.addAll(classes);
+			Collections.sort(sortedClasses, new ClassHierachyComparator());
 
 			if (versions != null && versions.size() > 0)
 			{
 				for (String version : versions)
 				{
-					scanSingleVersion(classes, version);
+					typeNameConverter = new TypeNameConverter(prefix, version, paket);
+					for (Class clazz : sortedClasses)
+					{
+						String jsonTypeName = typeNameConverter.convert(clazz.getName());
+						builders.put(jsonTypeName, jsonRepository.createBuilder(jsonTypeName));
+					}
 				}
 			}
 			else
 			{
-				scanSingleVersion(classes, null);
+				typeNameConverter = new TypeNameConverter(prefix, null, paket);
+				for (Class clazz : sortedClasses)
+				{
+					String jsonTypeName = typeNameConverter.convert(clazz.getName());
+					builders.put(jsonTypeName, jsonRepository.createBuilder(jsonTypeName));
+				}
+			}
+
+			if (versions != null && versions.size() > 0)
+			{
+				for (String version : versions)
+				{
+					scanSingleVersion(sortedClasses, version);
+				}
+			}
+			else
+			{
+				scanSingleVersion(sortedClasses, null);
 			}
 
 		}

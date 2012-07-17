@@ -22,6 +22,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.impl.MetaLogs;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
@@ -140,6 +141,8 @@ public class TypeTransformationBuilder<A, B>
 
 	private EntityType<A> sourceType;
 
+	private Transformation<?, ?> superTransformation;
+
 	private EntityTypeBuilder targetTypeBuilder;
 
 	private Transformation<A, B> transformation;
@@ -157,6 +160,7 @@ public class TypeTransformationBuilder<A, B>
 		deriveType.setTransformation(transformation);
 		entityTypeRepository.getEntityType(EntityType.class)
 			.getMetaAttribute(DerivationMetaAttributeRegistrar.DERIVED_FROM).setValue(newType, deriveType);
+		MetaLogs.LOG.info("finished init of " + newType.getCode());
 	}
 
 	public EntityTypeTransformation<A, B> buildTypeTransformation()
@@ -175,7 +179,11 @@ public class TypeTransformationBuilder<A, B>
 		{
 			entityTypeTransformation.setTypeConverter(new TypeCreator(sourceType, targetType));
 		}
-
+		// is already in the derivedTypetranformation
+		// if (superTransformation != null)
+		// {
+		// entityTypeTransformation.addTransformation(superTransformation);
+		// }
 		for (TransformationBuilder transformation : transformations)
 		{
 			entityTypeTransformation.addTransformation(transformation.create(targetType));
@@ -194,6 +202,12 @@ public class TypeTransformationBuilder<A, B>
 	public EntityType<A> getSourceType()
 	{
 		return sourceType;
+	}
+
+	public void includeSuper(Transformation<?, ?> transformation)
+	{
+		targetTypeBuilder.superType((EntityType<?>) transformation.getTypeB());
+		superTransformation = transformation;
 	}
 
 	public void setConverterFactory(ConverterFactory converterFactory)

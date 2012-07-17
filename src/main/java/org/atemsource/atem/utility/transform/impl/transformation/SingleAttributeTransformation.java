@@ -32,7 +32,14 @@ public class SingleAttributeTransformation<A, B> extends AbstractAttributeTransf
 				valueA = converter.convert(valueA);
 			}
 			// MetaLogs.LOG.debug("transform  " + attributeA + " to " + attributeB + " : " + valueA);
-			attributeB.setValue(b, valueA);
+			if (attributeB.getAttribute().isRequired() && valueA == null)
+			{
+			}
+			else
+			{
+				attributeB.setValue(b, valueA);
+
+			}
 		}
 
 	}

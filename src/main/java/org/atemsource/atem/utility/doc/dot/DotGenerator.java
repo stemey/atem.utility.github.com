@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.doc.dot;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -19,7 +20,7 @@ public class DotGenerator
 
 	private String basePackage;
 
-	private Set<EntityType<?>> processedTypes = new HashSet<EntityType<?>>();
+	private Map<EntityType<?>, NodeBuilder> processedTypes = new HashMap<EntityType<?>, NodeBuilder>();
 
 	private EntityType<?> root;
 
@@ -36,14 +37,14 @@ public class DotGenerator
 		return builder.create();
 	}
 
-	public void createDot(DotBuilder builder, EntityType<?> entityType)
+	public NodeBuilder createDot(DotBuilder builder, EntityType<?> entityType)
 	{
-		if (processedTypes.contains(entityType))
+		if (processedTypes.containsKey(entityType))
 		{
-			return;
+			return processedTypes.get(entityType);
 		}
-		processedTypes.add(entityType);
 		NodeBuilder nodeBuilder = builder.createNode(normalizeId(entityType), getLabel(entityType));
+		processedTypes.put(entityType, nodeBuilder);
 		for (Attribute<?, ?> attribute : entityType.getDeclaredAttributes())
 		{
 			if (attribute.getTargetType() instanceof PrimitiveType<?>)
@@ -71,13 +72,37 @@ public class DotGenerator
 		EntityType<?> superEntityType = entityType.getSuperEntityType();
 		if (superEntityType != null)
 		{
-			ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
-			connectionBuilder.target(normalizeId(superEntityType));
-			connectionBuilder.label("extends");
-			connectionBuilder.arrowType("empty");
-			createDot(builder, superEntityType);
+			NodeBuilder parent = createDot(builder, superEntityType);
+			if (parent != null)
+			{
+				ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
+				connectionBuilder.target(normalizeId(superEntityType));
+				connectionBuilder.label("extends");
+				connectionBuilder.arrowType("empty");
+			}
 		}
+		Set<EntityType> subEntityTypes = entityType.getSubEntityTypes(true);
+		if (subEntityTypes != null)
+		{
+			for (EntityType subtype : subEntityTypes)
+			{
+				if (subtype != entityType)
+				{
+					NodeBuilder subTypeBuilder = createDot(builder, subtype);
+					ConnectionBuilder connectionBuilder = subTypeBuilder.createConnection();
+					connectionBuilder.target(normalizeId(subtype));
+					connectionBuilder.label("extends");
+					connectionBuilder.arrowType("empty");
+				}
+			}
+		}
+		return nodeBuilder;
 
+	}
+
+	public void exclude(EntityType<?> type)
+	{
+		processedTypes.put(type, null);
 	}
 
 	private String getLabel(Type<?> type)
@@ -95,7 +120,7 @@ public class DotGenerator
 
 	private String normalizeId(Type<?> type)
 	{
-		return type.getCode().replace('.', '_').replace('$', '_');
+		return type.getCode().replace('.', '_').replace('$', '_').replace(':', '_');
 	}
 
 	public void setBasePackage(String basePackage)

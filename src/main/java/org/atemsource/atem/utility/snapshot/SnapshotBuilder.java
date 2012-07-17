@@ -161,4 +161,16 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 		attributeVisitor.visit(snapshotBuilder);
 
 	}
+
+	@Override
+	public void visitSubView(SnapshotBuilder context, View view)
+	{
+
+	}
+
+	@Override
+	public void visitSuperView(SnapshotBuilder context, View view)
+	{
+
+	}
 }

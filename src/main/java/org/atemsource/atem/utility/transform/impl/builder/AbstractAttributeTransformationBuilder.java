@@ -17,6 +17,7 @@ import net.sf.cglib.proxy.Enhancer;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilder;
@@ -25,6 +26,7 @@ import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.ConverterFactory;
 import org.atemsource.atem.utility.transform.api.DerivedAttribute;
+import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
@@ -73,6 +75,17 @@ public class AbstractAttributeTransformationBuilder<A, B> implements AttributeTr
 	public AttributeTransformationBuilder<A, B> convert(Converter<A, B> converter)
 	{
 		this.converter = converter;
+		return this;
+	}
+
+	@Override
+	public AttributeTransformationBuilder<A, B> convertDynamically(JavaUniConverter<String, String> typeCodeConverter)
+	{
+		Attribute metaAttribute =
+			entityTypeRepository.getEntityType(EntityType.class).getMetaAttribute(
+				DerivationMetaAttributeRegistrar.DERIVED_FROM);
+		this.converter =
+			new DynamicTransformation(typeCodeConverter, sourceType, entityTypeRepository, (SingleAttribute) metaAttribute);
 		return this;
 	}
 

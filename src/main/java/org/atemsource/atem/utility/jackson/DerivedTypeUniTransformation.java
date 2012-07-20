@@ -3,9 +3,9 @@ package org.atemsource.atem.utility.jackson;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.impl.meta.SingleMetaAttribute;
 import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
@@ -51,7 +51,7 @@ public class DerivedTypeUniTransformation<A, B> implements UniTransformation<A, 
 
 	private boolean ab = true;
 
-	private SingleMetaAttribute<DerivedType> derivedTypeAttribute;
+	private SingleAttribute<DerivedType> derivedTypeAttribute;
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -69,7 +69,7 @@ public class DerivedTypeUniTransformation<A, B> implements UniTransformation<A, 
 		return transformation.convert(a);
 	}
 
-	public SingleMetaAttribute<DerivedType> getDerivedTypeAttribute()
+	public SingleAttribute<DerivedType> getDerivedTypeAttribute()
 	{
 		return derivedTypeAttribute;
 	}
@@ -129,7 +129,7 @@ public class DerivedTypeUniTransformation<A, B> implements UniTransformation<A, 
 		this.ab = ab;
 	}
 
-	public void setDerivedTypeAttribute(SingleMetaAttribute<DerivedType> derivedTypeAttribute)
+	public void setDerivedTypeAttribute(SingleAttribute<DerivedType> derivedTypeAttribute)
 	{
 		this.derivedTypeAttribute = derivedTypeAttribute;
 	}

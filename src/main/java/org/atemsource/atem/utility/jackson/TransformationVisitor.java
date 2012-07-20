@@ -32,10 +32,14 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 
 	private JavaUniConverter<String, String> nameConverter;
 
-	public TransformationVisitor(EntityTypeRepository entityTypeRepository, List<AttributeFilter> filters,
+	private JavaUniConverter<String, String> typeNameConverter;
+
+	public TransformationVisitor(JavaUniConverter<String, String> typeNameConverter,
+		EntityTypeRepository entityTypeRepository, List<AttributeFilter> filters,
 		JavaUniConverter<String, String> nameConverter)
 	{
 		super();
+		this.typeNameConverter = typeNameConverter;
 		this.nameConverter = nameConverter;
 		this.filters = filters;
 		this.entityTypeRepository = entityTypeRepository;
@@ -74,9 +78,16 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 			return;
 		}
 		builder.from(attribute.getCode()).to(targetAttributeName);
-		if (converter != null)
+		if (attribute.getTargetType() == null)
 		{
-			builder.convert(converter);
+			builder.convertDynamically(typeNameConverter);
+		}
+		else
+		{
+			if (converter != null)
+			{
+				builder.convert(converter);
+			}
 		}
 	}
 

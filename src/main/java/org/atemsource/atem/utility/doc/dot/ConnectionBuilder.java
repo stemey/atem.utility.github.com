@@ -4,6 +4,8 @@ public class ConnectionBuilder
 {
 	private String arrowType;
 
+	private boolean constraint = true;
+
 	private String label;
 
 	private String source;
@@ -13,6 +15,12 @@ public class ConnectionBuilder
 	public void arrowType(String arrowType)
 	{
 		this.arrowType = arrowType;
+	}
+
+	public void constraint(boolean constraint)
+	{
+		this.constraint = constraint;
+
 	}
 
 	public void create(StringBuilder builder)
@@ -29,6 +37,8 @@ public class ConnectionBuilder
 			builder.append(arrowType);
 			builder.append("\"");
 		}
+		builder.append(",constraint=");
+		builder.append(constraint);
 		builder.append("]\r\n");
 	}
 

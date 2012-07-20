@@ -3,9 +3,9 @@ package org.atemsource.atem.utility.jackson;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.impl.meta.SingleMetaAttribute;
 import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
@@ -56,7 +56,7 @@ public class DerivedTypeTransformation<A, B> implements Transformation<A, B>
 
 	}
 
-	public void setDerivedAttribute(SingleMetaAttribute<DerivedType> attribute)
+	public void setDerivedAttribute(SingleAttribute<DerivedType> attribute)
 	{
 		ab.setDerivedTypeAttribute(attribute);
 		ba.setDerivedTypeAttribute(attribute);

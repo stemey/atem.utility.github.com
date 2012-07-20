@@ -93,6 +93,7 @@ public class DotGenerator
 					connectionBuilder.target(normalizeId(subtype));
 					connectionBuilder.label("extends");
 					connectionBuilder.arrowType("empty");
+					connectionBuilder.constraint(true);
 				}
 			}
 		}

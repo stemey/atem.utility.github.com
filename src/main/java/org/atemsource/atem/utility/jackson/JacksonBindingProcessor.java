@@ -17,6 +17,7 @@ import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.impl.MetaLogs;
+import org.atemsource.atem.impl.common.infrastructure.CandidateResolver;
 import org.atemsource.atem.impl.common.infrastructure.ClasspathScanner;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.transform.api.Binding;
@@ -92,6 +93,8 @@ public class JacksonBindingProcessor
 
 	private Map<String, EntityTypeBuilder> builders = new HashMap<String, EntityTypeBuilder>();
 
+	private CandidateResolver candidateResolver;
+
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
 
@@ -141,8 +144,11 @@ public class JacksonBindingProcessor
 			TypeTransformationBuilder<?, ?> transformationBuilder = createTransformationBuilder(jsonTypeName, entityType);
 			TransformationContext context =
 				new TransformationContext(new VersionRepositoryManager(version, typeNameConverter), transformationBuilder);
-			entityType.visit(new TransformationVisitor(entityTypeRepository, filters, attributeNameConverter), context);
+			TransformationVisitor visitor =
+				new TransformationVisitor(typeNameConverter, entityTypeRepository, filters, attributeNameConverter);
+			entityType.visit(visitor, context);
 			EntityTypeTransformation<?, ?> transformation = transformationBuilder.buildTypeTransformation();
+
 			addVersionAndExternalName(version, (EntityType<?>) transformation.getTypeB());
 		}
 
@@ -221,7 +227,7 @@ public class JacksonBindingProcessor
 	{
 		try
 		{
-			Collection<Class<?>> classes = scanner.findClasses(includedPackage);
+			Collection<Class<?>> classes = scanner.findClasses(includedPackage, candidateResolver);
 			List<Class<?>> sortedClasses = new ArrayList<Class<?>>();
 			sortedClasses.addAll(classes);
 			Collections.sort(sortedClasses, new ClassHierachyComparator());
@@ -281,6 +287,11 @@ public class JacksonBindingProcessor
 	public void setAttributeNameConverter(JavaUniConverter<String, String> attributeNameConverter)
 	{
 		this.attributeNameConverter = attributeNameConverter;
+	}
+
+	public void setCandidateResolver(CandidateResolver candidateResolver)
+	{
+		this.candidateResolver = candidateResolver;
 	}
 
 	public void setIncludedPackage(String includedPackage)

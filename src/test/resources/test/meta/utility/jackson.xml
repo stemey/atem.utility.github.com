@@ -28,14 +28,18 @@
 
 	<bean id="atem-utility-jacksonBindingProcessor"
 		class="org.atemsource.atem.utility.jackson.JacksonBindingProcessor">
-		<property name="includedPackage" value="org.atemsource.atem.utility.jackson.domain" />
+		<property name="includedPackage" value="org.atemsource.atem.utility.jackson.domaindummy" />
 		<property name="jsonRepository" ref="atem-json-repository" />
 		<property name="transformationBuilderFactory">
 			<bean
 				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
+				<property name="converterFactory">
+					<bean class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl"/>
+				</property>
 			</bean>
 		</property>
 		<property name="prefix" value="json" />
+		<property name="paket" value="domain" />
 		<property name="versionResolver">
 			<bean
 				class="org.atemsource.atem.utility.transform.impl.version.VersionResolver">
@@ -57,10 +61,6 @@
 			value="org.atemsource.atem.impl.pojo.PlainPojoEntityType" />
 		<property name="entityClass" value="java.lang.Object" />
 		<property name="includedPackage" value="org.atemsource.atem.utility.jackson.domain" />
-		<property name="annotationTypes">
-			<list>
-			</list>
-		</property>
 		<property name="attributeFactories">
 			<list>
 				<bean

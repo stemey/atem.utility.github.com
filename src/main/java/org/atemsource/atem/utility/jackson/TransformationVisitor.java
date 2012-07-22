@@ -177,7 +177,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 	public void visitSuperView(TransformationContext context, View view)
 	{
 		EntityType superType = (EntityType) view;
-		context.visitSuperType(superType);
+		context.visitSuperType(superType,this);
 
 	}
 }

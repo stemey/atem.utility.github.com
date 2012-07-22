@@ -30,9 +30,8 @@ import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
-
-public class AbstractAttributeTransformationBuilder<A, B> implements AttributeTransformationBuilder<A, B>
-{
+public class AbstractAttributeTransformationBuilder<A, B> implements
+		AttributeTransformationBuilder<A, B> {
 
 	private AttributePathBuilder attributePathBuilder;
 
@@ -57,73 +56,73 @@ public class AbstractAttributeTransformationBuilder<A, B> implements AttributeTr
 
 	protected String targetAttribute;
 
-	public AbstractAttributeTransformationBuilder()
-	{
+	public AbstractAttributeTransformationBuilder() {
 		super();
 	}
 
-	protected void addDerivation(Transformation<?, ?> transformation, Attribute newAttribute, Attribute sourceAttribute)
-	{
+	protected void addDerivation(Transformation<?, ?> transformation,
+			Attribute newAttribute, Attribute sourceAttribute) {
 		DerivedAttribute derivedAttribute = new DerivedAttribute();
 		derivedAttribute.setOriginalAttribute(sourceAttribute);
 		derivedAttribute.setTransformation(transformation);
-		entityTypeRepository.getEntityType(Attribute.class)
-			.getMetaAttribute(DerivationMetaAttributeRegistrar.DERIVED_FROM).setValue(newAttribute, derivedAttribute);
+		Attribute metaAttribute = entityTypeRepository.getEntityType(
+				Attribute.class).getMetaAttribute(
+				DerivationMetaAttributeRegistrar.DERIVED_FROM);
+		if (metaAttribute != null) {
+			metaAttribute.setValue(newAttribute, derivedAttribute);
+		}
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A, B> convert(Converter<A, B> converter)
-	{
+	public AttributeTransformationBuilder<A, B> convert(
+			Converter<A, B> converter) {
 		this.converter = converter;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A, B> convertDynamically(JavaUniConverter<String, String> typeCodeConverter)
-	{
-		Attribute metaAttribute =
-			entityTypeRepository.getEntityType(EntityType.class).getMetaAttribute(
+	public AttributeTransformationBuilder<A, B> convertDynamically(
+			JavaUniConverter<String, String> typeCodeConverter) {
+		Attribute metaAttribute = entityTypeRepository.getEntityType(
+				EntityType.class).getMetaAttribute(
 				DerivationMetaAttributeRegistrar.DERIVED_FROM);
-		this.converter =
-			new DynamicTransformation(typeCodeConverter, sourceType, entityTypeRepository, (SingleAttribute) metaAttribute);
+		if (metaAttribute == null) {
+			throw new IllegalStateException(
+					"cannot convert dynamically if metaAttribute is missing");
+		}
+		this.converter = new DynamicTransformation(typeCodeConverter,
+				sourceType, entityTypeRepository,
+				(SingleAttribute) metaAttribute);
 		return this;
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A, B> from(String sourceAttribute)
-	{
+	public AttributeTransformationBuilder<A, B> from(String sourceAttribute) {
 		this.sourceAttribute = sourceAttribute;
 		return this;
 	}
 
 	@Override
-	public A fromMethod()
-	{
+	public A fromMethod() {
 		Enhancer enhancer = new Enhancer();
-		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(this));
+		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(
+				this));
 	}
 
-	protected Converter<A, B> getConverter(Type<?> type)
-	{
-		if (converter != null)
-		{
+	protected Converter<A, B> getConverter(Type<?> type) {
+		if (converter != null) {
 			return converter;
-		}
-		else
-		{
+		} else {
 			return (Converter<A, B>) converterFactory.get(type);
 		}
 	}
 
-	public ConverterFactory getConverterFactory()
-	{
+	public ConverterFactory getConverterFactory() {
 		return converterFactory;
 	}
 
-	public AttributePathBuilder getSourcePathBuilder()
-	{
-		if (attributePathBuilder == null)
-		{
+	public AttributePathBuilder getSourcePathBuilder() {
+		if (attributePathBuilder == null) {
 			attributePathBuilder = attributePathBuilderFactory.createBuilder();
 			attributePathBuilder.start(null, sourceType);
 		}
@@ -131,25 +130,22 @@ public class AbstractAttributeTransformationBuilder<A, B> implements AttributeTr
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A, B> metaValue(String name, Object metaData)
-	{
+	public AttributeTransformationBuilder<A, B> metaValue(String name,
+			Object metaData) {
 		this.meta.put(name, metaData);
 		return this;
 	}
 
-	public void setConverterFactory(ConverterFactory converterFactory)
-	{
+	public void setConverterFactory(ConverterFactory converterFactory) {
 		this.converterFactory = converterFactory;
 	}
 
-	public void setSourceType(EntityType<A> sourceType)
-	{
+	public void setSourceType(EntityType<A> sourceType) {
 		this.sourceType = sourceType;
 	}
 
 	@Override
-	public AttributeTransformationBuilder<A, B> to(String targetAttribute)
-	{
+	public AttributeTransformationBuilder<A, B> to(String targetAttribute) {
 		this.targetAttribute = targetAttribute;
 		return this;
 	}

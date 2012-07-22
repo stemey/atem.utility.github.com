@@ -25,7 +25,8 @@ public class TransformationBuilderFactory
 	public <A, B> TypeTransformationBuilder<A, ?> create()
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
-		return transformationBuilder;
+		transformationBuilder.setConverterFactory(converterFactory);
+	return transformationBuilder;
 	}
 
 	public <A, B> TypeTransformationBuilder<A, ?> create(Class<A> sourceType, EntityTypeBuilder targetTypeBuilder)

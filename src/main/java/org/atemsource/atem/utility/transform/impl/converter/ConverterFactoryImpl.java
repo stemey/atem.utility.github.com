@@ -102,7 +102,7 @@ public class ConverterFactoryImpl implements ConverterFactory
 	public Converter<?, ?> get(Type<?> type)
 	{
 		Converter converter = entityTypeToConverters.get(type.getCode());
-		if (converter == null)
+		if (converter == null && factories!=null)
 		{
 			for (InternalConverterFactory factory : factories)
 			{

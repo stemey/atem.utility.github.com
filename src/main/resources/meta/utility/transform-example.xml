@@ -27,9 +27,21 @@
 
 	<import resource="transform.xml"/>
 	<import resource="path-example.xml"/>
+	<import resource="classpath:/atem/impl/memory-meta.xml"/>
 	
 	<bean id="meta-utility-transformationBuilderFactory" class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
+		<property name="converterFactory">
+			<bean class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl"/>
+		</property>
 	</bean>
+	<!--
+	<bean class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
+		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService"/>
+	</bean>
+	<bean class="org.atemsource.atem.utility.transform.impl.BindingMetaAttributeRegistrar">
+		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService"/>
+	</bean>
+	-->
 	
 
 

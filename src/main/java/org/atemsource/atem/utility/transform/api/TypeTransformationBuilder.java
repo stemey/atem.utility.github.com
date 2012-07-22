@@ -173,8 +173,10 @@ public class TypeTransformationBuilder<A, B> {
 					sourceType, targetType));
 		}
 		if (superTransformation != null) {
+			EntityTypeTransformation<A, B> superEntityTypeTransformation = (EntityTypeTransformation<A, B>) superTransformation;
 			selfReference
-					.setSuperTransformation((EntityTypeTransformation<A, B>) superTransformation);
+					.setSuperTransformation(superEntityTypeTransformation);
+			superEntityTypeTransformation.addSubTransformation(selfReference);
 		}
 		for (TransformationBuilder transformation : transformations) {
 			selfReference.addTransformation(transformation

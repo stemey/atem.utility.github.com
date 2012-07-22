@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -28,7 +30,7 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation
 	private EntityType<B> entityTypeB;
 
 	private EntityTypeTransformation<A, B> superTransformation;
-	private Set<EntityTypeTransformation<A, B>> subTransformations;
+	private Set<EntityTypeTransformation<A, B>> subTransformations=new HashSet<EntityTypeTransformation<A,B>>();
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -123,6 +125,11 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation
 	public void setSuperTransformation(
 			EntityTypeTransformation<A, B> superTransformation) {
 		this.superTransformation = superTransformation;
+	
+	}
+	
+	public void addSubTransformation(EntityTypeTransformation<A, B> subTransformation) {
+		this.subTransformations.add(subTransformation);
 	}
 
 	@Override

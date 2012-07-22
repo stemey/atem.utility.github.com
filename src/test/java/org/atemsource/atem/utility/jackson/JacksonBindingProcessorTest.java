@@ -40,16 +40,42 @@ public class JacksonBindingProcessorTest
 		Assert.assertNotNull(entityType);
 		Assert.assertNotNull(entityType.getAttribute("renamed_property"));
 		
+		}
+
+	@Test
+	public void testSuper()
+	{
+		
+		jacksonBindingProcessor.createEntityType(SubdomainA.class, "1.1");
+		EntityType<Object> entityType = entityTypeRepository.getEntityType("json:1.1:domain:" + DomainA.class.getSimpleName());
+
 		SubdomainA subdomainA = new SubdomainA();
-		subdomainA.setDomainB(new DomainB());
 		subdomainA.setField10("hallo");
 		subdomainA.setField11("bye");
-		subdomainA.setDomainBs(new ArrayList<DomainB>());		
 		subdomainA.setSubField("sub");
 		
 		EntityTypeTransformation<DomainA, ObjectNode> transformation = (EntityTypeTransformation<DomainA, ObjectNode>) jacksonBindingProcessor.getTransformation(entityTypeRepository.getEntityType(SubdomainA.class));
 		ObjectNode node = transformation.createB(subdomainA);
-		Assert.assertEquals("sub", ((TextNode)node.get("sub")).toString());
+		Assert.assertEquals("sub", ((TextNode)node.get("subField")).getValueAsText());
+		Assert.assertEquals("bye", ((TextNode)node.get("field11")).getValueAsText());
+	}
+	
+	@Test
+	public void testSub()
+	{
+		
+		jacksonBindingProcessor.createEntityType(SubdomainA.class, "1.1");
+		EntityType<Object> entityType = entityTypeRepository.getEntityType("json:1.1:domain:" + DomainA.class.getSimpleName());
+
+		SubdomainA subdomainA = new SubdomainA();
+		subdomainA.setField10("hallo");
+		subdomainA.setField11("bye");
+		subdomainA.setSubField("sub");
+		
+		EntityTypeTransformation<DomainA, ObjectNode> transformation = (EntityTypeTransformation<DomainA, ObjectNode>) jacksonBindingProcessor.getTransformation(entityTypeRepository.getEntityType(DomainA.class));
+		ObjectNode node = transformation.getAB().convert(subdomainA);
+		Assert.assertEquals("sub", ((TextNode)node.get("subField")).getValueAsText());
+		Assert.assertEquals("bye", ((TextNode)node.get("field11")).getValueAsText());
 	}
 
 	@Test

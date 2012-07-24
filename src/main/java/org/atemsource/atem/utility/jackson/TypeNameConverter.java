@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.jackson;
 
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
+import org.codehaus.jackson.node.ObjectNode;
 
 
 public class TypeNameConverter implements JavaUniConverter<String, String>
@@ -23,8 +24,19 @@ public class TypeNameConverter implements JavaUniConverter<String, String>
 	@Override
 	public String convert(String a)
 	{
+		if (a.equals(ObjectNode.class.getName()))
+		{
+			return a;
+		}
 		int index = a.lastIndexOf('.');
-		return prefix + ":" + version + ":" + paket + ":" + a.substring(index + 1);
+		if (paket == null)
+		{
+			return prefix + ":" + version + ":" + a;
+		}
+		else
+		{
+			return prefix + ":" + version + ":" + paket + ":" + a.substring(index + 1);
+		}
 
 	}
 

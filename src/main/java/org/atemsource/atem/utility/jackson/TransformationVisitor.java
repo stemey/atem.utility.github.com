@@ -109,9 +109,28 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 				}
 			}
 		}
+		Converter<?, ?> converter = null;
+		Conversion conversion = ((JavaMetaData) attribute).getAnnotation(Conversion.class);
+		if (conversion != null)
+		{
+			JavaConverter<?, ?> javaConverter;
+			try
+			{
+				javaConverter = conversion.value().newInstance();
+			}
+			catch (InstantiationException e)
+			{
+				throw new TechnicalException("cannot instantiate converter", e);
+			}
+			catch (IllegalAccessException e)
+			{
+				throw new TechnicalException("cannot instantiate converter", e);
+			}
+			converter = ConverterUtils.create(javaConverter);
+		}
 		JavaMetaData javaAttribute = (JavaMetaData) attribute;
 		JsonProperty jsonProperty = javaAttribute.getAnnotation(JsonProperty.class);
-		convert(context, attribute, null, jsonProperty);
+		convert(context, attribute, converter, jsonProperty);
 
 	}
 
@@ -160,7 +179,12 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 				// transformation
 
 				JsonProperty jsonProperty = javaAttribute.getAnnotation(JsonProperty.class);
+				context.cascade(targetType, attributeVisitor);
 				Transformation transformation = context.getTypeTransformation(targetType);
+				if (transformation == null)
+				{
+					throw new IllegalStateException("cannot tranform " + attribute);
+				}
 				convert(context, attribute, transformation, jsonProperty);
 			}
 		}
@@ -177,7 +201,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 	public void visitSuperView(TransformationContext context, View view)
 	{
 		EntityType superType = (EntityType) view;
-		context.visitSuperType(superType,this);
+		context.visitSuperType(superType, this);
 
 	}
 }

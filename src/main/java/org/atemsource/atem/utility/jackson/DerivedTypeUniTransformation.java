@@ -18,6 +18,54 @@ import org.springframework.stereotype.Component;
 public class DerivedTypeUniTransformation<A, B> implements UniTransformation<A, B>
 {
 
+	public static final class IdentityTransformation<A, B> implements UniTransformation<A, B>
+	{
+
+		Type type;
+
+		public IdentityTransformation(Type type)
+		{
+			super();
+			this.type = type;
+		}
+
+		@Override
+		public Object convert(Object a)
+		{
+			return a;
+		}
+
+		@Override
+		public Type getSourceType()
+		{
+			// TODO Auto-generated method stub
+			return type;
+		}
+
+		@Override
+		public Type getTargetType()
+		{
+			// TODO Auto-generated method stub
+			return type;
+		}
+
+		public Type getType()
+		{
+			return type;
+		}
+
+		@Override
+		public Object merge(Object a, Object b)
+		{
+			return a;
+		}
+
+		public void setType(Type type)
+		{
+			this.type = type;
+		}
+	};
+
 	private static final UniTransformation NullTransformation = new UniTransformation() {
 
 		@Override
@@ -96,19 +144,30 @@ public class DerivedTypeUniTransformation<A, B> implements UniTransformation<A, 
 		while (entityType != null)
 		{
 			String typeCode = typeCodeConverter.convert(entityType.getCode());
-			EntityType<Object> targetType = entityTypeRepository.getEntityType(typeCode);
-			DerivedType value = derivedTypeAttribute.getValue(targetType);
-			UniTransformation<A, B> transformation;
-			if (ab)
+			if (typeCode.equals(entityType.getCode()))
 			{
-				transformation = (UniTransformation<A, B>) value.getTransformation().getAB();
+				return new IdentityTransformation(entityType);
 			}
 			else
 			{
-				transformation = (UniTransformation<A, B>) value.getTransformation().getBA();
+				EntityType<Object> targetType = entityTypeRepository.getEntityType(typeCode);
+				if (targetType == null)
+				{
+					break;
+				}
+				DerivedType value = derivedTypeAttribute.getValue(targetType);
+				UniTransformation<A, B> transformation;
+				if (ab)
+				{
+					transformation = (UniTransformation<A, B>) value.getTransformation().getAB();
+				}
+				else
+				{
+					transformation = (UniTransformation<A, B>) value.getTransformation().getBA();
+				}
+				listTransformation.addTransformation(transformation);
+				entityType = entityType.getSuperEntityType();
 			}
-			listTransformation.addTransformation(transformation);
-			entityType = entityType.getSuperEntityType();
 		}
 		return listTransformation;
 	}

@@ -11,12 +11,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
-import org.atemsource.atem.impl.MetaLogs;
 import org.atemsource.atem.impl.common.infrastructure.CandidateResolver;
 import org.atemsource.atem.impl.common.infrastructure.ClasspathScanner;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
@@ -34,6 +34,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 public class JacksonBindingProcessor
 {
+
 	private final class VersionRepositoryManager implements RepositoryManager
 	{
 		private JavaUniConverter<String, String> typeNameConverter;
@@ -105,6 +106,8 @@ public class JacksonBindingProcessor
 
 	private DynamicEntityTypeSubrepository<ObjectNode> jsonRepository;
 
+	private Logger logger = Logger.getLogger(getClass());
+
 	private String paket;
 
 	private String prefix;
@@ -134,7 +137,7 @@ public class JacksonBindingProcessor
 			binding.setVersion(version);
 			bindingAttribute.setValue(type, binding);
 		}
-		MetaLogs.LOG.info("added version to type " + type.getCode());
+		logger.info("added version to type " + type.getCode());
 	}
 
 	public void createEntityType(Class<?> clazz, final String version)
@@ -144,7 +147,7 @@ public class JacksonBindingProcessor
 		{
 			filters.add(new VersionFilter(version, versionResolver));
 		}
-		MetaLogs.LOG.debug("started to transform " + clazz.getName() + " version:" + version);
+		logger.debug("started to transform " + clazz.getName() + " version:" + version);
 		filters.add(new IgnoreFilter());
 		EntityType<?> entityType = entityTypeRepository.getEntityType(clazz);
 		String jsonTypeName = typeNameConverter.convert(entityType.getCode());
@@ -169,7 +172,7 @@ public class JacksonBindingProcessor
 			addVersionAndExternalName(version, (EntityType<?>) transformation.getTypeB());
 		}
 
-		MetaLogs.LOG.debug("finished to transform " + clazz.getName() + " version:" + version);
+		logger.debug("finished to transform " + clazz.getName() + " version:" + version);
 	}
 
 	public TypeTransformationBuilder<?, ?> createTransformationBuilder(String newtypeCode, EntityType<?> entityType)

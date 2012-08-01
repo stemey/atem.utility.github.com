@@ -17,6 +17,7 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 
@@ -49,17 +50,9 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 		return new UniTransformation<A, B>() {
 
 			@Override
-			public B convert(A a)
+			public B convert(A a, TransformationContext ctx)
 			{
-				if (AbstractAttributeTransformation.this.typeB instanceof EntityType)
-				{
-					B b = ((EntityType<B>) AbstractAttributeTransformation.this.typeB).createEntity();
-					return merge(a, b);
-				}
-				else
-				{
-					throw new IllegalArgumentException("cannot handle type");
-				}
+				throw new IllegalArgumentException("attribute transformation can only merge");
 			}
 
 			@Override
@@ -75,10 +68,10 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 			}
 
 			@Override
-			public B merge(A a, B b)
+			public B merge(A a, B b, TransformationContext ctx)
 			{
 				UniConverter abConverter = converter == null ? null : converter.getAB();
-				AbstractAttributeTransformation.this.transformInternally(a, b, attributeA, attributeB, abConverter);
+				AbstractAttributeTransformation.this.transformInternally(a, b, attributeA, attributeB, ctx, abConverter);
 				return b;
 			}
 
@@ -100,19 +93,12 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 		return new UniTransformation<B, A>() {
 
 			@Override
-			public A convert(B b)
+			public A convert(B b, TransformationContext ctx)
 			{
-				if (AbstractAttributeTransformation.this.typeA instanceof EntityType)
-				{
-					A a = ((EntityType<A>) AbstractAttributeTransformation.this.typeA).createEntity();
-					return merge(b, a);
-				}
-				else
-				{
-					throw new IllegalArgumentException("cannot handle type");
-				}
+					throw new IllegalArgumentException("attribute transformation can only merge");
 			}
 
+			
 			@Override
 			public Type<B> getSourceType()
 			{
@@ -126,12 +112,14 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 			}
 
 			@Override
-			public A merge(B b, A a)
+			public A merge(B b, A a, TransformationContext ctx)
 			{
 				UniConverter baConverter = converter == null ? null : converter.getBA();
-				AbstractAttributeTransformation.this.transformInternally(b, a, attributeB, attributeA, baConverter);
+				AbstractAttributeTransformation.this.transformInternally(b, a, attributeB, attributeA, ctx, baConverter);
 				return a;
 			}
+
+
 		};
 	}
 
@@ -186,5 +174,5 @@ public abstract class AbstractAttributeTransformation<A, B> implements Transform
 	}
 
 	protected abstract void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
-		UniConverter<Object, Object> ab);
+		TransformationContext ctx, UniConverter<Object, Object> ab);
 }

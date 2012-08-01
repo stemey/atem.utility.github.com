@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 
 
 public class AbstractCompositeTransformation<A, B>
@@ -37,19 +38,19 @@ public class AbstractCompositeTransformation<A, B>
 		this.embeddedTransformations.add(transformation);
 	}
 
-	protected void transformABChildren(A valueA, B valueB)
+	protected void transformABChildren(A valueA, B valueB,TransformationContext ctx)
 	{
 		for (Transformation<A, B> transformation : embeddedTransformations)
 		{
-			transformation.getAB().merge(valueA, valueB);
+			transformation.getAB().merge(valueA, valueB, ctx);
 		}
 	}
 
-	protected void transformBAChildren(B valueB, A valueA)
+	protected void transformBAChildren(B valueB, A valueA,TransformationContext ctx)
 	{
 		for (Transformation<A, B> transformation : embeddedTransformations)
 		{
-			transformation.getBA().merge(valueB, valueA);
+			transformation.getBA().merge(valueB, valueA, ctx);
 		}
 	}
 

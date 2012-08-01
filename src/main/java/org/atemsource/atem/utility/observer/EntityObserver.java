@@ -29,7 +29,9 @@ import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.Difference;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
+import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
+import org.springframework.aop.interceptor.SimpleTraceInterceptor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +62,7 @@ public class EntityObserver
 	public void check()
 	{
 		Object entity = handle.getEntity();
-		Object snapshot = snapshotting.convert(entity);
+		Object snapshot = snapshotting.convert(entity, new SimpleTransformationContext());
 		if (previousSnapshot != null)
 		{
 			EntityObserverContext ctx = beanLocator.getInstance(EntityObserverContext.class);

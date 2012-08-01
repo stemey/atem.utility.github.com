@@ -9,33 +9,30 @@ package org.atemsource.atem.utility.transform.impl.transformation;
 
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class SingleAttributeTransformation<A, B> extends AbstractAttributeTransformation<A, B> implements
-	Transformation<A, B>
-{
+public class SingleAttributeTransformation<A, B> extends
+		AbstractAttributeTransformation<A, B> implements Transformation<A, B> {
 
 	@Override
-	protected void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
-		UniConverter<Object, Object> converter)
-	{
-		if (attributeB.isWriteable())
-		{
+	protected void transformInternally(Object a, Object b,
+			AttributePath attributeA, AttributePath attributeB,
+			TransformationContext ctx, UniConverter<Object, Object> converter) {
+		if (attributeB.isWriteable()) {
 			Object valueA = attributeA.getValue(a);
-			if (converter != null)
-			{
-				valueA = converter.convert(valueA);
+
+			if (converter != null) {
+				valueA = converter.convert(valueA, ctx);
 			}
-			if (attributeB.getAttribute().isRequired() && valueA == null)
-			{
-			}
-			else
-			{
+			if (attributeB.getAttribute().isRequired() && valueA == null) {
+
+				// TODO
+			} else {
 				attributeB.setValue(b, valueA);
 
 			}

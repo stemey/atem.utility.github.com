@@ -24,7 +24,7 @@ public class PathRecorder implements MethodInterceptor {
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args,
 			MethodProxy proxy) throws Throwable {
-		// TODO reuse utility code or move to AttributePathBuilder
+		// TODO reuse utility code or move to AttributePathBuilder or move to EntityType.getAtributeForMethod
 		if (method.getName().startsWith("get")) {
 			String name = method.getName().substring(3, 3).toLowerCase()+method.getName().substring(4);
 			Attribute<?,?> attribute=((EntityType)builder.getSourcePathBuilder().getTargetType()).getAttribute(name);

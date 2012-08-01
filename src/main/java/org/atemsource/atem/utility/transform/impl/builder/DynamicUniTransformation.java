@@ -1,18 +1,15 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
-import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.jackson.DerivedTypeTransformation;
 import org.atemsource.atem.utility.transform.api.DerivedType;
-import org.atemsource.atem.utility.transform.api.JavaUniConverter;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
+import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 
-
-public class DynamicUniTransformation<A, B> implements UniTransformation<A, B>
-{
+public class DynamicUniTransformation<A, B> implements UniTransformation<A, B> {
 
 	private boolean aUnkown;
 
@@ -22,12 +19,11 @@ public class DynamicUniTransformation<A, B> implements UniTransformation<A, B>
 
 	private Type type;
 
-	private JavaUniConverter<String, String> typeCodeConverter;
+	private TypeNameConverter typeCodeConverter;
 
-	public DynamicUniTransformation(JavaUniConverter<String, String> typeCodeConverter,
-		EntityTypeRepository entityTypeRepository, Type<?> type, boolean aUnknown,
-		SingleAttribute<DerivedType> derivedTypeAttribute)
-	{
+	public DynamicUniTransformation(TypeNameConverter typeCodeConverter,
+			EntityTypeRepository entityTypeRepository, Type<?> type,
+			boolean aUnknown, SingleAttribute<DerivedType> derivedTypeAttribute) {
 		this.typeCodeConverter = typeCodeConverter;
 		this.type = type;
 		this.aUnkown = aUnknown;
@@ -37,79 +33,50 @@ public class DynamicUniTransformation<A, B> implements UniTransformation<A, B>
 	}
 
 	@Override
-	public B convert(A a)
-	{
-		if (a == null)
-		{
+	public B convert(A a, TransformationContext ctx) {
+		if (a == null) {
 			return null;
-		}
-		else
-		{
+		} else {
 			EntityType entityType = entityTypeRepository.getEntityType(a);
-			if (entityType == null)
-			{
-				return null;
-			}
-			EntityType targetType = entityTypeRepository.getEntityType(typeCodeConverter.convert(entityType.getCode()));
-			if (targetType == null)
-			{
-				return null;
-			}
+			EntityType targetType = entityTypeRepository
+					.getEntityType(typeCodeConverter.convert(entityType));
 			DerivedType derivedType = derivedTypeAttribute.getValue(targetType);
-			UniTransformation transformation = derivedType.getTransformation().getAB();
-
-			DerivedTypeTransformation derivedTypeTransformation =
-				BeanLocator.getInstance().getInstance(DerivedTypeTransformation.class);
-
-			derivedTypeTransformation.setTypeA(entityType);
-			derivedTypeTransformation.setTypeB(targetType);
-			derivedTypeTransformation.setDerivedAttribute(derivedTypeAttribute);
-			derivedTypeTransformation.setTypeCodeConverter(typeCodeConverter);
-			return (B) derivedTypeTransformation.getAB().convert(a);
+			UniTransformation transformation = derivedType.getTransformation()
+					.getAB();
+			return (B) transformation.convert(a, ctx);
 		}
-
 	}
 
 	@Override
-	public Type<A> getSourceType()
-	{
-		if (aUnkown)
-		{
+	public Type<A> getSourceType() {
+		if (aUnkown) {
 			return null;
-		}
-		else
-		{
+		} else {
 			return type;
 		}
 	}
 
 	@Override
-	public Type<B> getTargetType()
-	{
-		if (aUnkown)
-		{
+	public Type<B> getTargetType() {
+		if (aUnkown) {
 			return type;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
 
 	@Override
-	public B merge(A a, B b)
-	{
-		if (a == null)
-		{
+	public B merge(A a, B b, TransformationContext ctx) {
+		if (a == null) {
 			return null;
-		}
-		else
-		{
+		} else {
 			EntityType entityType = entityTypeRepository.getEntityType(a);
-			EntityType targetType = entityTypeRepository.getEntityType(typeCodeConverter.convert(entityType.getCode()));
+			EntityType targetType = entityTypeRepository
+					.getEntityType(typeCodeConverter.convert(entityType));
 			DerivedType derivedType = derivedTypeAttribute.getValue(targetType);
-			UniTransformation transformation = derivedType.getTransformation().getAB();
-			return (B) transformation.merge(a, b);
+			UniTransformation transformation = derivedType.getTransformation()
+					.getAB();
+			return (B) transformation.merge(a, b, ctx);
 		}
 	}
 

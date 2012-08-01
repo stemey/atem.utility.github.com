@@ -22,10 +22,12 @@ public interface UniConverter<A, B>
 {
 	/**
 	 * @param a the value to transform
+	 * @param ctx TODO
 	 * @return the transformed instance
 	 */
-	B convert(A a);
+	B convert(A a, TransformationContext ctx);
 
+	
 	Type<A> getSourceType();
 
 	Type<B> getTargetType();

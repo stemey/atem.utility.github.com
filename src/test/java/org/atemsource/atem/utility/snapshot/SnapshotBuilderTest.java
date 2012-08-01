@@ -19,6 +19,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
+import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,9 +62,9 @@ public class SnapshotBuilderTest
 
 		Transformation<EntityA, DynamicEntity> snapshotting = (Transformation<EntityA, DynamicEntity>) builder.create();
 
-		DynamicEntity snapshot = snapshotting.getAB().convert(entityA);
+		DynamicEntity snapshot = snapshotting.getAB().convert(entityA, new SimpleTransformationContext());
 
-		EntityA restored = snapshotting.getBA().convert(snapshot);
+		EntityA restored = snapshotting.getBA().convert(snapshot, new SimpleTransformationContext());
 
 		Assert.assertFalse(((List) snapshot.get("list")).get(0) instanceof EntityB);
 		Assert.assertEquals(100, restored.getIntP());

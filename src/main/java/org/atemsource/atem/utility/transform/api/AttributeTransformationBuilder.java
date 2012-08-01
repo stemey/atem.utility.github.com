@@ -7,11 +7,12 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
+
 public interface AttributeTransformationBuilder<A, B>
 {
 	AttributeTransformationBuilder<A, B> convert(Converter<A, B> converter);
 
-	AttributeTransformationBuilder<A, B> convertDynamically(JavaUniConverter<String, String> typeCodeConverter);
+	AttributeTransformationBuilder<A, B> convertDynamically(TypeNameConverter typeCodeConverter);
 
 	AttributeTransformationBuilder<A, B> from(String attributePath);
 

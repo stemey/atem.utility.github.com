@@ -27,17 +27,17 @@
 	</bean>
 	
 
-	<bean id="atem-utility-jacksonBindingProcessor"
-		class="org.atemsource.atem.utility.jackson.JacksonBindingProcessor">
-		<property name="includedPackage" value="org.atemsource.atem.utility.dummy"/>
-		<property name="jsonRepository" ref="atem-json-repository" />
-		<property name="transformationBuilderFactory">
-			<bean
-				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
-			</bean>
-		</property>
-		<property name="typePrefix" value="json"/>
-	</bean>
+<!-- 	<bean id="atem-utility-jacksonBindingProcessor" -->
+<!-- 		class="org.atemsource.atem.utility.jackson.JacksonBindingProcessor"> -->
+<!-- 		<property name="includedPackage" value="org.atemsource.atem.utility.dummy"/> -->
+<!-- 		<property name="jsonRepository" ref="atem-json-repository" /> -->
+<!-- 		<property name="transformationBuilderFactory"> -->
+<!-- 			<bean -->
+<!-- 				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory"> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 		<property name="typePrefix" value="json"/> -->
+<!-- 	</bean> -->
 
 
 

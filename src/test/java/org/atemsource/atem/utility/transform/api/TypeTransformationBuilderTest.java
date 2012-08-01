@@ -30,9 +30,14 @@ import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
+import org.atemsource.atem.utility.domain.DomainA;
+import org.atemsource.atem.utility.domain.DomainB;
+import org.atemsource.atem.utility.domain.SubdomainA;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
+import org.codehaus.jackson.node.BooleanNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,7 +90,7 @@ public class TypeTransformationBuilderTest
 		b2.setInteger(2);
 		bs.add(b2);
 		a.setList(bs);
-		DynamicEntity b = entityTypeTransformation.createB(a);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		List<DynamicEntity> actualList = (List<DynamicEntity>) b.get("list");
 		Assert.assertEquals(1, actualList.get(0).get("i"));
 		Assert.assertEquals(2, actualList.get(1).get("i"));
@@ -111,7 +116,7 @@ public class TypeTransformationBuilderTest
 		b2.setInteger(2);
 		bs.put("2", b2);
 		a.setMap(bs);
-		DynamicEntity b = entityTypeTransformation.createB(a);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		Map<String, DynamicEntity> actualMap = (Map<String, DynamicEntity>) b.get("map");
 		Assert.assertEquals(1, actualMap.get("1").get("i"));
 		Assert.assertEquals(2, actualMap.get("2").get("i"));
@@ -133,7 +138,7 @@ public class TypeTransformationBuilderTest
 		stringList.add("1");
 		stringList.add("2");
 		a.setStringList(stringList);
-		DynamicEntity b = entityTypeTransformation.createB(a);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		List<String> actualList = (List<String>) b.get("list");
 		Assert.assertEquals("1", actualList.get(0));
 		Assert.assertEquals("2", actualList.get(1));
@@ -155,7 +160,7 @@ public class TypeTransformationBuilderTest
 		map.put("1", 1);
 		map.put("2", 2);
 		a.setString2int(map);
-		DynamicEntity b = entityTypeTransformation.createB(a);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		Map<String, Integer> actualMap = (Map<String, Integer>) b.get("map");
 		Assert.assertEquals(1, (int) actualMap.get("1"));
 		Assert.assertEquals(2, (int) actualMap.get("2"));
@@ -178,7 +183,7 @@ public class TypeTransformationBuilderTest
 		b.setInteger(5);
 		EntityA a = new EntityA();
 		a.setEntityB(b);
-		DynamicEntity a2 = entityTypeTransformation.createB(a);
+		DynamicEntity a2 = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		Assert.assertEquals(5, ((DynamicEntity) a2.get("b")).get("i"));
 	}
 
@@ -195,7 +200,7 @@ public class TypeTransformationBuilderTest
 
 		EntityB a = new EntityB();
 		a.setInteger(5);
-		DynamicEntity b = entityTypeTransformation.createB(a);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		Assert.assertEquals(5, b.get("i"));
 	}
 

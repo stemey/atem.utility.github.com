@@ -28,6 +28,7 @@ import org.atemsource.atem.utility.transform.api.ConverterFactory;
 import org.atemsource.atem.utility.transform.api.DerivedAttribute;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
 public class AbstractAttributeTransformationBuilder<A, B> implements
@@ -82,7 +83,7 @@ public class AbstractAttributeTransformationBuilder<A, B> implements
 
 	@Override
 	public AttributeTransformationBuilder<A, B> convertDynamically(
-			JavaUniConverter<String, String> typeCodeConverter) {
+			TypeNameConverter typeCodeConverter) {
 		Attribute metaAttribute = entityTypeRepository.getEntityType(
 				EntityType.class).getMetaAttribute(
 				DerivationMetaAttributeRegistrar.DERIVED_FROM);

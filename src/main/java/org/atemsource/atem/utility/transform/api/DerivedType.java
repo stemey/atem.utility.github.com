@@ -8,6 +8,7 @@
 package org.atemsource.atem.utility.transform.api;
 
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
 
 public class DerivedType
@@ -15,14 +16,14 @@ public class DerivedType
 
 	private EntityType<?> originalType;
 
-	private Transformation<?, ?> transformation;
+	private EntityTypeTransformation<?, ?> transformation;
 
 	public EntityType<?> getOriginalType()
 	{
 		return originalType;
 	}
 
-	public Transformation<?, ?> getTransformation()
+	public EntityTypeTransformation<?, ?> getTransformation()
 	{
 		return transformation;
 	}
@@ -32,7 +33,7 @@ public class DerivedType
 		this.originalType = originalType;
 	}
 
-	public void setTransformation(Transformation<?, ?> transformation)
+	public void setTransformation(EntityTypeTransformation<?, ?> transformation)
 	{
 		this.transformation = transformation;
 	}

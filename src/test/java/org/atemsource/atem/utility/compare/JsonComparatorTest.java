@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import junit.framework.Assert;
 
 import org.atemsource.atem.api.EntityTypeRepository;
-import org.atemsource.atem.utility.jackson.JsonComparator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;

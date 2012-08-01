@@ -6,6 +6,7 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
+import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
@@ -16,7 +17,7 @@ public class DynamicTransformation<A, B> implements Converter<A, B>
 
 	private DynamicUniTransformation ba;
 
-	public DynamicTransformation(JavaUniConverter<String, String> typeCodeConverter, Type<?> type,
+	public DynamicTransformation(TypeNameConverter typeCodeConverter, Type<?> type,
 		EntityTypeRepository entityTypeRepository, SingleAttribute<DerivedType> derivedTypeAttribute)
 	{
 		super();

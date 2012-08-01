@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends Abstract
 
 	@Override
 	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB,
-		UniConverter<Object, Object> converter)
+		TransformationContext ctx, UniConverter<Object, Object> converter)
 	{
 		CollectionAttribute<Object, Object> attributeA =
 			(CollectionAttribute<Object, Object>) attributePathA.getAttribute(a);
@@ -56,7 +57,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends Abstract
 				Object valueB;
 				if (converter != null)
 				{
-					valueB = converter.convert(valueA);
+					valueB = converter.convert(valueA, ctx);
 				}
 				else
 				{

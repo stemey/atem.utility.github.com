@@ -16,6 +16,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
@@ -39,12 +40,12 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 		return new UniTransformation<A, B>() {
 
 			@Override
-			public B convert(A a)
+			public B convert(A a, TransformationContext ctx)
 			{
 				if (MapAssociationAttributeTransformation.this.getTypeB() instanceof EntityType)
 				{
 					B b = ((EntityType<B>) MapAssociationAttributeTransformation.this.getTypeB()).createEntity();
-					return merge(a, b);
+					return merge(a, b, ctx);
 				}
 				else
 				{
@@ -65,11 +66,11 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 			}
 
 			@Override
-			public B merge(A a, B b)
+			public B merge(A a, B b, TransformationContext ctx)
 			{
 				UniConverter abConverter = getConverter() == null ? null : getConverter().getAB();
 				UniConverter<Object, Object> abKeyConverter = getKeyConverter() == null ? null : keyConverter.getAB();
-				MapAssociationAttributeTransformation.this.transformInternally(a, b, getAttributeA(), getAttributeB(),
+				MapAssociationAttributeTransformation.this.transformInternally(a, b, getAttributeA(), getAttributeB(),ctx,
 					abConverter, abKeyConverter);
 				return b;
 			}
@@ -83,17 +84,11 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 		return new UniTransformation<B, A>() {
 
 			@Override
-			public A convert(B b)
+			public A convert(B b, TransformationContext ctx)
 			{
-				if (MapAssociationAttributeTransformation.this.getTypeA() instanceof EntityType)
-				{
-					A a = ((EntityType<A>) MapAssociationAttributeTransformation.this.getTypeA()).createEntity();
-					return merge(b, a);
-				}
-				else
-				{
-					throw new IllegalArgumentException("cannot handle type");
-				}
+				
+					throw new IllegalArgumentException("attribute transformation can only merge");
+				
 			}
 
 			@Override
@@ -109,9 +104,9 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 			}
 
 			@Override
-			public A merge(B b, A a)
+			public A merge(B b, A a, TransformationContext ctx)
 			{
-				MapAssociationAttributeTransformation.this.transformInternally(b, a, getAttributeB(), getAttributeA(),
+				MapAssociationAttributeTransformation.this.transformInternally(b, a, getAttributeB(), getAttributeA(),ctx,
 					getConverter().getBA(), keyConverter.getBA());
 				return a;
 			}
@@ -150,13 +145,13 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 
 	@Override
 	protected void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
-		UniConverter<Object, Object> ab)
+		TransformationContext ctx, UniConverter<Object, Object> ab)
 	{
 		// TODO Auto-generated method stub
 
 	}
 
-	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB,
+	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB, TransformationContext ctx,
 		UniConverter<Object, Object> converter, UniConverter<Object, Object> keyConverter)
 	{
 		MapAttribute<Object, Object, Object> attributeA =
@@ -184,7 +179,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 				Object keyB = next.getKey();
 				if (keyConverter != null)
 				{
-					keyB = keyConverter.convert(next.getKey());
+					keyB = keyConverter.convert(next.getKey(), ctx);
 
 				}
 				Object elementB = attributeB.getElement(b, keyB);
@@ -192,7 +187,7 @@ public class MapAssociationAttributeTransformation<A, B> extends AbstractAttribu
 				{
 					if (converter != null)
 					{
-						elementB = converter.convert(elementA);
+						elementB = converter.convert(elementA, ctx);
 					}
 					else
 					{

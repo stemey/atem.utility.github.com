@@ -16,15 +16,15 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class EntityTypeTransformation<A, B> extends EntityTransformation implements Transformation<A, B>
-{
+public class EntityTypeTransformation<A, B> extends EntityTransformation
+		implements Transformation<A, B> {
 	private EntityType<A> entityTypeA;
 
 	private EntityType<B> entityTypeB;
@@ -36,103 +36,107 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation impleme
 
 	private EntityTypeTransformation<A, B> superTransformation;
 
-	public void addSubTransformation(EntityTypeTransformation<A, B> subTransformation)
-	{
+	public void addSubTransformation(
+			EntityTypeTransformation<A, B> subTransformation) {
 		this.subTransformations.add(subTransformation);
 	}
 
-	public A createA(B b)
-	{
-		A valueA = (A) getTypeConverter().getBA().convert(b);
-		transformBAChildren(b, valueA);
-		return valueA;
-	}
-
-	public B createB(A a)
-	{
-		if (a == null)
-		{
+	private A createA(B b, TransformationContext ctx) {
+		if (b == null) {
 			return null;
 		}
-		B valueB = (B) getTypeConverter().getAB().convert(a);
-		transformABChildren(a, valueB);
-		return valueB;
+		if (ctx.isTransformed(b)) {
+			return (A) ctx.getTransformed(b);
+		} else {
+			A valueA = (A) getTypeConverter().getBA().convert(b, ctx);
+			ctx.transformed(b, valueA);
+			transformBAChildren(b, valueA, ctx);
+			return valueA;
+		}
+	}
+
+	private B createB(A a, TransformationContext ctx) {
+		if (a == null) {
+			return null;
+		}
+		if (ctx.isTransformed(a)) {
+			return (B) ctx.getTransformed(a);
+		} else {
+			B valueB = (B) getTypeConverter().getAB().convert(a, ctx);
+			ctx.transformed(a, valueB);
+			transformABChildren(a, valueB, ctx);
+			return valueB;
+		}
 	}
 
 	@Override
-	public UniTransformation<A, B> getAB()
-	{
+	public UniTransformation<A, B> getAB() {
 		return new UniTransformation<A, B>() {
 
 			@Override
-			public B convert(A a)
-			{
-				if (a == null)
-				{
+			public B convert(A a, TransformationContext ctx) {
+				if (a == null) {
 					return null;
 				}
-				EntityType<A> entityType = entityTypeRepository.getEntityType(a);
-				return getTransformationByTypeA(entityType).createB(a);
+				EntityType<A> entityType = entityTypeRepository
+						.getEntityType(a);
+				return getTransformationByTypeA(entityType).createB(a, ctx);
 			}
 
 			@Override
-			public Type<A> getSourceType()
-			{
+			public Type<A> getSourceType() {
 				return entityTypeA;
 			}
 
 			@Override
-			public Type<B> getTargetType()
-			{
+			public Type<B> getTargetType() {
 				return entityTypeB;
 			}
 
 			@Override
-			public B merge(A a, B b)
-			{
-				EntityType<A> entityType = entityTypeRepository.getEntityType(a);
-				getTransformationByTypeA(entityType).transformABChildren(a, b);
+			public B merge(A a, B b, TransformationContext ctx) {
+				EntityType<A> entityType = entityTypeRepository
+						.getEntityType(a);
+				getTransformationByTypeA(entityType).transformABChildren(a, b,
+						ctx);
 				return b;
 			}
 		};
 	}
 
-	protected UniTransformation getAB(Object value)
-	{
+	protected UniTransformation getAB(Object value) {
 
 		EntityType<?> entityType = entityTypeRepository.getEntityType(value);
 		return getTransformationByTypeA(entityType).getAB();
 	}
 
 	@Override
-	public UniTransformation<B, A> getBA()
-	{
+	public UniTransformation<B, A> getBA() {
 		return new UniTransformation<B, A>() {
 
 			@Override
-			public A convert(B b)
-			{
-				EntityType<B> entityType = entityTypeRepository.getEntityType(b);
-				return getTransformationByTypeB(entityType).createA(b);
+			public A convert(B b, TransformationContext ctx) {
+				EntityType<B> entityType = entityTypeRepository
+						.getEntityType(b);
+				return getTransformationByTypeB(entityType).createA(b, ctx);
 			}
 
 			@Override
-			public Type<B> getSourceType()
-			{
+			public Type<B> getSourceType() {
 				return entityTypeB;
 			}
 
 			@Override
-			public Type<A> getTargetType()
-			{
+			public Type<A> getTargetType() {
 				return entityTypeA;
 			}
 
 			@Override
-			public A merge(B b, A a)
-			{
-				EntityType<B> entityType = entityTypeRepository.getEntityType(b);
-				getTransformationByTypeB(entityType).transformBAChildren(b, a);
+			public A merge(B b, A a, TransformationContext ctx) {
+				EntityType<B> entityType = entityTypeRepository
+						.getEntityType(b);
+				getTransformationByTypeB(entityType).transformBAChildren(b, a,
+						ctx);
 
 				return a;
 			}
@@ -140,46 +144,36 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation impleme
 		};
 	}
 
-	protected UniTransformation getBA(Object value)
-	{
+	protected UniTransformation getBA(Object value) {
 
 		EntityType<?> entityType = entityTypeRepository.getEntityType(value);
 		return getTransformationByTypeA(entityType).getBA();
 	}
 
-	public EntityType<A> getEntityTypeA()
-	{
+	public EntityType<A> getEntityTypeA() {
 		return entityTypeA;
 	}
 
-	public EntityType<B> getEntityTypeB()
-	{
+	public EntityType<B> getEntityTypeB() {
 		return entityTypeB;
 	}
 
-	public EntityTypeTransformation<A, B> getSuperTransformation()
-	{
+	public EntityTypeTransformation<A, B> getSuperTransformation() {
 		return superTransformation;
 	}
 
-	protected EntityTypeTransformation<A, B> getTransformationByTypeA(EntityType<?> entityType)
-	{
+	protected EntityTypeTransformation<A, B> getTransformationByTypeA(
+			EntityType<?> entityType) {
 
-		if (entityType.equals(getEntityTypeA()))
-		{
+		if (entityType.equals(getEntityTypeA())) {
 			return this;
-		}
-		else if (entityType.isAssignableFrom(getEntityTypeA()))
-		{
+		} else if (entityType.isAssignableFrom(getEntityTypeA())) {
 			return superTransformation.getTransformationByTypeA(entityType);
-		}
-		else
-		{
-			for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
-			{
-				EntityTypeTransformation<A, B> transformation = subTransformation.getTransformationByTypeA(entityType);
-				if (transformation != null)
-				{
+		} else {
+			for (EntityTypeTransformation<A, B> subTransformation : subTransformations) {
+				EntityTypeTransformation<A, B> transformation = subTransformation
+						.getTransformationByTypeA(entityType);
+				if (transformation != null) {
 					return transformation;
 				}
 			}
@@ -187,77 +181,66 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation impleme
 		return null;
 	}
 
-	protected EntityTypeTransformation<A, B> getTransformationByTypeB(EntityType<?> entityType)
-	{
+	protected EntityTypeTransformation<A, B> getTransformationByTypeB(
+			EntityType<?> entityType) {
 
-		if (entityType.equals(getEntityTypeB()))
-		{
+		if (entityType.equals(getEntityTypeB())) {
 			return this;
-		}
-		else if (entityType.isAssignableFrom(getEntityTypeB()))
-		{
+		} else if (entityType.isAssignableFrom(getEntityTypeB())) {
 			return superTransformation.getTransformationByTypeB(entityType);
-		}
-		else
-		{
-			for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
-			{
-				EntityTypeTransformation<A, B> transformation = subTransformation.getTransformationByTypeB(entityType);
-				if (transformation != null)
-				{
+		} else {
+			for (EntityTypeTransformation<A, B> subTransformation : subTransformations) {
+				EntityTypeTransformation<A, B> transformation = subTransformation
+						.getTransformationByTypeB(entityType);
+				if (transformation != null) {
 					return transformation;
 				}
 			}
 		}
-		throw new IllegalArgumentException("cannot transformation entity of type " + entityType.getCode());
+		throw new IllegalArgumentException(
+				"cannot transformation entity of type " + entityType.getCode());
 	}
 
 	@Override
-	public Type getTypeA()
-	{
+	public Type getTypeA() {
 		return getEntityTypeA();
 	}
 
 	@Override
-	public Type getTypeB()
-	{
+	public Type getTypeB() {
 		return getEntityTypeB();
 	}
 
-	public void setEntityTypeA(EntityType<A> entityTypeA)
-	{
+	public void setEntityTypeA(EntityType<A> entityTypeA) {
 		this.entityTypeA = entityTypeA;
 	}
 
-	public void setEntityTypeB(EntityType<B> entityTypeB)
-	{
+	public void setEntityTypeB(EntityType<B> entityTypeB) {
 		this.entityTypeB = entityTypeB;
 	}
 
-	public void setSuperTransformation(EntityTypeTransformation<A, B> superTransformation)
-	{
+	public void setSuperTransformation(
+			EntityTypeTransformation<A, B> superTransformation) {
 		this.superTransformation = superTransformation;
 
 	}
 
 	@Override
-	protected void transformABChildren(Object valueA, Object valueB)
-	{
-		if (superTransformation != null)
-		{
-			superTransformation.transformABChildren(valueA, valueB);
+	protected void transformABChildren(Object valueA, Object valueB,
+			TransformationContext ctx) {
+		if (superTransformation != null) {
+			superTransformation.transformABChildren(valueA, valueB, ctx);
 		}
-		super.transformABChildren(valueA, valueB);
+		super.transformABChildren(valueA, valueB, ctx);
 	}
 
 	@Override
-	protected void transformBAChildren(Object valueB, Object valueA)
-	{
-		if (superTransformation != null)
-		{
-			superTransformation.transformBAChildren(valueB, valueA);
+	protected void transformBAChildren(Object valueB, Object valueA,
+			TransformationContext ctx) {
+		if (superTransformation != null) {
+			superTransformation.transformBAChildren(valueB, valueA, ctx);
 		}
-		super.transformBAChildren(valueB, valueA);
+		super.transformBAChildren(valueB, valueA, ctx);
 	}
 
 }

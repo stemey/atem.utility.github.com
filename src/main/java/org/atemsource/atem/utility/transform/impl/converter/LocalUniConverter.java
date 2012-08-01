@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.transform.impl.converter;
 
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
@@ -17,7 +18,7 @@ public class LocalUniConverter implements UniConverter<Object, Object>
 		this.converter = converter;
 	}
 
-	public Object convert(Object a)
+	public Object convert(Object a, TransformationContext ctx)
 	{
 		if (direction)
 		{

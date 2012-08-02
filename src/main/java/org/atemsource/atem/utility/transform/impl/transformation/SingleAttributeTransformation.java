@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class SingleAttributeTransformation<A, B> extends
-		AbstractAttributeTransformation<A, B> implements Transformation<A, B> {
+		AbstractAttributeTransformation<A, B> {
 
 	@Override
 	protected void transformInternally(Object a, Object b,

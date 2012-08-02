@@ -27,7 +27,7 @@
 
 	<bean class="org.codehaus.jackson.map.ObjectMapper"/>
 	
-	<bean class="org.atemsource.atem.utility.jackson.JsonComparator">
+	<bean class="org.atemsource.atem.utility.compare.JsonComparator">
 		<property name="comparisonBuilderFactory" ref="atem-utility-comparisonBuilderFactory"/>
 	</bean>
 	

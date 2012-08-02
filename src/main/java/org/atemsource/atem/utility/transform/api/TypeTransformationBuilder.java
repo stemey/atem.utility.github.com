@@ -188,7 +188,7 @@ public class TypeTransformationBuilder<A, B> {
 			superEntityTypeTransformation.addSubTransformation(selfReference);
 		}
 		for (TransformationBuilder transformation : transformations) {
-			selfReference.addTransformation(transformation.create(targetType));
+			selfReference.addTransformation((AttributeTransformation<A, B>) transformation.create(targetType));
 		}
 		selfReference.setEntityTypeB(targetType);
 		selfReference.setEntityTypeA(sourceType);

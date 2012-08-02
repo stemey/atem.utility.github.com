@@ -20,8 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class CollectionAssociationAttributeTransformation<A, B> extends AbstractAttributeTransformation<A, B> implements
-	Transformation<A, B>
+public class CollectionAssociationAttributeTransformation<A, B> extends AbstractAttributeTransformation<A, B>
 {
 
 	private boolean convertNullToEmpty;

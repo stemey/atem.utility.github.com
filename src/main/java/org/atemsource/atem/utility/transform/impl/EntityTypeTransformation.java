@@ -7,7 +7,9 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,6 +17,7 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
@@ -23,8 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class EntityTypeTransformation<A, B> extends EntityTransformation
-		implements Transformation<A, B> {
+public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 	private EntityType<A> entityTypeA;
 
 	private EntityType<B> entityTypeB;
@@ -67,6 +69,22 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation
 			transformABChildren(a, valueB, ctx);
 			return valueB;
 		}
+	}
+
+	private List<AttributeTransformation<A, B>> embeddedTransformations = new ArrayList<AttributeTransformation<A, B>>();
+
+	public void addTransformation(AttributeTransformation<A, B> transformation) {
+		this.embeddedTransformations.add(transformation);
+	}
+
+	private Transformation<A, B> typeConverter;
+
+	public Transformation<A, B> getTypeConverter() {
+		return typeConverter;
+	}
+
+	public void setTypeConverter(Transformation<A, B> typeConverter) {
+		this.typeConverter = typeConverter;
 	}
 
 	@Override
@@ -225,22 +243,24 @@ public class EntityTypeTransformation<A, B> extends EntityTransformation
 
 	}
 
-	@Override
-	protected void transformABChildren(Object valueA, Object valueB,
+	protected void transformABChildren(A valueA, B valueB,
 			TransformationContext ctx) {
 		if (superTransformation != null) {
 			superTransformation.transformABChildren(valueA, valueB, ctx);
 		}
-		super.transformABChildren(valueA, valueB, ctx);
+		for (AttributeTransformation<A, B> transformation : embeddedTransformations) {
+			transformation.mergeAB(valueA, valueB, ctx);
+		}
 	}
 
-	@Override
-	protected void transformBAChildren(Object valueB, Object valueA,
+	protected void transformBAChildren(B valueB, A valueA,
 			TransformationContext ctx) {
 		if (superTransformation != null) {
 			superTransformation.transformBAChildren(valueB, valueA, ctx);
 		}
-		super.transformBAChildren(valueB, valueA, ctx);
+		for (AttributeTransformation<A, B> transformation : embeddedTransformations) {
+			transformation.mergeBA(valueB, valueA, ctx);
+		}
 	}
 
 }

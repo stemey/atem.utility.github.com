@@ -21,7 +21,7 @@ import org.atemsource.atem.api.attribute.Attribute;
 public class DerivedAttribute
 {
 
-	private Transformation<?, ?> transformation;
+	private AttributeTransformation<?, ?> transformation;
 
 	private Attribute<?, ?> originalAttribute;
 
@@ -30,7 +30,7 @@ public class DerivedAttribute
 		return originalAttribute;
 	}
 
-	public Transformation<?, ?> getTransformation()
+	public AttributeTransformation<?, ?> getTransformation()
 	{
 		return transformation;
 	}
@@ -40,7 +40,7 @@ public class DerivedAttribute
 		this.originalAttribute = originalAttribute;
 	}
 
-	public void setTransformation(Transformation<?, ?> transformation)
+	public void setTransformation(AttributeTransformation<?, ?> transformation)
 	{
 		this.transformation = transformation;
 	}

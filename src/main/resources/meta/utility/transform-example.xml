@@ -29,7 +29,7 @@
 	<import resource="path-example.xml"/>
 	<import resource="classpath:/atem/impl/memory-meta.xml"/>
 	
-	<bean id="meta-utility-transformationBuilderFactory" class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
+	<bean id="atem-utility-transformationBuilderFactory" class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
 		<property name="converterFactory">
 			<bean class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl"/>
 		</property>

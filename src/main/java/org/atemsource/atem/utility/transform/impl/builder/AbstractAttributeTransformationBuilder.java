@@ -22,6 +22,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
+import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.ConverterFactory;
@@ -61,7 +62,7 @@ public class AbstractAttributeTransformationBuilder<A, B> implements
 		super();
 	}
 
-	protected void addDerivation(Transformation<?, ?> transformation,
+	protected void addDerivation(AttributeTransformation<?, ?> transformation,
 			Attribute newAttribute, Attribute sourceAttribute) {
 		DerivedAttribute derivedAttribute = new DerivedAttribute();
 		derivedAttribute.setOriginalAttribute(sourceAttribute);

@@ -13,6 +13,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssociationAttributeTransformation;
@@ -56,7 +57,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends AbstractAttr
 	}
 
 	@Override
-	public Transformation<?, ?> create(EntityType<?> targetType)
+	public AttributeTransformation<?, ?> create(EntityType<?> targetType)
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
 		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(targetAttribute, targetType);

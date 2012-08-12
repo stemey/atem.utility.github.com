@@ -25,7 +25,6 @@ import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
-import org.atemsource.atem.utility.transform.api.CollectionTransformation;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;

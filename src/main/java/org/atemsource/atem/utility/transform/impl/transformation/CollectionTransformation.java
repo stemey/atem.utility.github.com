@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.atemsource.atem.utility.transform.impl.builder;
+package org.atemsource.atem.utility.transform.impl.transformation;
 
 
-import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.api.type.EntityTypeBuilder;
-import org.atemsource.atem.utility.transform.api.AttributeTransformation;
-import org.atemsource.atem.utility.transform.api.Transformation;
+import java.util.Collection;
+
+import org.atemsource.atem.api.attribute.CollectionAttribute;
 
 
-public interface TransformationBuilder
+public interface CollectionTransformation<B, C, D>
 {
 
-	void build(EntityTypeBuilder targetTypeBuilder);
-
-	AttributeTransformation<?, ?> create(EntityType<?> targetType);
+	void transformChildrenAB(CollectionAttribute<D, Object> attributeB, B valueB, Collection<C> associatedEntitiesA);
 
 }

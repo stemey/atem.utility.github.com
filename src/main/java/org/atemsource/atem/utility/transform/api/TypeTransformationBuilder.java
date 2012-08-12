@@ -30,7 +30,6 @@ import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
-import org.atemsource.atem.utility.transform.impl.builder.TransformationBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -152,7 +151,7 @@ public class TypeTransformationBuilder<A, B> {
 
 	private Transformation<A, B> transformation;
 
-	private List<TransformationBuilder> transformations = new ArrayList<TransformationBuilder>();
+	private List<AttributeTransformationBuilder> transformations = new ArrayList<AttributeTransformationBuilder>();
 
 	public TypeTransformationBuilder() {
 	}
@@ -172,7 +171,7 @@ public class TypeTransformationBuilder<A, B> {
 	}
 
 	public EntityTypeTransformation<A, B> buildTypeTransformation() {
-		for (TransformationBuilder transformation : transformations) {
+		for (AttributeTransformationBuilder transformation : transformations) {
 			transformation.build(targetTypeBuilder);
 		}
 		EntityType targetType = targetTypeBuilder.createEntityType();
@@ -187,7 +186,7 @@ public class TypeTransformationBuilder<A, B> {
 			selfReference.setSuperTransformation(superEntityTypeTransformation);
 			superEntityTypeTransformation.addSubTransformation(selfReference);
 		}
-		for (TransformationBuilder transformation : transformations) {
+		for (AttributeTransformationBuilder transformation : transformations) {
 			selfReference.addTransformation((AttributeTransformation<A, B>) transformation.create(targetType));
 		}
 		selfReference.setEntityTypeB(targetType);
@@ -253,6 +252,15 @@ public class TypeTransformationBuilder<A, B> {
 		} else {
 			return transform();
 		}
+	}
+	
+	public <B extends CustomAttributeTransformationBuilder<A, B>> B transformCustom(
+			Class<B> builderClass) {
+		B builder = beanLocator.getInstance(builderClass);
+		builder.setSourceType(sourceType);
+		builder.setConverterFactory(converterFactory);
+		transformations.add(builder);
+		return builder;
 	}
 
 	public CollectionAttributeTransformationBuilder<A, B> transformCollection() {

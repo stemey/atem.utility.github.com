@@ -22,12 +22,10 @@ import org.atemsource.atem.utility.transform.impl.transformation.MapAssociationA
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class MapAttributeTransformationBuilder extends AbstractAttributeTransformationBuilder implements
-	TransformationBuilder, AttributeTransformationBuilder
-{
+public class MapAttributeTransformationBuilder<A, B> extends
+		AbstractAttributeTransformationBuilder<A, B> {
 	private boolean convertNullToEmpty;
 
 	@Inject
@@ -36,58 +34,55 @@ public class MapAttributeTransformationBuilder extends AbstractAttributeTransfor
 	private Converter<?, ?> keyConverter;
 
 	@Override
-	public void build(EntityTypeBuilder entityTypeBuilder)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
+	public void build(EntityTypeBuilder entityTypeBuilder) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null)
-		{
-			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
-		}
-		else
-		{
+		if (getConverter(sourcePath.getTargetType().getType()) != null) {
+			attributeTargetType = getConverter(
+					sourcePath.getTargetType().getType()).getTypeB();
+		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
 		Type<?> keyType;
-		if (keyConverter != null)
-		{
+		if (keyConverter != null) {
 			keyType = keyConverter.getTypeB();
-		}
-		else
-		{
+		} else {
 			keyType = ((MapAttribute) sourcePath.getAttribute()).getKeyType();
 		}
-		entityTypeBuilder.addMapAssociationAttribute(targetAttribute, keyType, attributeTargetType);
+		entityTypeBuilder.addMapAssociationAttribute(targetAttribute, keyType,
+				attributeTargetType);
 	}
 
-	MapAttributeTransformationBuilder convertKey(Converter<?, ?> keyConverter)
-	{
+	public MapAttributeTransformationBuilder convertKey(Converter<?, ?> keyConverter) {
 		this.keyConverter = keyConverter;
 		return this;
 	}
 
-	public MapAttributeTransformationBuilder convertNullToEmpty()
-	{
+	public MapAttributeTransformationBuilder convertNullToEmpty() {
 		convertNullToEmpty = true;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformation<?, ?> create(EntityType<?> targetType)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
-		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(targetAttribute, targetType);
-		MapAssociationAttributeTransformation<?, ?> transformation =
-			beanLocator.getInstance(MapAssociationAttributeTransformation.class);
+	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
+		AttributePath targetPath = attributePathBuilderFactory
+				.createAttributePath(targetAttribute, targetType);
+		MapAssociationAttributeTransformation<A,B>  transformation = beanLocator
+				.getInstance(MapAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
+		transformation.setConverter(getConverter(sourcePath.getTargetType()
+				.getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
 		transformation.setKeyConverter(keyConverter);
-		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
+		addDerivation(transformation, targetPath.getAttribute(),
+				sourcePath.getAttribute());
 		return transformation;
 	}
 

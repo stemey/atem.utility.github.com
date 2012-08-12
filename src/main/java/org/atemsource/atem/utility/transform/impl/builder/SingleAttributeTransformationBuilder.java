@@ -17,42 +17,40 @@ import org.atemsource.atem.utility.transform.impl.transformation.SingleAttribute
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class SingleAttributeTransformationBuilder extends AbstractAttributeTransformationBuilder implements
-	TransformationBuilder, AttributeTransformationBuilder
-{
-	@Override
-	public void build(EntityTypeBuilder entityTypeBuilder)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
+public class SingleAttributeTransformationBuilder<A, B> extends
+		AbstractAttributeTransformationBuilder<A, B> {
+	public void build(EntityTypeBuilder entityTypeBuilder) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null)
-		{
-			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
-		}
-		else
-		{
+		if (getConverter(sourcePath.getTargetType().getType()) != null) {
+			attributeTargetType = getConverter(
+					sourcePath.getTargetType().getType()).getTypeB();
+		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		entityTypeBuilder.addSingleAttribute(targetAttribute, attributeTargetType);
+		entityTypeBuilder.addSingleAttribute(targetAttribute,
+				attributeTargetType);
 	}
 
-	@Override
-	public AttributeTransformation<?, ?> create(EntityType<?> targetType)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
-		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(targetAttribute, targetType);
-		SingleAttributeTransformation<?, ?> primitiveAttributeTransformation =
-			beanLocator.getInstance(SingleAttributeTransformation.class);
+	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
+		AttributePath targetPath = attributePathBuilderFactory
+				.createAttributePath(targetAttribute, targetType);
+		SingleAttributeTransformation<A, B> primitiveAttributeTransformation = beanLocator
+				.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);
 		primitiveAttributeTransformation.setAttributeB(targetPath);
-		primitiveAttributeTransformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
+		primitiveAttributeTransformation.setConverter(getConverter(sourcePath
+				.getTargetType().getType()));
 		primitiveAttributeTransformation.setTypeA(sourceType);
 		primitiveAttributeTransformation.setTypeB(targetType);
 		primitiveAttributeTransformation.setMeta(meta);
-		addDerivation(primitiveAttributeTransformation, targetPath.getAttribute(), sourcePath.getAttribute());
+		addDerivation(primitiveAttributeTransformation,
+				targetPath.getAttribute(), sourcePath.getAttribute());
 		return primitiveAttributeTransformation;
 	}
 

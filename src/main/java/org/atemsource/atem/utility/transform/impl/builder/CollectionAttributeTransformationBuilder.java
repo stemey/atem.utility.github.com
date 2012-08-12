@@ -20,62 +20,63 @@ import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssoc
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class CollectionAttributeTransformationBuilder<A, B> extends AbstractAttributeTransformationBuilder<A, B>
-	implements TransformationBuilder, AttributeTransformationBuilder<A, B>
+public class CollectionAttributeTransformationBuilder<A, B> extends
+		AbstractAttributeTransformationBuilder<A, B>
+
 {
 	private CollectionSortType collectionSortType;
 
 	private boolean convertNullToEmpty;
 
 	@Override
-	public void build(EntityTypeBuilder entityTypeBuilder)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
+	public void build(EntityTypeBuilder entityTypeBuilder) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null)
-		{
-			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
-		}
-		else
-		{
+		if (getConverter(sourcePath.getTargetType().getType()) != null) {
+			attributeTargetType = getConverter(
+					sourcePath.getTargetType().getType()).getTypeB();
+		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		if (collectionSortType == null)
-		{
-			collectionSortType = ((CollectionAttribute) sourcePath.getAttribute()).getCollectionSortType();
+		if (collectionSortType == null) {
+			collectionSortType = ((CollectionAttribute) sourcePath
+					.getAttribute()).getCollectionSortType();
 		}
-		entityTypeBuilder.addMultiAssociationAttribute(targetAttribute, attributeTargetType, collectionSortType);
+		entityTypeBuilder.addMultiAssociationAttribute(targetAttribute,
+				attributeTargetType, collectionSortType);
 	}
 
-	public CollectionAttributeTransformationBuilder convertNullToEmpty()
-	{
+	public CollectionAttributeTransformationBuilder convertNullToEmpty() {
 		convertNullToEmpty = true;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformation<?, ?> create(EntityType<?> targetType)
-	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(sourceAttribute, sourceType);
-		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(targetAttribute, targetType);
-		CollectionAssociationAttributeTransformation<?, ?> transformation =
-			beanLocator.getInstance(CollectionAssociationAttributeTransformation.class);
+	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
+		AttributePath sourcePath = attributePathBuilderFactory
+				.createAttributePath(sourceAttribute, sourceType);
+		AttributePath targetPath = attributePathBuilderFactory
+				.createAttributePath(targetAttribute, targetType);
+		CollectionAssociationAttributeTransformation<A, B> transformation = beanLocator
+				.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setConverter(getConverter(sourcePath.getTargetType().getType()));
+		transformation.setConverter(getConverter(sourcePath.getTargetType()
+				.getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
-		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
+		addDerivation(transformation, targetPath.getAttribute(),
+				sourcePath.getAttribute());
 		return transformation;
 	}
 
-	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)
-	{
+	public CollectionAttributeTransformationBuilder sort(
+			CollectionSortType collectionSortType) {
 		this.collectionSortType = collectionSortType;
 		return this;
 	}

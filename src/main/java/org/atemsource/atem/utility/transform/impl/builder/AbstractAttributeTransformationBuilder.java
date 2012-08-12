@@ -32,7 +32,7 @@ import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
-public class AbstractAttributeTransformationBuilder<A, B> implements
+public abstract class AbstractAttributeTransformationBuilder<A, B> implements
 		AttributeTransformationBuilder<A, B> {
 
 	private AttributePathBuilder attributePathBuilder;

@@ -1,4 +1,4 @@
-package org.atemsource.atem.utility.transform.api.attribute;
+package org.atemsource.atem.utility.transform.impl.builder;
 
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
@@ -6,12 +6,15 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
-import org.atemsource.atem.utility.transform.impl.builder.AbstractAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssociationAttributeTransformation;
 import org.atemsource.atem.utility.transform.impl.transformation.CollectionToMapAttributeTransformation;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-public class CollectionToMap<A, B> extends
-		AbstractAttributeTransformationBuilder<A, B> {
+@Component
+@Scope("prototype")
+public class CollectionToMap extends
+		AbstractAttributeTransformationBuilder<Object, Object> {
 
 	private Converter<?, ?> keyConverter;
 	private boolean convertNullToEmpty;
@@ -32,7 +35,7 @@ public class CollectionToMap<A, B> extends
 	}
 
 	@Override
-	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
+	public AttributeTransformation<Object,Object> create(EntityType<Object> targetType) {
 		CollectionToMapAttributeTransformation transformation = beanLocator
 				.getInstance(CollectionToMapAttributeTransformation.class);
 		AttributePath sourcePath = attributePathBuilderFactory

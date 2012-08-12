@@ -26,6 +26,7 @@ import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.ConverterFactory;
+import org.atemsource.atem.utility.transform.api.CustomAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.DerivedAttribute;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
@@ -33,7 +34,7 @@ import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
 public abstract class AbstractAttributeTransformationBuilder<A, B> implements
-		AttributeTransformationBuilder<A, B> {
+		CustomAttributeTransformationBuilder<A, B> {
 
 	private AttributePathBuilder attributePathBuilder;
 

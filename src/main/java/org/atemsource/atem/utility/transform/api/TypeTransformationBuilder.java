@@ -254,9 +254,9 @@ public class TypeTransformationBuilder<A, B> {
 		}
 	}
 	
-	public <B extends CustomAttributeTransformationBuilder<A, B>> B transformCustom(
-			Class<B> builderClass) {
-		B builder = beanLocator.getInstance(builderClass);
+	public <A extends CustomAttributeTransformationBuilder> A transformCustom(
+			Class<A> builderClass) {
+		A builder = beanLocator.getInstance(builderClass);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
 		transformations.add(builder);

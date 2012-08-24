@@ -18,6 +18,7 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
+import org.atemsource.atem.utility.transform.api.JavaTransformation;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
@@ -30,6 +31,11 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 	private EntityType<A> entityTypeA;
 
 	private EntityType<B> entityTypeB;
+	
+	private List<JavaTransformation<A, B>> javaTransformations= new ArrayList<JavaTransformation<A,B>>();
+public void addTransformation(JavaTransformation<A, B> javaTransformation) {
+	javaTransformations.add(javaTransformation);
+}
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -248,6 +254,9 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 		if (superTransformation != null) {
 			superTransformation.transformABChildren(valueA, valueB, ctx);
 		}
+		for (JavaTransformation<A, B> transformation : javaTransformations) {
+			transformation.mergeAB(valueA, valueB);
+		}
 		for (AttributeTransformation<A, B> transformation : embeddedTransformations) {
 			transformation.mergeAB(valueA, valueB, ctx);
 		}
@@ -257,6 +266,9 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 			TransformationContext ctx) {
 		if (superTransformation != null) {
 			superTransformation.transformBAChildren(valueB, valueA, ctx);
+		}
+		for (JavaTransformation<A, B> transformation : javaTransformations) {
+			transformation.mergeBA(valueB, valueA);
 		}
 		for (AttributeTransformation<A, B> transformation : embeddedTransformations) {
 			transformation.mergeBA(valueB, valueA, ctx);

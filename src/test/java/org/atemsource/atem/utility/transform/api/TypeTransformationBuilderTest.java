@@ -227,7 +227,7 @@ public class TypeTransformationBuilderTest {
 				.create();
 		builder.setSourceType(EntityA.class);
 		builder.setTargetTypeBuilder(dynamicEntityTypeSubrepository
-				.createBuilder("test"));
+				.createBuilder("testGeneric"));
 		GenericTransformationBuilder transformCustom = builder
 				.transformCustom(GenericTransformationBuilder.class);
 		transformCustom.getTargetTypeBuilder().addSingleAttribute(
@@ -242,7 +242,7 @@ public class TypeTransformationBuilderTest {
 					}
 
 					@Override
-					public void mergeBA(EntityA a, DynamicEntity b) {
+					public void mergeBA( DynamicEntity b,EntityA a) {
 					}
 
 				});

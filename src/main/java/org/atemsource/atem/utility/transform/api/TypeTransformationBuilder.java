@@ -41,6 +41,11 @@ public class TypeTransformationBuilder<A, B> {
 	private BeanLocator beanLocator;
 
 	private ConverterFactory converterFactory;
+	
+	
+	public void addTransformation(JavaTransformation<A, B> javaTransformation) {
+		selfReference.addTransformation(javaTransformation);
+	}
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;

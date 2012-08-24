@@ -13,7 +13,7 @@ public class GenericAttributeTransformation<A,B> extends AbstractAttributeTransf
 private JavaTransformation<A, B> transformation;
 	@Override
 	public void mergeBA(B b, A a, TransformationContext ctx) {
-		transformation.mergeBA(a, b);
+		transformation.mergeBA(b, a);
 	}
 
 	@Override

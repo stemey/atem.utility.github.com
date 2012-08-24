@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class SingleAttributeTransformationBuilder<A, B> extends
-		AbstractAttributeTransformationBuilder<A, B> {
+		OneToOneAttributeTransformationBuilder<A, B,SingleAttributeTransformationBuilder<A, B>> {
 	public void build(EntityTypeBuilder entityTypeBuilder) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		if (getConverter(sourcePath.getTargetType().getType()) != null) {
 			attributeTargetType = getConverter(
@@ -31,15 +31,15 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		entityTypeBuilder.addSingleAttribute(targetAttribute,
+		entityTypeBuilder.addSingleAttribute(getTargetAttribute(),
 				attributeTargetType);
 	}
 
 	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		AttributePath targetPath = attributePathBuilderFactory
-				.createAttributePath(targetAttribute, targetType);
+				.createAttributePath(getTargetAttribute(), targetType);
 		SingleAttributeTransformation<A, B> primitiveAttributeTransformation = beanLocator
 				.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);

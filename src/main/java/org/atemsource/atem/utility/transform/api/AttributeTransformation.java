@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.transform.api;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.path.AttributePath;
@@ -11,11 +12,9 @@ public interface AttributeTransformation<A, B> {
 
 	void mergeAB(A a, B b, TransformationContext ctx);
 
-	AttributePath getAttributeA();
+	Set<AttributePath> getAttributeAs();
 
-	AttributePath getAttributeB();
-
-	Converter getConverter();
+	Set<AttributePath> getAttributeBs();
 
 	Map<String, Object> getMeta();
 

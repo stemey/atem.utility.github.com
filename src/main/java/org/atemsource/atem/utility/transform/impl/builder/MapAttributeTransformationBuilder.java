@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class MapAttributeTransformationBuilder<A, B> extends
-		AbstractAttributeTransformationBuilder<A, B> {
+OneToOneAttributeTransformationBuilder<A, B, MapAttributeTransformationBuilder<A, B>> {
 	private boolean convertNullToEmpty;
 
 	@Inject
@@ -36,7 +36,7 @@ public class MapAttributeTransformationBuilder<A, B> extends
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		if (getConverter(sourcePath.getTargetType().getType()) != null) {
 			attributeTargetType = getConverter(
@@ -50,7 +50,7 @@ public class MapAttributeTransformationBuilder<A, B> extends
 		} else {
 			keyType = ((MapAttribute) sourcePath.getAttribute()).getKeyType();
 		}
-		entityTypeBuilder.addMapAssociationAttribute(targetAttribute, keyType,
+		entityTypeBuilder.addMapAssociationAttribute(getTargetAttribute(), keyType,
 				attributeTargetType);
 	}
 
@@ -67,9 +67,9 @@ public class MapAttributeTransformationBuilder<A, B> extends
 	@Override
 	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		AttributePath targetPath = attributePathBuilderFactory
-				.createAttributePath(targetAttribute, targetType);
+				.createAttributePath(getTargetAttribute(), targetType);
 		MapAssociationAttributeTransformation<A,B>  transformation = beanLocator
 				.getInstance(MapAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
@@ -85,5 +85,6 @@ public class MapAttributeTransformationBuilder<A, B> extends
 				sourcePath.getAttribute());
 		return transformation;
 	}
+
 
 }

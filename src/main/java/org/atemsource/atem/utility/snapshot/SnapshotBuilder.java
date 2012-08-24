@@ -25,6 +25,7 @@ import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -87,7 +88,7 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 
 	public SnapshotAttributeBuilder include(Attribute attribute)
 	{
-		AttributeTransformationBuilder attributeTransformationBuilder =
+		OneToOneAttributeTransformationBuilder<?,?,?> attributeTransformationBuilder =
 			transformationBuilder.transform(attribute.getClass()).from(attribute.getCode()).to(attribute.getCode());
 		SnapshotAttributeBuilder attributeBuilder = beanLocator.getInstance(SnapshotAttributeBuilder.class);
 		attributeBuilder.setSnapshotBuilderFactory(this.factory);
@@ -100,7 +101,7 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 	{
 		AttributePath attributePath = attributePathBuilderFactory.createAttributePath(path, entityType);
 		String targetAttributePath = path.replace('.', '_');
-		AttributeTransformationBuilder attributeTransformationBuilder =
+		OneToOneAttributeTransformationBuilder<?,?,?> attributeTransformationBuilder =
 			transformationBuilder.transform(attributePath.getAttribute().getClass()).from(path).to(targetAttributePath);
 		SnapshotAttributeBuilder attributeBuilder = beanLocator.getInstance(SnapshotAttributeBuilder.class);
 		attributeBuilder.initialize(attributeTransformationBuilder, attributePath.getAttribute().getTargetType());

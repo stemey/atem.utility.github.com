@@ -22,8 +22,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class CollectionAttributeTransformationBuilder<A, B> extends
-		AbstractAttributeTransformationBuilder<A, B>
+public class CollectionAttributeTransformationBuilder<A, B>
+		extends
+		OneToOneAttributeTransformationBuilder<A, B, CollectionAttributeTransformationBuilder<A,B>>
 
 {
 	private CollectionSortType collectionSortType;
@@ -33,7 +34,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		if (getConverter(sourcePath.getTargetType().getType()) != null) {
 			attributeTargetType = getConverter(
@@ -45,7 +46,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 			collectionSortType = ((CollectionAttribute) sourcePath
 					.getAttribute()).getCollectionSortType();
 		}
-		entityTypeBuilder.addMultiAssociationAttribute(targetAttribute,
+		entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(),
 				attributeTargetType, collectionSortType);
 	}
 
@@ -57,9 +58,9 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 	@Override
 	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		AttributePath targetPath = attributePathBuilderFactory
-				.createAttributePath(targetAttribute, targetType);
+				.createAttributePath(getTargetAttribute(), targetType);
 		CollectionAssociationAttributeTransformation<A, B> transformation = beanLocator
 				.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);

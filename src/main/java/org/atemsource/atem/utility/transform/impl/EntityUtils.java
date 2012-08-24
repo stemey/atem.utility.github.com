@@ -15,7 +15,6 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
-
 import java.util.List;
 
 import org.atemsource.atem.api.EntityTypeRepository;
@@ -23,31 +22,56 @@ import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.BeanLocator;
 
+public class EntityUtils {
 
-public class EntityUtils
-{
-
-	public static <T, S extends T, U extends T> void merge(S from, U to, Class<T> clazz)
-	{
-		EntityType<T> entityType = BeanLocator.getInstance().getInstance(EntityTypeRepository.class).getEntityType(clazz);
+	public static <T, S extends T, U extends T> void merge(S from, U to,
+			Class<T> clazz) {
+		EntityType<T> entityType = BeanLocator.getInstance()
+				.getInstance(EntityTypeRepository.class).getEntityType(clazz);
 		merge(from, to, entityType);
 
 	}
 
-	public static <T, S extends T, U extends T> void merge(S from, U to, EntityType<T> entityType)
-	{
-			List<Attribute> attributes = entityType.getAttributes();
-			for (Attribute attribute : attributes)
-			{
-				if (attribute.isWriteable())
-				{
+	public static <T, S extends T, U extends T> void merge(S from, U to,
+			EntityType<T> entityType) {
+		List<Attribute> attributes = entityType.getAttributes();
+		for (Attribute attribute : attributes) {
+			if (attribute.isWriteable()) {
 
-					Object value = attribute.getValue(from);
-					attribute.setValue(to, value);
+				Object value = attribute.getValue(from);
+				attribute.setValue(to, value);
 
-				}
 			}
+		}
 
+	}
+
+	public static <T, S extends T, U extends T> void mergeRecursive(S from,
+			U to, EntityType<T> entityType) {
+		do {
+			merge(from, to, entityType);
+			entityType = entityType.getSuperEntityType();
+		} while (entityType != null);
+
+	}
+
+	public static<T> EntityType<T> getCommonAncestor(EntityType<?> a,
+			EntityType<?> b) {
+		while (a != null && b != null && !a.equals(b)) {
+			if (a.isAssignableFrom(b)) {
+				a = a.getSuperEntityType();
+			} else if (b.isAssignableFrom(a)) {
+				b = b.getSuperEntityType();
+			} else {
+				a = a.getSuperEntityType();
+				b = b.getSuperEntityType();
+			}
+		}
+		if (a == null || b == null) {
+			return null;
+		} else {
+			return (EntityType<T>) a;
+		}
 	}
 
 }

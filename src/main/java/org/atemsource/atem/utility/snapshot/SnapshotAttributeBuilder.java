@@ -23,6 +23,7 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class SnapshotAttributeBuilder
 {
-	private AttributeTransformationBuilder builder;
+	private OneToOneAttributeTransformationBuilder<?,?,?> builder;
 
 	private boolean useId;
 
@@ -47,12 +48,12 @@ public class SnapshotAttributeBuilder
 		return subBuilder;
 	}
 
-	public void cascade(Converter<?, ?> converter)
+	public void cascade(Converter converter)
 	{
 		builder.convert(converter);
 	}
 
-	public void initialize(AttributeTransformationBuilder builder, Type<?> targetType)
+	public void initialize(OneToOneAttributeTransformationBuilder<?,?,?> builder, Type<?> targetType)
 	{
 		this.builder = builder;
 		this.targetType = targetType;

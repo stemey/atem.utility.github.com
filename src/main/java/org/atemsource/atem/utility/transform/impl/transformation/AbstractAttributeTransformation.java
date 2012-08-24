@@ -8,6 +8,7 @@
 package org.atemsource.atem.utility.transform.impl.transformation;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -16,23 +17,23 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
-import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.Transformation;
-import org.atemsource.atem.utility.transform.api.TransformationContext;
-import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 
+public abstract class AbstractAttributeTransformation<A, B> implements
+		AttributeTransformation<A, B> {
 
-public abstract class AbstractAttributeTransformation<A, B> implements AttributeTransformation<A, B> 
-{
+	private Set<AttributePath> attributeAs;
 
+	private Set<AttributePath> attributeBs;
 
+	public void setAttributeAs(Set<AttributePath> attributeAs) {
+		this.attributeAs = attributeAs;
+	}
 
-	private AttributePath attributeA;
-
-	private AttributePath attributeB;
-
-	private Converter converter;
+	public void setAttributeBs(Set<AttributePath> attributeBs) {
+		this.attributeBs = attributeBs;
+	}
 
 	@Inject
 	protected EntityTypeRepository entityTypeRepository;
@@ -43,108 +44,69 @@ public abstract class AbstractAttributeTransformation<A, B> implements Attribute
 
 	private EntityType typeB;
 
-	public AbstractAttributeTransformation()
-	{
+	public AbstractAttributeTransformation() {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#mergeBA(B, A, org.atemsource.atem.utility.transform.api.TransformationContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.atemsource.atem.utility.transform.impl.transformation.
+	 * AttributeTransformation#getAttributeA()
 	 */
-	public void mergeBA(B b, A a, TransformationContext ctx)
-	{
-		UniConverter baConverter = converter == null ? null : converter.getBA();
-		AbstractAttributeTransformation.this.transformInternally(b, a, attributeB, attributeA, ctx, baConverter);
+	public Set<AttributePath> getAttributeAs() {
+		return attributeAs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#mergeAB(A, B, org.atemsource.atem.utility.transform.api.TransformationContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.atemsource.atem.utility.transform.impl.transformation.
+	 * AttributeTransformation#getAttributeB()
 	 */
-	public void mergeAB( A a,B b, TransformationContext ctx)
-	{
-		UniConverter abConverter = converter == null ? null : converter.getAB();
-		AbstractAttributeTransformation.this.transformInternally(a,b, attributeA, attributeB, ctx, abConverter);
+	public Set<AttributePath> getAttributeBs() {
+		return attributeBs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getAttributeA()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.atemsource.atem.utility.transform.impl.transformation.
+	 * AttributeTransformation#getMeta()
 	 */
-	public AttributePath getAttributeA()
-	{
-		return attributeA;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getAttributeB()
-	 */
-	public AttributePath getAttributeB()
-	{
-		return attributeB;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getConverter()
-	 */
-	public Converter getConverter()
-	{
-		return converter;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getMeta()
-	 */
-	public Map<String, Object> getMeta()
-	{
+	public Map<String, Object> getMeta() {
 		return meta;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getTypeA()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.atemsource.atem.utility.transform.impl.transformation.
+	 * AttributeTransformation#getTypeA()
 	 */
-	public EntityType getTypeA()
-	{
+	public EntityType getTypeA() {
 		return typeA;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.atemsource.atem.utility.transform.impl.transformation.AttributeTransformation#getTypeB()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.atemsource.atem.utility.transform.impl.transformation.
+	 * AttributeTransformation#getTypeB()
 	 */
-	public EntityType getTypeB()
-	{
+	public EntityType getTypeB() {
 		return typeB;
 	}
 
-	public void setAttributeA(AttributePath source)
-	{
-		this.attributeA = source;
-	}
-
-	public void setAttributeB(AttributePath attributeB)
-	{
-		this.attributeB = attributeB;
-	}
-
-	public void setConverter(Converter converter)
-	{
-		this.converter = converter;
-	}
-
-	public void setMeta(Map<String, Object> meta)
-	{
+	public void setMeta(Map<String, Object> meta) {
 		this.meta = meta;
 	}
 
-	public void setTypeA(EntityType typeA)
-	{
+	public void setTypeA(EntityType typeA) {
 		this.typeA = typeA;
 	}
 
-	public void setTypeB(EntityType typeB)
-	{
+	public void setTypeB(EntityType typeB) {
 		this.typeB = typeB;
 	}
-
-	protected abstract void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
-		TransformationContext ctx, UniConverter<Object, Object> ab);
 }

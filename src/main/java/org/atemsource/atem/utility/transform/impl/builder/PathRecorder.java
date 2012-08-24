@@ -14,10 +14,10 @@ import net.sf.cglib.proxy.MethodProxy;
 
 public class PathRecorder implements MethodInterceptor {
 
-	private AbstractAttributeTransformationBuilder<?, ?> builder;
+	private AbstractAttributeTransformationBuilder<?, ?,?> builder;
 
 	public PathRecorder(
-			AbstractAttributeTransformationBuilder<?, ?> builder) {
+			AbstractAttributeTransformationBuilder<?, ?,?> builder) {
 	}
 	
 

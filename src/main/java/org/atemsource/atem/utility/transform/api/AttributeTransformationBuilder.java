@@ -10,19 +10,13 @@ package org.atemsource.atem.utility.transform.api;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 
-public interface AttributeTransformationBuilder<A, B> {
-	AttributeTransformationBuilder<A, B> convert(Converter<A, B> converter);
+public interface AttributeTransformationBuilder<A, B, T extends AttributeTransformationBuilder<A,B,T>> {
 
-	AttributeTransformationBuilder<A, B> convertDynamically(
-			TypeNameConverter typeCodeConverter);
-
-	AttributeTransformationBuilder<A, B> from(String attributePath);
+	T from(String attributePath);
 
 	A fromMethod();
 
-	AttributeTransformationBuilder<A, B> metaValue(String name, Object metaData);
-
-	AttributeTransformationBuilder<A, B> to(String attributePath);
+	T metaValue(String name, Object metaData);
 
 	void build(EntityTypeBuilder targetTypeBuilder);
 

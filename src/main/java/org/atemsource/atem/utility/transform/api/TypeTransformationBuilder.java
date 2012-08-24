@@ -23,12 +23,12 @@ import org.atemsource.atem.api.attribute.MapAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.PrimitiveType;
-import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,97 +36,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class TypeTransformationBuilder<A, B> {
-
-	private final class TypeCreator<A, B> implements Transformation<A, B> {
-		private EntityType sourceType;
-
-		private EntityType targetType;
-
-		private TypeCreator(EntityType sourceType, EntityType targetType) {
-			super();
-			this.sourceType = sourceType;
-			this.targetType = targetType;
-		}
-
-		@Override
-		public UniTransformation<A, B> getAB() {
-			return new UniTransformation<A, B>() {
-
-				@Override
-				public Type<A> getSourceType() {
-					return sourceType;
-				}
-
-				@Override
-				public Type<B> getTargetType() {
-					return targetType;
-				}
-
-				@Override
-				public B merge(A a, B b, TransformationContext ctx) {
-					if (ctx.isTransformed(a)) {
-						return (B) ctx.getTransformed(a);
-					} else {
-						return (B) targetType.createEntity();
-					}
-				}
-
-				@Override
-				public B convert(A a, TransformationContext ctx) {
-					if (ctx.isTransformed(a)) {
-						return (B) ctx.getTransformed(a);
-					} else {
-						return (B) targetType.createEntity();
-					}
-				}
-			};
-		}
-
-		@Override
-		public UniTransformation<B, A> getBA() {
-			return new UniTransformation<B, A>() {
-
-				@Override
-				public Type<B> getSourceType() {
-					return targetType;
-				}
-
-				@Override
-				public Type<A> getTargetType() {
-					return sourceType;
-				}
-
-				@Override
-				public A merge(B a, A b, TransformationContext ctx) {
-					if (ctx.isTransformed(a)) {
-						return (A) ctx.getTransformed(a);
-					} else {
-						return (A) sourceType.createEntity();
-					}
-				}
-
-				@Override
-				public A convert(B a, TransformationContext ctx) {
-					if (ctx.isTransformed(a)) {
-						return (A) ctx.getTransformed(a);
-					} else {
-						return (A) sourceType.createEntity();
-					}
-				}
-			};
-		}
-
-		@Override
-		public Type getTypeA() {
-			return sourceType;
-		}
-
-		@Override
-		public Type getTypeB() {
-			return targetType;
-		}
-
-	}
 
 	@Inject
 	private BeanLocator beanLocator;
@@ -155,6 +64,11 @@ public class TypeTransformationBuilder<A, B> {
 
 	public TypeTransformationBuilder() {
 	}
+	
+	public void setTypeTransfomation(Transformation<A,B> transformation) {
+		this.transformation=transformation;
+	}
+	
 
 	private void addDerivation(EntityTypeTransformation<?, ?> transformation,
 			EntityType<?> newType, EntityType<?> originalType) {
@@ -178,8 +92,7 @@ public class TypeTransformationBuilder<A, B> {
 		if (transformation != null) {
 			selfReference.setTypeConverter(transformation);
 		} else {
-			selfReference.setTypeConverter(new TypeCreator(sourceType,
-					targetType));
+			selfReference.setTypeConverter(createTypeCreator(targetType));
 		}
 		if (superTransformation != null) {
 			EntityTypeTransformation<A, B> superEntityTypeTransformation = (EntityTypeTransformation<A, B>) superTransformation;
@@ -193,6 +106,13 @@ public class TypeTransformationBuilder<A, B> {
 		selfReference.setEntityTypeA(sourceType);
 		addDerivation(selfReference, targetType, sourceType);
 		return selfReference;
+	}
+
+	protected TypeCreator createTypeCreator(EntityType targetType) {
+		TypeCreator instance = beanLocator.getInstance(TypeCreator.class);
+		instance.initialize( sourceType,
+				targetType);
+		return instance;
 	}
 
 	public ConverterFactory getConverterFactory() {
@@ -234,7 +154,7 @@ public class TypeTransformationBuilder<A, B> {
 		this.targetTypeBuilder = targetTypeBuilder;
 	}
 
-	public AttributeTransformationBuilder<A, B> transform() {
+	public SingleAttributeTransformationBuilder<A, B> transform() {
 		SingleAttributeTransformationBuilder builder = beanLocator
 				.getInstance(SingleAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
@@ -243,14 +163,14 @@ public class TypeTransformationBuilder<A, B> {
 		return builder;
 	}
 
-	public AttributeTransformationBuilder<A, B> transform(
+	public <T extends OneToOneAttributeTransformationBuilder<A,B,T>> OneToOneAttributeTransformationBuilder<A, B,T> transform(
 			Class<? extends Attribute> attributeClass) {
 		if (CollectionAttribute.class.isAssignableFrom(attributeClass)) {
-			return transformCollection();
+			return (OneToOneAttributeTransformationBuilder<A, B, T>) transformCollection();
 		} else if (MapAttribute.class.isAssignableFrom(attributeClass)) {
-			return transformMap();
+			return (OneToOneAttributeTransformationBuilder<A, B, T>) transformMap();
 		} else {
-			return transform();
+			return (OneToOneAttributeTransformationBuilder<A, B, T>) transform();
 		}
 	}
 	
@@ -259,6 +179,7 @@ public class TypeTransformationBuilder<A, B> {
 		A builder = beanLocator.getInstance(builderClass);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
+		builder.setTargetTypeBuilder(targetTypeBuilder);
 		transformations.add(builder);
 		return builder;
 	}
@@ -272,7 +193,7 @@ public class TypeTransformationBuilder<A, B> {
 		return builder;
 	}
 
-	public MapAttributeTransformationBuilder transformMap() {
+	public MapAttributeTransformationBuilder<A,B> transformMap() {
 		MapAttributeTransformationBuilder builder = beanLocator
 				.getInstance(MapAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
@@ -289,7 +210,7 @@ public class TypeTransformationBuilder<A, B> {
 				// transformers
 				Converter converter = converterFactory.get(attribute
 						.getTargetType());
-				AttributeTransformationBuilder<A, B> transform = transform();
+				SingleAttributeTransformationBuilder<A, B> transform = transform();
 				transform.from(attribute.getCode()).to(attribute.getCode());// .convert(converter);
 				if (converter != null) {
 					transform.convert(converter);

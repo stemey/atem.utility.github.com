@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class CollectionToMap extends
-		AbstractAttributeTransformationBuilder<Object, Object> {
+		OneToOneAttributeTransformationBuilder<Object, Object, CollectionToMap> {
 
 	private Converter<?, ?> keyConverter;
 	private boolean convertNullToEmpty;
@@ -22,7 +22,7 @@ public class CollectionToMap extends
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder) {
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		if (getConverter(sourcePath.getTargetType().getType()) != null) {
 			attributeTargetType = getConverter(
@@ -30,18 +30,19 @@ public class CollectionToMap extends
 		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		entityTypeBuilder.addMapAssociationAttribute(targetAttribute,
+		entityTypeBuilder.addMapAssociationAttribute(getTargetAttribute(),
 				keyConverter.getTypeB(), attributeTargetType);
 	}
 
 	@Override
-	public AttributeTransformation<Object,Object> create(EntityType<Object> targetType) {
+	public AttributeTransformation<Object, Object> create(
+			EntityType<Object> targetType) {
 		CollectionToMapAttributeTransformation transformation = beanLocator
 				.getInstance(CollectionToMapAttributeTransformation.class);
 		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(sourceAttribute, sourceType);
+				.createAttributePath(getSourceAttribute(), sourceType);
 		AttributePath targetPath = attributePathBuilderFactory
-				.createAttributePath(targetAttribute, targetType);
+				.createAttributePath(getTargetAttribute(), targetType);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
 		transformation.setConverter(getConverter(sourcePath.getTargetType()

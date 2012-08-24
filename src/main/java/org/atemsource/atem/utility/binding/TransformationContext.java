@@ -1,5 +1,5 @@
 package org.atemsource.atem.utility.binding;
-
+    
 import java.util.Stack;
 
 import org.atemsource.atem.api.type.EntityType;

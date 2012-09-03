@@ -27,7 +27,7 @@
 	</bean>
 
 
-	<bean id="atem-utility-bindingProcessor" class="org.atemsource.atem.utility.binding.Binder">
+	<bean id="atem-utility-binder" class="org.atemsource.atem.utility.binding.Binder">
 		<property name="typeFilter">
 			<bean class="org.atemsource.atem.utility.binding.PackageTypeFilter">
 				<property name="includedPackage" value="org.atemsource.atem.utility.domain" />

@@ -193,7 +193,7 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 			return this;
 		} else if (entityType.isAssignableFrom(getEntityTypeA())) {
 			return superTransformation.getTransformationByTypeA(entityType);
-		} else {
+		} else if (getEntityTypeA().isAssignableFrom(entityType)) {
 			for (EntityTypeTransformation<A, B> subTransformation : subTransformations) {
 				EntityTypeTransformation<A, B> transformation = subTransformation
 						.getTransformationByTypeA(entityType);
@@ -201,6 +201,7 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 					return transformation;
 				}
 			}
+			 return this;
 		}
 		return null;
 	}

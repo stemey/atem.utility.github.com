@@ -58,8 +58,9 @@ public class CollectionToMap extends
 		return transformation;
 	}
 
-	public void keyConvert(Converter<?, ?> keyConverter) {
+	public CollectionToMap keyConvert(Converter<?, ?> keyConverter) {
 		this.keyConverter = keyConverter;
+		return this;
 	}
 
 }

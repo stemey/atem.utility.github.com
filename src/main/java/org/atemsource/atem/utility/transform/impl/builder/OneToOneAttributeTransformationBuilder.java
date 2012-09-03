@@ -13,7 +13,7 @@ import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistr
 
 public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneToOneAttributeTransformationBuilder<A,B,T>> extends AbstractAttributeTransformationBuilder<A, B,T> {
 
-	private Converter<A, B> converter;
+	private Converter<?, ?> converter;
 	private String sourceAttribute;
 	private String targetAttribute;
 
@@ -25,7 +25,7 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneT
 		return targetAttribute;
 	}
 
-	public T convert(Converter<A, B> converter) {
+	public T convert(Converter<?, ?> converter) {
 		this.converter = converter;
 		return (T) this;
 	}
@@ -58,11 +58,11 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneT
 				this));
 	}
 
-	protected Converter<A, B> getConverter(Type<?> type) {
+	protected Converter<?, ?> getConverter(Type<?> type) {
 		if (converter != null) {
 			return converter;
 		} else {
-			return (Converter<A, B>) converterFactory.get(type);
+			return (Converter<?, ?>) converterFactory.get(type);
 		}
 	}
 

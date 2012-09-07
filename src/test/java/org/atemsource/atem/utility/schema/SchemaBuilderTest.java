@@ -1,15 +1,14 @@
 package org.atemsource.atem.utility.schema;
 
-import static org.junit.Assert.*;
-
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.utility.domain.SimpleEntity;
 import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +24,14 @@ public class SchemaBuilderTest {
 	
 	@Inject
 	private SchemaBuilder schemaBuilder;
+	
 	@Test
 	public void test() {
 		EntityType<SimpleEntity> entityType = entityTypeRepository.getEntityType(SimpleEntity.class);
 		EntityTypeTransformation<EntityType, ?> transformation = schemaBuilder.init();
 		ObjectNode schema = (ObjectNode) transformation.getAB().convert(entityType,new SimpleTransformationContext());
-		System.out.println(schema.toString());
+	    System.out.println(schema.toString());
+
 	}
 
 }

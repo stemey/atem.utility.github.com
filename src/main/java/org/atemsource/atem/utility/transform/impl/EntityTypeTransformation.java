@@ -99,12 +99,17 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 
 			@Override
 			public B convert(A a, TransformationContext ctx) {
+
 				if (a == null) {
 					return null;
 				}
 				EntityType<A> entityType = entityTypeRepository
 						.getEntityType(a);
-				return getTransformationByTypeA(entityType).createB(a, ctx);
+				EntityTypeTransformation<A, B> transformationByTypeA = getTransformationByTypeA(entityType);
+				if (transformationByTypeA==null) {
+					throw new IllegalStateException("cannot find transformation for "+entityType.getCode());
+				}
+				return transformationByTypeA.createB(a, ctx);
 			}
 
 			@Override

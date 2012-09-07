@@ -29,8 +29,8 @@ OneToOneAttributeTransformation<A, B> {
 
 	@Override
 	public void mergeBA(B b, A a, TransformationContext ctx) {
-		UniConverter baConverter = getConverter() == null ? null
-				: getConverter().getBA();
+		UniConverter baConverter = getTransformation() == null ? null
+				: getTransformation().getBA();
 		UniConverter<Object, Object> baKeyConverter = getKeyConverter() == null ? null
 				: keyConverter.getBA();
 		MapAssociationAttributeTransformation.this.transformInternally(b, a,
@@ -40,8 +40,8 @@ OneToOneAttributeTransformation<A, B> {
 
 	@Override
 	public void mergeAB(A a, B b, TransformationContext ctx) {
-		UniConverter abConverter = getConverter() == null ? null
-				: getConverter().getAB();
+		UniConverter abConverter = getTransformation() == null ? null
+				: getTransformation().getAB();
 		UniConverter<Object, Object> abKeyConverter = getKeyConverter() == null ? null
 				: keyConverter.getAB();
 		MapAssociationAttributeTransformation.this.transformInternally(a, b,
@@ -82,7 +82,7 @@ OneToOneAttributeTransformation<A, B> {
 	@Override
 	protected void transformInternally(Object a, Object b,
 			AttributePath attributeA, AttributePath attributeB,
-			TransformationContext ctx, UniConverter<Object, Object> ab) {
+			TransformationContext ctx, UniTransformation<Object, Object> ab) {
 
 	}
 

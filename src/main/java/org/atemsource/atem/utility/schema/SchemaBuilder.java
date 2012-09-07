@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.primitive.IntegerType;
 import org.atemsource.atem.api.attribute.primitive.TextType;
 import org.atemsource.atem.api.attribute.relation.ListAssociationAttribute;
@@ -14,12 +15,16 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.atemsource.atem.utility.transform.api.JavaTransformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionToMap;
+import org.atemsource.atem.utility.transform.impl.builder.Embed;
+import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
+import org.codehaus.jackson.node.ObjectNode;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,44 +43,57 @@ public class SchemaBuilder {
 		transformationBuilder.transformCustom(CollectionToMap.class).from("attributes").to("attributes")
 				.keyConvert(getAttributeKeyConverter())
 				.convert(getAttributeTransformation());
+		transformationBuilder.includeSuper(getTypeTransformation());
 		return transformationBuilder.buildTypeTransformation();
 
 	}
 
 	private Converter<Object, Object> getAttributeTransformation() {
-		return getSingleAttributeTransformation();
+		EntityTypeBuilder typeBuilder = subrepository
+				.createBuilder("attribute");
+		TypeTransformationBuilder<Attribute, ?> transformationBuilder = transformationBuilderFactory
+				.create(Attribute.class, typeBuilder);
+		SingleAttributeTransformationBuilder<Attribute, ?> requiredTransformer = transformationBuilder
+				.transform();
+		requiredTransformer.from("required");
+		requiredTransformer.to("required");
+		transformationBuilder.transformCustom(Embed.class).from("targetType").transform((EntityTypeTransformation<?, ?>) getTypeTransformation());
+		getSingleAttributeTransformation(transformationBuilder.getReference());
+		getListAttributeTransformation(transformationBuilder.getReference());
+		return transformationBuilder.buildTypeTransformation();
 	}
 
-	private Converter<Object, Object> getSingleAttributeTransformation() {
+	private void getSingleAttributeTransformation(EntityTypeTransformation attributeTransformation) {
 		EntityTypeBuilder typeBuilder = subrepository
 				.createBuilder("single-attribute");
 		TypeTransformationBuilder<SingleAttribute, ?> transformationBuilder = transformationBuilderFactory
 				.create(SingleAttribute.class, typeBuilder);
-		SingleAttributeTransformationBuilder<SingleAttribute, ?> requiredTransformer = transformationBuilder
-				.transform();
-		requiredTransformer.from("required");
-		requiredTransformer.to("required");
-		SingleAttributeTransformationBuilder<SingleAttribute, ?> typeTransformer = transformationBuilder
-				.transform();
-		typeTransformer.from("targetType");
-		typeTransformer.to("type").convert(getTypeTransformation());
-		return transformationBuilder.buildTypeTransformation();
+		transformationBuilder.transformCustom(Embed.class).from("targetType").transform((EntityTypeTransformation<?, ?>) getTypeTransformation());
+		transformationBuilder.includeSuper(attributeTransformation);
+		 transformationBuilder.buildTypeTransformation();
 	}
 
-	private Converter<Object, Object> getListAttributeTransformation() {
+	private void getListAttributeTransformation(EntityTypeTransformation attributeTransformation) {
 		EntityTypeBuilder typeBuilder = subrepository
 				.createBuilder("list-attribute");
-		TypeTransformationBuilder<SingleAttribute, ?> transformationBuilder = transformationBuilderFactory
-				.create(SingleAttribute.class, typeBuilder);
-		SingleAttributeTransformationBuilder<SingleAttribute, ?> requiredTransformer = transformationBuilder
-				.transform();
-		requiredTransformer.from("required");
-		requiredTransformer.to("required");
-		SingleAttributeTransformationBuilder<SingleAttribute, ?> typeTransformer = transformationBuilder
-				.transform();
-		typeTransformer.from("targetType");
-		typeTransformer.to("type").convert(getTypeTransformation());
-		return transformationBuilder.buildTypeTransformation();
+		TypeTransformationBuilder<CollectionAttribute, ?> transformationBuilder = transformationBuilderFactory
+				.create(CollectionAttribute.class, typeBuilder);
+		GenericTransformationBuilder arrayAttributeBuilder = transformationBuilder.transformCustom(GenericTransformationBuilder.class);
+		arrayAttributeBuilder.to().addSingleAttribute("array", String.class);
+		arrayAttributeBuilder.transform(new JavaTransformation<Object,ObjectNode>() {
+
+			@Override
+			public void mergeAB(Object a, ObjectNode b) {
+				b.put("array", true);
+			}
+
+			@Override
+			public void mergeBA(ObjectNode b, Object a) {
+			}
+
+		});
+		transformationBuilder.includeSuper(attributeTransformation);
+		 transformationBuilder.buildTypeTransformation();
 	}
 
 	private void createTextTypeTransformation(
@@ -108,8 +126,9 @@ public class SchemaBuilder {
 		transformationBuilder.includeSuper(superTransformation);
 		transformationBuilder.buildTypeTransformation();
 	}
-
-	private Converter<Type, ?> getTypeTransformation() {
+private EntityTypeTransformation<?,?> primitiveTypeTransformation;
+	private EntityTypeTransformation<?, ?> getTypeTransformation() {
+		if (primitiveTypeTransformation==null) {
 		EntityTypeBuilder typeBuilder = subrepository
 				.createBuilder("primitive-type");
 		TypeTransformationBuilder<Type, ?> transformationBuilder = transformationBuilderFactory
@@ -118,8 +137,12 @@ public class SchemaBuilder {
 				.getReference());
 		createIntegerTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder
 				.getReference());
+		createListTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder
+				.getReference());
 		transformationBuilder.transform().from("code").to("id");
-		return transformationBuilder.buildTypeTransformation();
+		primitiveTypeTransformation= transformationBuilder.buildTypeTransformation();
+		}
+		return primitiveTypeTransformation;
 	}
 
 	private Converter<Attribute<?, ?>, String> getAttributeKeyConverter() {

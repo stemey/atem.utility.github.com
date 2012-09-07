@@ -65,7 +65,7 @@ public class CollectionAttributeTransformationBuilder<A, B>
 				.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setConverter(getConverter(sourcePath.getTargetType()
+		transformation.setTransformation(getTransformation(sourcePath.getTargetType()
 				.getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);

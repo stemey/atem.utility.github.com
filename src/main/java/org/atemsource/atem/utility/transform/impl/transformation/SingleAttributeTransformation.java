@@ -11,6 +11,7 @@ import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
+import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ OneToOneAttributeTransformation<A, B> {
 	@Override
 	protected void transformInternally(Object a, Object b,
 			AttributePath attributeA, AttributePath attributeB,
-			TransformationContext ctx, UniConverter<Object, Object> converter) {
+			TransformationContext ctx, UniTransformation<Object, Object> converter) {
 		if (attributeB.isWriteable()) {
 			Object valueA = attributeA.getValue(a);
 

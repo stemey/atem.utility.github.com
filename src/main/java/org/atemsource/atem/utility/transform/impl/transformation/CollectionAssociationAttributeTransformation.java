@@ -14,6 +14,7 @@ import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
+import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 
 	@Override
 	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB,
-		TransformationContext ctx, UniConverter<Object, Object> converter)
+		TransformationContext ctx, UniTransformation<Object, Object> converter)
 	{
 		CollectionAttribute<Object, Object> attributeA =
 			(CollectionAttribute<Object, Object>) attributePathA.getAttribute(a);

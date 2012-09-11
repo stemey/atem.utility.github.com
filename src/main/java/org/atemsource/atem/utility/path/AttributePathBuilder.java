@@ -49,6 +49,18 @@ public class AttributePathBuilder
 		if (returnType instanceof EntityType)
 		{
 			EntityType entityType = (EntityType) returnType;
+			if (property.startsWith("@")) {
+				Attribute metaAttribute = entityType.getMetaAttribute(property);
+				if (metaAttribute != null)
+				{
+					newPath.add(new AttributeAttributePathElement(metaAttribute));
+				}
+				else
+				{
+					throw new IllegalStateException("meta attribute "+property+"  not found ");
+				}
+			}
+			// TODO this searches the subtypes. Therefore there  can be more than one results.
 			Attribute attribute = AttributeUtils.findAttribute(property, entityType);
 			if (attribute != null)
 			{

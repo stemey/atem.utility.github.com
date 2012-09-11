@@ -22,6 +22,7 @@ import org.atemsource.atem.utility.transform.api.JavaTransformation;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
+import org.atemsource.atem.utility.transform.impl.builder.TransformationFinder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,8 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 	javaTransformations.add(javaTransformation);
 }
+
+private TransformationFinder<A, B> finder;
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -92,6 +95,7 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 	public void setTypeConverter(Transformation<A, B> typeConverter) {
 		this.typeConverter = typeConverter;
 	}
+	
 
 	@Override
 	public UniTransformation<A, B> getAB() {
@@ -105,6 +109,13 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 				}
 				EntityType<A> entityType = entityTypeRepository
 						.getEntityType(a);
+				if (finder!=null) {
+					
+					UniTransformation<A, B> ab = finder.getAB(a, ctx);
+					if (ab!=null) {
+					return ab.convert(a, ctx);
+					}
+				}
 				EntityTypeTransformation<A, B> transformationByTypeA = getTransformationByTypeA(entityType);
 				if (transformationByTypeA==null) {
 					throw new IllegalStateException("cannot find transformation for "+entityType.getCode());
@@ -126,6 +137,12 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 			public B merge(A a, B b, TransformationContext ctx) {
 				EntityType<A> entityType = entityTypeRepository
 						.getEntityType(a);
+				if (finder!=null) {
+					UniTransformation<A, B> ab = finder.getAB(a, ctx);
+					if (ab!=null) {
+					return ab.merge(a,b, ctx);
+					}
+				}
 				getTransformationByTypeA(entityType).transformABChildren(a, b,
 						ctx);
 				return b;
@@ -147,6 +164,12 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 			public A convert(B b, TransformationContext ctx) {
 				EntityType<B> entityType = entityTypeRepository
 						.getEntityType(b);
+				if (finder!=null) {
+					UniTransformation<B, A> ba = finder.getBA(b, ctx);
+					if (ba!=null) {
+					return ba.convert(b, ctx);
+					}
+				}
 				return getTransformationByTypeB(entityType).createA(b, ctx);
 			}
 
@@ -164,6 +187,12 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 			public A merge(B b, A a, TransformationContext ctx) {
 				EntityType<B> entityType = entityTypeRepository
 						.getEntityType(b);
+				if (finder!=null) {
+					UniTransformation<B, A> ba = finder.getBA(b, ctx);
+					if (ba!=null) {
+					return ba.merge(b,a, ctx);
+					}
+				}
 				getTransformationByTypeB(entityType).transformBAChildren(b, a,
 						ctx);
 
@@ -279,6 +308,10 @@ public void addTransformation(JavaTransformation<A, B> javaTransformation) {
 		for (AttributeTransformation<A, B> transformation : embeddedTransformations) {
 			transformation.mergeBA(valueB, valueA, ctx);
 		}
+	}
+
+	public void setFinder(TransformationFinder<A, B> finder) {
+		this.finder = finder;
 	}
 
 }

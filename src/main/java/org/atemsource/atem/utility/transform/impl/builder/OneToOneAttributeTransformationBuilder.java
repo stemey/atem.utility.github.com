@@ -46,6 +46,8 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		return (T) this;
 	}
 
+	
+
 	@Override
 	public T from(String sourceAttribute) {
 		this.sourceAttribute = sourceAttribute;

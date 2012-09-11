@@ -30,6 +30,7 @@ import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTra
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.builder.TransformationFinder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -149,6 +150,11 @@ public class TypeTransformationBuilder<A, B> {
 
 	public void setSourceType(Class sourceType) {
 		this.sourceType = entityTypeRepository.getEntityType(sourceType);
+	}
+	
+	public TypeTransformationBuilder<A, B> finder(TransformationFinder<A,B> finder) {
+		selfReference.setFinder(finder);
+		return this;
 	}
 
 	public void setSourceType(EntityType sourceType) {

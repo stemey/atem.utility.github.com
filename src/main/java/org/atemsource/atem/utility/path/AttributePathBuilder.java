@@ -15,7 +15,6 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.path;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,142 +27,120 @@ import org.atemsource.atem.utility.type.AttributeUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class AttributePathBuilder
-{
+public class AttributePathBuilder {
 
 	private List<AttributePathElement> newPath = new ArrayList<AttributePathElement>();
 
-	public AttributePathBuilder addAttribute(Attribute<?,?> attribute)
-	{
+	public AttributePathBuilder addAttribute(Attribute<?, ?> attribute) {
 		newPath.add(new AttributeAttributePathElement(attribute));
 		return this;
 	}
 
-	public AttributePathBuilder addAttribute(String property)
-	{
+	public AttributePathBuilder addAttribute(String property) {
 
 		Type<?> returnType = getTargetType();
-		if (returnType instanceof EntityType)
-		{
+		if (returnType instanceof EntityType) {
 			EntityType entityType = (EntityType) returnType;
-			if (property.startsWith("@")) {
-				Attribute metaAttribute = entityType.getMetaAttribute(property);
-				if (metaAttribute != null)
-				{
-					newPath.add(new AttributeAttributePathElement(metaAttribute));
-				}
-				else
-				{
-					throw new IllegalStateException("meta attribute "+property+"  not found ");
-				}
-			}
-			// TODO this searches the subtypes. Therefore there  can be more than one results.
-			Attribute attribute = AttributeUtils.findAttribute(property, entityType);
-			if (attribute != null)
-			{
-				newPath.add(new AttributeAttributePathElement(attribute));
-			}
-			else
-			{
-				throw new IllegalStateException("evaluation time attribute not implemented yet" + newPath.toString());
-			}
-		}
-		else
-		{
-			throw new IllegalStateException("no attributes possible" + newPath.toString());
+			addAttribute(property, entityType);
+		} else {
+			throw new IllegalStateException("no attributes possible"
+					+ newPath.toString());
 		}
 
 		return this;
 	}
 
-	public void addElement(String pathElement)
-	{
-		if (getAttribute() != null)
-		{
-			if (getAttribute() instanceof MapAttribute)
-			{
+	protected void addAttribute(String property, EntityType entityType) {
+		if (property.startsWith("@")) {
+			String metaAttributeCode = property.substring(1);
+			Attribute metaAttribute = entityType.getMetaAttribute(metaAttributeCode);
+			if (metaAttribute != null) {
+				newPath.add(new AttributeAttributePathElement(metaAttribute));
+			} else {
+				throw new IllegalStateException("meta attribute "
+						+ metaAttributeCode + "  not found ");
+			}
+		}
+		// TODO this searches the subtypes. Therefore there can be more than
+		// one results.
+		Attribute attribute = AttributeUtils.findAttribute(property,
+				entityType);
+		if (attribute != null) {
+			newPath.add(new AttributeAttributePathElement(attribute));
+		} else {
+			throw new IllegalStateException(
+					"evaluation time attribute not implemented yet"
+							+ newPath.toString());
+		}
+	}
+
+	public void addElement(String pathElement) {
+		if (getAttribute() != null) {
+			if (getAttribute() instanceof MapAttribute) {
 				throw new UnsupportedOperationException(
-					"converting from string based key to object based is notimplemented");
-			}
-			else if (getAttribute() instanceof OrderableCollection)
-			{
+						"converting from string based key to object based is notimplemented");
+			} else if (getAttribute() instanceof OrderableCollection) {
 				addIndex(Integer.parseInt("pathElement"));
-			}
-			else
-			{
+			} else {
 				addAttribute(pathElement);
 			}
 		}
 	}
 
-	public AttributePathBuilder addIndex(int index)
-	{
-		try
-		{
+	public AttributePathBuilder addIndex(int index) {
+		try {
 			Attribute attribute = getAttribute();
-			if (attribute == null)
-			{
-				throw new IllegalStateException("cannot handle index here" + newPath.toString());
+			if (attribute == null) {
+				throw new IllegalStateException("cannot handle index here"
+						+ newPath.toString());
 			}
-			newPath.add(new IndexPathElement(index, (OrderableCollection) attribute));
+			newPath.add(new IndexPathElement(index,
+					(OrderableCollection) attribute));
 			return this;
-		}
-		catch (ClassCastException e)
-		{
-			throw new IllegalStateException("cannot add index here: " + newPath.toString());
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("cannot add index here: "
+					+ newPath.toString());
 		}
 	}
 
-	public AttributePathBuilder addMapKey(Object key)
-	{
-		try
-		{
+	public AttributePathBuilder addMapKey(Object key) {
+		try {
 			Attribute attribute = getAttribute();
 			newPath.add(new MapKeyPathElement(key, (MapAttribute) attribute));
 			return this;
-		}
-		catch (ClassCastException e)
-		{
-			throw new IllegalStateException("cannot add index here: " + newPath.toString());
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("cannot add index here: "
+					+ newPath.toString());
 		}
 	}
 
-	public void addPath(AttributePath basePath)
-	{
+	public void addPath(AttributePath basePath) {
 		newPath.add(new AttributePathAttributePathElement(basePath));
 	}
 
-	public AttributePath createPath()
-	{
+	public AttributePath createPath() {
 		return new AttributePathImpl(newPath);
 	}
 
-	private Attribute getAttribute()
-	{
+	private Attribute getAttribute() {
 		AttributePathElement element = newPath.get(newPath.size() - 1);
 		Attribute attribute = element.getAttribute();
-		if (attribute == null)
-		{
+		if (attribute == null) {
 			return null;
-		}
-		else
-		{
+		} else {
 			return attribute;
 		}
 	}
 
-	public Type<?> getTargetType()
-	{
+	public Type<?> getTargetType() {
 		AttributePathElement element = newPath.get(newPath.size() - 1);
 		return element.getTargetType().getType();
 	}
 
-	public AttributePathBuilder start(String property, EntityType baseType)
-	{
-		addAttribute(baseType.getAttribute(property));
+	public AttributePathBuilder start(String property, EntityType baseType) {
+		addAttribute(property,  baseType);
 		return this;
 	}
 

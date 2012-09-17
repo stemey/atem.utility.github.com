@@ -78,7 +78,7 @@ public class SchemaBuilder {
 				.from("targetType")
 				.transform(
 						(EntityTypeTransformation<?, ?>) getTypeTransformation());
-		transformationBuilder.transform().from("@max-length").to("max-length");
+		transformationBuilder.transform().from("@maxLength").to("max-length");
 		getSingleAttributeTransformation(transformationBuilder.getReference());
 		getListAttributeTransformation(transformationBuilder.getReference());
 		return transformationBuilder.buildTypeTransformation();

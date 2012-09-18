@@ -17,6 +17,7 @@ import org.atemsource.atem.utility.binding.jackson.JacksonAttributeNameConverter
 import org.atemsource.atem.utility.domain.DomainA;
 import org.atemsource.atem.utility.transform.api.Binding;
 import org.atemsource.atem.utility.transform.api.DerivedType;
+import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.BindingMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
@@ -78,8 +79,7 @@ public class VersionedBinder extends AbstractBinder {
 				BindingSession bindingSession = beanLocator
 						.getInstance(getBindingSessionClass());
 				bindingSession
-						.setTypeNameConverter(new VersionTypeNameConverter(
-								prefix, version));
+						.setTypeNameConverter(createTypeCode(version));
 				bindingSession
 						.setAttributeNameConverter(getAttributeNameConverter());
 				bindingSession.setSubRepository(getSubRepository());
@@ -96,6 +96,11 @@ public class VersionedBinder extends AbstractBinder {
 
 	}
 
+	protected TypeNameConverter createTypeCode(final String version) {
+		return new VersionTypeNameConverter(
+				prefix, version);
+	}
+
 	public VersionResolver getVersionResolver() {
 		return versionResolver;
 	}
@@ -109,7 +114,7 @@ public class VersionedBinder extends AbstractBinder {
 	public <A, B> EntityTypeTransformation<A, B> getTransformation(
 			Class<A> sourceClass, String version) {
 
-		String targetTypeCode = new VersionTypeNameConverter(prefix, version)
+		String targetTypeCode = createTypeCode(version)
 				.convert(entityTypeRepository.getEntityType(sourceClass));
 		EntityType<Object> entityType = entityTypeRepository
 				.getEntityType(targetTypeCode);

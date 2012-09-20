@@ -1,0 +1,16 @@
+<ol>
+$entityType.name
+$entityType.description
+
+#foreach( $subtype in $entitytype.subtypes )
+<a href="$subtype.url">$subtype.name</a> 
+#end
+<a href="$entitytype.supertype.url">$entitytype.supertype.name</a> 
+
+
+#foreach( $attribute in $entityType.attributes )
+   <li>
+   	#evaluate( ${attribute.template} )
+    </li>
+#end
+</ol>

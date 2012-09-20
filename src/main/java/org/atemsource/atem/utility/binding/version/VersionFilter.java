@@ -11,9 +11,9 @@ import org.atemsource.atem.utility.transform.impl.version.VersionResolver;
 public class VersionFilter implements AttributeFilter
 {
 
-	private VersionNumber versionNumber;
+	private final VersionNumber versionNumber;
 
-	private VersionResolver versionResolver;
+	private final VersionResolver versionResolver;
 
 	public VersionFilter(String version, VersionResolver versionResolver)
 	{
@@ -32,18 +32,25 @@ public class VersionFilter implements AttributeFilter
 	@Override
 	public boolean isExcluded(Attribute attribute)
 	{
-		JavaMetaData javaAttribute = (JavaMetaData) attribute;
-		Version version = javaAttribute.getAnnotation(Version.class);
-		if (version == null)
+		if (attribute instanceof JavaMetaData)
 		{
-			return false;
+			JavaMetaData javaAttribute = (JavaMetaData) attribute;
+			Version version = javaAttribute.getAnnotation(Version.class);
+			if (version == null)
+			{
+				return false;
+			}
+			else
+			{
+				VersionNumber from = versionResolver.create(version.from());
+				VersionNumber until = versionResolver.create(version.until());
+				boolean exclude = !versionNumber.isBetween(from, until);
+				return exclude;
+			}
 		}
 		else
 		{
-			VersionNumber from = versionResolver.create(version.from());
-			VersionNumber until = versionResolver.create(version.until());
-			boolean exclude = !versionNumber.isBetween(from, until);
-			return exclude;
+			return false;
 		}
 	}
 

@@ -8,10 +8,12 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
-public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneToOneAttributeTransformationBuilder<A,B,T>> extends AbstractAttributeTransformationBuilder<A, B,T> {
+public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends OneToOneAttributeTransformationBuilder<A, B, T>>
+		extends AbstractAttributeTransformationBuilder<A, B, T> {
 
 	private Converter<?, ?> converter;
 	private String sourceAttribute;
@@ -29,7 +31,6 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneT
 		this.converter = converter;
 		return (T) this;
 	}
-	
 
 	public T convertDynamically(TypeNameConverter typeCodeConverter) {
 		Attribute metaAttribute = entityTypeRepository.getEntityType(
@@ -44,6 +45,8 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneT
 				(SingleAttribute) metaAttribute);
 		return (T) this;
 	}
+
+	
 
 	@Override
 	public T from(String sourceAttribute) {
@@ -63,6 +66,24 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B,T extends OneT
 			return converter;
 		} else {
 			return (Converter<?, ?>) converterFactory.get(type);
+		}
+	}
+
+	protected Transformation<?, ?> getTransformation(Type<?> type) {
+		if (type instanceof EntityType<?>) {
+
+			if (converter != null && converter instanceof Transformation) {
+				return (Transformation<?, ?>) converter;
+			} else {
+				return null;
+			}
+		} else {
+			Converter<?, ?> simpleConverter = getConverter(type);
+			if (simpleConverter != null) {
+				return new PrimitiveTransformation(simpleConverter);
+			} else {
+				return null;
+			}
 		}
 	}
 

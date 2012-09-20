@@ -6,6 +6,7 @@ import org.atemsource.atem.api.infrastructure.util.ReflectionUtils;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.codehaus.jackson.JsonNode;
 
 
 public class ConverterUtils
@@ -16,17 +17,18 @@ public class ConverterUtils
 		EntityTypeRepository entityTypeRepository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);
 		Class[] actualTypeParameters =
 			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
-		Type typeB = entityTypeRepository.getType(actualTypeParameters[1]);
-		Type typeA = entityTypeRepository.getType(actualTypeParameters[0]);
-		if (typeA == null)
+		Class classB = actualTypeParameters[1];
+		Type typeB = entityTypeRepository.getType(classB);
+		Class classA = actualTypeParameters[0];
+		Type typeA = entityTypeRepository.getType(classA);
+		if (typeA == null && !classA.equals(Object.class))
 		{
-			throw new IllegalArgumentException("cannot create converter. " + actualTypeParameters[0].getName()
-				+ " is not an atem type");
+			throw new IllegalArgumentException("cannot create converter. " + classA.getName() + " is not an atem type");
 		}
-		if (typeB == null)
+		if (typeB == null && !classB.equals(Object.class) && !classB.equals(JsonNode.class))
 		{
-			throw new IllegalArgumentException("cannot create converter. " + actualTypeParameters[1].getName()
-				+ " is not an atem type");
+			// TODO fix dependency to JsonNode. Provide proper type for JsonNode
+			throw new IllegalArgumentException("cannot create converter. " + classB.getName() + " is not an atem type");
 		}
 		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
 		return localConverter;

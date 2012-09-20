@@ -55,6 +55,7 @@
 		<property name="entityTypeClass"
 			value="org.atemsource.atem.impl.pojo.PlainPojoEntityType" />
 		<property name="entityClass" value="java.lang.Object" />
+		<property name="propertyDescriptorFactory" ref="pojoPropertyDescriptorFactory"/>
 		<property name="includedPackage" value="org.atemsource.atem.utility.domain" />
 		<property name="attributeFactories">
 			<list>

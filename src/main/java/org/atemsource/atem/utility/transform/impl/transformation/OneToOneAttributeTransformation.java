@@ -5,15 +5,17 @@ import java.util.Set;
 
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
+import org.atemsource.atem.utility.transform.api.UniTransformation;
 
 public abstract  class OneToOneAttributeTransformation<A, B>  extends AbstractAttributeTransformation<A, B>{
 
-	private Converter converter;
+	private Transformation transformation;
 
 	public void mergeBA(B b, A a, TransformationContext ctx) {
-		UniConverter baConverter = converter == null ? null : converter.getBA();
+		UniTransformation baConverter = transformation == null ? null : transformation.getBA();
 		transformInternally(b, a,
 				getAttributeB(), getAttributeA(), ctx, baConverter);
 	}
@@ -27,13 +29,13 @@ public abstract  class OneToOneAttributeTransformation<A, B>  extends AbstractAt
 	}
 
 	public void mergeAB(A a, B b, TransformationContext ctx) {
-		UniConverter abConverter = converter == null ? null : converter.getAB();
+		UniTransformation abConverter = transformation == null ? null : transformation.getAB();
 		transformInternally(a, b,
 				getAttributeA(), getAttributeB(), ctx, abConverter);
 	}
 
-	public Converter getConverter() {
-		return converter;
+	public Transformation getTransformation() {
+		return transformation;
 	}
 
 	public void setAttributeA(AttributePath source) {
@@ -48,11 +50,11 @@ public abstract  class OneToOneAttributeTransformation<A, B>  extends AbstractAt
 		setAttributeBs(attributeBs);
 	}
 
-	public void setConverter(Converter converter) {
-		this.converter = converter;
+	public void setTransformation(Transformation transformation) {
+		this.transformation = transformation;
 	}
 
 	protected abstract void transformInternally(Object a, Object b,
-			AttributePath attributeA, AttributePath attributeB, TransformationContext ctx, UniConverter<Object, Object> ab);
+			AttributePath attributeA, AttributePath attributeB, TransformationContext ctx, UniTransformation<Object, Object> ab);
 
 }

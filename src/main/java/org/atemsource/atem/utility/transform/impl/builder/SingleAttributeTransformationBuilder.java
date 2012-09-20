@@ -44,7 +44,7 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 				.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);
 		primitiveAttributeTransformation.setAttributeB(targetPath);
-		primitiveAttributeTransformation.setConverter(getConverter(sourcePath
+		primitiveAttributeTransformation.setTransformation(getTransformation(sourcePath
 				.getTargetType().getType()));
 		primitiveAttributeTransformation.setTypeA(sourceType);
 		primitiveAttributeTransformation.setTypeB(targetType);

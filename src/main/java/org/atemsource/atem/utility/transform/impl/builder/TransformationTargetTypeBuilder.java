@@ -58,5 +58,11 @@ public class TransformationTargetTypeBuilder {
 		return genericTransformationBuilder.getTargetTypeBuilder();
 	}
 
+	public <J> SingleAttribute<J>  addSingleAttribute(String code, Class<J> javaType) {
+		SingleAttribute<J> attribute = getEntityTypeBuilder().addSingleAttribute(code, javaType);
+		genericTransformationBuilder.addTargetAttribute(attribute);
+		return attribute;
+	}
+
 	
 }

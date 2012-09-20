@@ -37,7 +37,7 @@
 			<bean class="org.codehaus.jackson.map.ObjectMapper">
 			</bean>
 		</property>
-<!-- 		<property name="typeProperty"><null/></property> -->
+		<property name="typeProperty"><null/></property>
 	</bean>
 
 	<bean id="atem-repository"

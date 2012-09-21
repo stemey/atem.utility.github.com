@@ -16,6 +16,7 @@ import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.JavaTransformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionToMap;
@@ -131,13 +132,13 @@ public class SchemaBuilder
 		{
 
 			@Override
-			public void mergeAB(Object a, ObjectNode b)
+			public void mergeAB(Object a, ObjectNode b, TransformationContext ctx)
 			{
 				b.put("array", true);
 			}
 
 			@Override
-			public void mergeBA(ObjectNode b, Object a)
+			public void mergeBA(ObjectNode b, Object a, TransformationContext ctx)
 			{
 			}
 

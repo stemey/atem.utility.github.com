@@ -13,20 +13,11 @@ import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.impl.dynamic.DynamicEntityImpl;
 
 public class HtmlDocGenerator {
-public String generate(EntityType<?> entityType) {
+public String generate(EntityType<J> entityType) {
 	VelocityEngine engine= new VelocityEngine();
 	StringWriter writer = new StringWriter();
 	Context context = new VelocityContext();
 	
-	DynamicEntity e= new DynamicEntityImpl();
-	e.put("code","Hallo");
-	ArrayList attributes = new ArrayList();
-	DynamicEntity a = new DynamicEntityImpl();
-	a.put("code","aHallo");
-	a.put("targetType","HalloType");
-	attributes.add(a);
-	attributes.add(attributes);
-	e.put("attributes",attributes);
 	
 	context.put("entityType", e);
 	Reader reader = new InputStreamReader(getClass().getResourceAsStream("entityType.vm"));

@@ -40,20 +40,18 @@ public class EditorBuilder
 {
 	private static Logger logger = Logger.getLogger(EditorBuilder.class);
 
-	private EntityTypeTransformation<?, ?> basicTypeTransformation;
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
 
 	private EntityTypeTransformation<EntityType, ?> entityTypeTransformation;
 
-	private EntityTypeTransformation<?, ?> primitiveTypeTransformation;
 
 	private DynamicEntityTypeSubrepository<?> subrepository;
 
 	private TransformationBuilderFactory transformationBuilderFactory;
 
-	private void addArrayTransform(TypeTransformationBuilder<?, ?> transformationBuilder, final String attribute,
+	private void addConstantTransform(TypeTransformationBuilder<?, ?> transformationBuilder, final String attribute,
 		final Class targetType, final Object value)
 	{
 		GenericTransformationBuilder arrayTransform =
@@ -111,7 +109,7 @@ public class EditorBuilder
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("date-type");
 		TypeTransformationBuilder<DateType, ?> transformationBuilder =
 			transformationBuilderFactory.create(DateType.class, typeBuilder);
-		addArrayTransform(transformationBuilder, "format", String.class, "dd-MM-yyyy");
+		addConstantTransform(transformationBuilder, "format", String.class, "dd-MM-yyyy");
 		transformationBuilder.includeSuper(superTransformation);
 		transformationBuilder.buildTypeTransformation();
 	}
@@ -122,7 +120,7 @@ public class EditorBuilder
 		TypeTransformationBuilder<ChoiceType, ?> transformationBuilder =
 			transformationBuilderFactory.create(ChoiceType.class, typeBuilder);
 		addValuesTransform(transformationBuilder, "values", String.class);
-		addArrayTransform(transformationBuilder, "type", String.class, "text");
+		addConstantTransform(transformationBuilder, "type", String.class, "text");
 		transformationBuilder.includeSuper(superTransformation);
 		transformationBuilder.buildTypeTransformation();
 	}
@@ -166,9 +164,9 @@ public class EditorBuilder
 		return basicTransformationBuilder.buildTypeTransformation();
 	}
 
-	protected EntityTypeTransformation<?, ?> createTypeTransformation()
+	protected EntityTypeTransformation<?, ?> createPrimitiveTypeTransformation()
 	{
-		EntityTypeBuilder typeBuilder = subrepository.createBuilder("primitive-type");
+		EntityTypeBuilder typeBuilder = subrepository.createBuilder("schema.primitivetype");
 		TypeTransformationBuilder<Type, ?> transformationBuilder =
 			transformationBuilderFactory.create(Type.class, typeBuilder);
 		createTextTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder.getReference());
@@ -200,7 +198,7 @@ public class EditorBuilder
 		return ConverterUtils.create(javaConverter);
 	}
 
-	private Converter<Object, Object> getAttributeTransformation()
+	private Converter<Object, Object> getAttributeTransformation(EntityTypeTransformation primitiveTypeTransformation,EntityTypeTransformation entityTypeTransformation,EntityTypeTransformation typeTransformation)
 	{
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("attribute");
 		TypeTransformationBuilder<Attribute, ?> transformationBuilder =
@@ -209,15 +207,16 @@ public class EditorBuilder
 		requiredTransformer.from("required");
 		requiredTransformer.to("required");
 		// transformationBuilder.transform().from("code").to("label");
-		transformationBuilder.transformCustom(Embed.class).from("targetType").transform(getTypeTransformation());
+		// this should be genral type transformation without attributes : schema.typeref
+		transformationBuilder.transformCustom(Embed.class).from("targetType").transform(primitiveTypeTransformation);
 
 		transformValidTypes(transformationBuilder,
-			(EntityTypeTransformation<EntityType, ObjectNode>) basicTypeTransformation);
+			(EntityTypeTransformation<EntityType, ObjectNode>) entityTypeTransformation);
 
 		transformationBuilder.transform().from("code").to("label");
 		transformationBuilder.transform().from("code").to("code");
 		// transformationBuilder.transform().from("@max-length").to("max-length");
-		getSingleAttributeTransformation(transformationBuilder.getReference());
+		getSingleAttributeTransformation(transformationBuilder.getReference(),typeTransformation);
 		getListAttributeTransformation(transformationBuilder.getReference());
 		return transformationBuilder.buildTypeTransformation();
 	}
@@ -227,7 +226,7 @@ public class EditorBuilder
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("list-attribute");
 		TypeTransformationBuilder<CollectionAttribute, ?> transformationBuilder =
 			transformationBuilderFactory.create(CollectionAttribute.class, typeBuilder);
-		addArrayTransform(transformationBuilder, "array", Boolean.class, true);
+		addConstantTransform(transformationBuilder, "array", Boolean.class, true);
 		transformationBuilder.includeSuper(attributeTransformation);
 		transformationBuilder.buildTypeTransformation();
 	}
@@ -237,14 +236,14 @@ public class EditorBuilder
 		return entityTypeRepository;
 	}
 
-	private void getSingleAttributeTransformation(EntityTypeTransformation attributeTransformation)
+	private void getSingleAttributeTransformation(EntityTypeTransformation attributeTransformation,EntityTypeTransformation typeTransformation)
 	{
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("single-attribute");
 		TypeTransformationBuilder<SingleAttribute, ?> transformationBuilder =
 			transformationBuilderFactory.create(SingleAttribute.class, typeBuilder);
-		transformationBuilder.transformCustom(Embed.class).from("targetType").transform(basicTypeTransformation);
+		transformationBuilder.transformCustom(Embed.class).from("targetType").transform(typeTransformation);
 		transformationBuilder.includeSuper(attributeTransformation);
-		addArrayTransform(transformationBuilder, "array", Boolean.class, false);
+		addConstantTransform(transformationBuilder, "array", Boolean.class, false);
 		transformationBuilder.buildTypeTransformation();
 	}
 
@@ -253,7 +252,7 @@ public class EditorBuilder
 		return subrepository;
 	}
 
-	public EntityTypeTransformation<EntityType, ?> getTransformation()
+	public EntityTypeTransformation<EntityType, ?> getEntityTypeTransformation()
 	{
 		return entityTypeTransformation;
 	}
@@ -263,41 +262,37 @@ public class EditorBuilder
 		return transformationBuilderFactory;
 	}
 
-	private EntityTypeTransformation<?, ?> getTypeTransformation()
-	{
-		return primitiveTypeTransformation;
-	}
+	
 
 	@PostConstruct
 	public void init()
 	{
-		EntityTypeBuilder typeBuilder = subrepository.createBuilder("schema");
+		EntityTypeBuilder entityTypeBuilder = subrepository.createBuilder("schema.entitytype");
 
-		EntityTypeTransformation<Type, ?> typeRefTransformation = createTypeRef();
 
-		EntityTypeBuilder basicTypeBuilder = subrepository.createBuilder("basic-type");
-		TypeTransformationBuilder<Type, ?> basicTransformationBuilder =
-			transformationBuilderFactory.create(Type.class, basicTypeBuilder);
-		basicTransformationBuilder.transform().from("code").to("type");
-		basicTransformationBuilder.transform().from("code").to("typeLabel");
+		EntityTypeBuilder typeBuilder = subrepository.createBuilder("schema.type");
+		TypeTransformationBuilder<Type, ?> typeTransformationBuilder =
+			transformationBuilderFactory.create(Type.class, typeBuilder);
+		typeTransformationBuilder.transform().from("code").to("type");
+		typeTransformationBuilder.transform().from("code").to("typeLabel");
 
-		basicTypeTransformation = basicTransformationBuilder.getReference();
+		EntityTypeTransformation typeTransformation = typeTransformationBuilder.getReference();
 
-		primitiveTypeTransformation = createTypeTransformation();
+		EntityTypeTransformation primitiveTypeTransformation = createPrimitiveTypeTransformation();
 
-		final TypeTransformationBuilder<EntityType, ?> transformationBuilder =
-			transformationBuilderFactory.create(EntityType.class, typeBuilder);
+		final TypeTransformationBuilder<EntityType, ?> entityTypeTransformationBuilder =
+			transformationBuilderFactory.create(EntityType.class, entityTypeBuilder);
 
-		transformationBuilder.transformCollection().from("attributes").to("attributes")
-			.convert(getAttributeTransformation());
+		entityTypeTransformationBuilder.transformCollection().from("attributes").to("attributes")
+			.convert(getAttributeTransformation(primitiveTypeTransformation,entityTypeTransformationBuilder.getReference(),typeTransformationBuilder.getReference()));
 
-		basicTransformationBuilder.buildTypeTransformation();
-		transformationBuilder.includeSuper(basicTypeTransformation);
+		typeTransformationBuilder.buildTypeTransformation();
+		entityTypeTransformationBuilder.includeSuper(typeTransformation);
 
 		// transformationBuilder.transformCollection().from("subEntityTypes").to("validTypes")
 		// .convert(transformationBuilder.getReference());
 
-		transformationBuilder.transformCustom(GenericTransformationBuilder.class)
+		entityTypeTransformationBuilder.transformCustom(GenericTransformationBuilder.class)
 			.transform(new JavaTransformation<EntityType, ObjectNode>()
 			{
 
@@ -314,7 +309,7 @@ public class EditorBuilder
 
 			}).to().addSingleAttribute("type-property", entityTypeRepository.getType(String.class));
 
-		entityTypeTransformation = transformationBuilder.buildTypeTransformation();
+		entityTypeTransformation = entityTypeTransformationBuilder.buildTypeTransformation();
 
 	}
 

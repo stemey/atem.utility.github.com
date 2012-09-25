@@ -33,6 +33,10 @@
 	<import resource="classpath:/atem/annotation/entitytype.xml" />
 		<import resource="classpath:/atem/impl/memory-meta.xml"/>
 	
+	<bean id="atem-dynamicEntity-repository"
+		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
+		<property name="serializingPrimitiveValues" value="false"/>
+	</bean>
 
 	
 	<bean id="test-annotation-repository" parent="atem-annotation-repository">
@@ -46,7 +50,7 @@
 	
 
 	<bean class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
-		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService"/>
+		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
 	</bean>
 	
 

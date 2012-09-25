@@ -84,7 +84,6 @@
 				<ref bean="atem-attribute-repository" />
 				<ref bean="atem-json-repository" />
 				<ref bean="atem-pojo-repository" />
-				<ref bean="atem-dynamicEntity-repository" />
 				<ref bean="derivation-repository" />
 			</list>
 		</property>

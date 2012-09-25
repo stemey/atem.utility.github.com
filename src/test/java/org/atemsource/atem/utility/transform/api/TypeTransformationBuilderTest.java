@@ -14,10 +14,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import junit.framework.Assert;
 import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
+import org.atemsource.atem.pojo.TestAnnotation;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;
@@ -212,17 +214,39 @@ public class TypeTransformationBuilderTest
 	@Test
 	public void testSinglePrimitive()
 	{
-		TypeTransformationBuilder<?, ?> builder = transformationBuilderFactory.create();
-		builder.setSourceType(EntityB.class);
-		builder.setTargetTypeBuilder(dynamicEntityTypeSubrepository.createBuilder("test"));
-		builder.transform().from("integer").to("i");
-		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation =
-			(EntityTypeTransformation<EntityB, DynamicEntity>) builder.buildTypeTransformation();
-		EntityType<?> typeB = entityTypeTransformation.getEntityTypeB();
+		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation = createEntityTypeTransformation("testSinglePrimitive");
 
 		EntityB a = new EntityB();
 		a.setInteger(5);
 		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
 		Assert.assertEquals(5, b.get("i"));
+		
+	}
+
+	@Test
+	public void testSinglePrimitiveDerivedAnnotation()
+	{
+		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation = createEntityTypeTransformation("testDerivedAnnotation");
+
+		EntityType<Attribute> attributeType = entityTypeRepository.getEntityType(Attribute.class);
+		Attribute attr=((EntityType<?>)entityTypeTransformation.getTypeA()).getAttribute("integer");
+		Attribute metaAttribute = attributeType.getMetaAttribute(TestAnnotation.class.getName());
+		Object value = metaAttribute.getValue(attr);
+		Assert.assertNotNull(value);
+		
+		Attribute derivedAttr=((EntityType<?>)entityTypeTransformation.getTypeB()).getAttribute("i");
+		Object derivedAnnoation = metaAttribute.getValue(derivedAttr);
+		Assert.assertEquals(value, derivedAnnoation);
+	}
+
+	protected EntityTypeTransformation<EntityB, DynamicEntity> createEntityTypeTransformation(String transformationId) {
+		TypeTransformationBuilder<?, ?> builder = transformationBuilderFactory.create();
+		builder.setSourceType(EntityB.class);
+		builder.setTargetTypeBuilder(dynamicEntityTypeSubrepository.createBuilder(transformationId));
+		builder.transform().from("integer").to("i");
+		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation =
+			(EntityTypeTransformation<EntityB, DynamicEntity>) builder.buildTypeTransformation();
+		EntityType<?> typeB = entityTypeTransformation.getEntityTypeB();
+		return entityTypeTransformation;
 	}
 }

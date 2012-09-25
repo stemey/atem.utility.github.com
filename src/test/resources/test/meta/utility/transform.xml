@@ -30,10 +30,25 @@
 	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
 	<import resource="classpath:/meta/utility/transform-example.xml" />
 	<import resource="classpath:/atem/dynamic/entitytype.xml" />
+	<import resource="classpath:/atem/annotation/entitytype.xml" />
+		<import resource="classpath:/atem/impl/memory-meta.xml"/>
 	
-	<bean id="atem-dynamicEntity-repository"
-		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
+
+	
+	<bean id="test-annotation-repository" parent="atem-annotation-repository">
+		<property name="includedPackage" value="org.atemsource.atem.pojo"/>
 	</bean>
+
+	<bean id="constraint-annotation-metaAtributeService" class="org.atemsource.atem.impl.annotation.AnnotationMetaAttributeService">
+		<property name="annotationTypeFilter" ref="test-annotation-repository"/>
+	</bean>
+	
+	
+
+	<bean class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
+		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService"/>
+	</bean>
+	
 
 
 	<bean id="atem-repository"
@@ -43,8 +58,9 @@
 			<list>
 				<ref bean="atem-entityType-repository" />
 				<ref bean="atem-attribute-repository" />
-				<ref bean="atem-pojo-repository" />
+				<ref bean="test-annotation-repository" />
 				<ref bean="atem-dynamicEntity-repository" />
+				<ref bean="atem-pojo-repository" />
 			</list>
 		</property>
 	</bean>

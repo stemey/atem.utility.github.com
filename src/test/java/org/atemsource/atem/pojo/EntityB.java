@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 public class EntityB implements Serializable
 {
+	@TestAnnotation
 	private int integer;
 
 	private EntityA singleA;

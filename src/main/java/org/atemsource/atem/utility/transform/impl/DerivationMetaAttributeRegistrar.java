@@ -14,6 +14,7 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.extension.MetaAttributeService;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.api.DerivedAttribute;
 import org.atemsource.atem.utility.transform.api.DerivedType;
 
@@ -21,7 +22,6 @@ import org.atemsource.atem.utility.transform.api.DerivedType;
 public class DerivationMetaAttributeRegistrar
 {
 
-	public static final String DERIVED_FROM = "derivedFrom";
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -36,9 +36,9 @@ public class DerivationMetaAttributeRegistrar
 	@PostConstruct
 	public void initialize()
 	{
-		metaAttributeService.addSingleMetaAttribute(DERIVED_FROM, entityTypeRepository.getEntityType(Attribute.class),
+		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(Attribute.class),
 			entityTypeRepository.getEntityType(DerivedAttribute.class));
-		metaAttributeService.addSingleMetaAttribute(DERIVED_FROM, entityTypeRepository.getEntityType(EntityType.class),
+		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(EntityType.class),
 			entityTypeRepository.getEntityType(DerivedType.class));
 
 	}

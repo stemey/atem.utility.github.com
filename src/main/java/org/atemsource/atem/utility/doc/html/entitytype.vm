@@ -1,6 +1,16 @@
+
+#macro( debug $dynamicEntity )
+#foreach( $attribute in $dynamicEntity.attributeNames )
+     $attribute :: $dynamicEntity.get($attribute) 
+#end
+#end
+
 <ol>
 $entityType.name
 $entityType.description
+<!--
+#debug($entityType)
+-->
 
 #foreach( $subtype in $entitytype.subtypes )
 <a href="$subtype.url">$subtype.name</a> 
@@ -10,7 +20,7 @@ $entityType.description
 
 #foreach( $attribute in $entityType.attributes )
    <li>
-   	#evaluate( ${attribute.template} )
+   	#parse("attribute.vm")
     </li>
 #end
 </ol>

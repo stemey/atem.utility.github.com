@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.binding.AbstractBinder;
 import org.atemsource.atem.utility.binding.AttributeFilter;
 import org.atemsource.atem.utility.binding.BindingListener;
@@ -120,7 +121,7 @@ public class VersionedBinder extends AbstractBinder {
 				.getEntityType(targetTypeCode);
 		SingleAttribute<DerivedType> metaAttribute = (SingleAttribute<DerivedType>) entityTypeRepository
 				.getEntityType(EntityType.class).getMetaAttribute(
-						DerivationMetaAttributeRegistrar.DERIVED_FROM);
+						DerivedObject.META_ATTRIBUTE_CODE);
 		return (EntityTypeTransformation<A, B>) metaAttribute.getValue(
 				entityType).getTransformation();
 	}

@@ -1,4 +1,3 @@
-      <a href="${attribute.url}">$attribute.name</a>
+      $attribute.name
      $attribute.description
-      type: $attribute.type.name
- 
+   type: <a href="${attribute.targetType.url}">$attribute.targetType.name</a>

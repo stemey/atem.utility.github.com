@@ -12,17 +12,21 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ContextConfiguration(locations = { "classpath:/test/meta/utility/transform.xml" })
+@ContextConfiguration(locations = { "classpath:/test/meta/utility/transform.xml" , "classpath:/meta/utility/doc-html.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class HtmlDocGeneratorTest {
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
-	
+
+	@Inject
+	private HtmlDocGenerator htmlDocGenerator;
+
 	@Test
 	public void test() {
-		EntityType<DomainA> entityType = entityTypeRepository.getEntityType(DomainA.class);
-		String html=new HtmlDocGenerator().generate(entityType);
+		EntityType<DomainA> entityType = entityTypeRepository
+				.getEntityType(DomainA.class);
+		String html = htmlDocGenerator.generate(entityType);
 		System.out.println(html);
 	}
 

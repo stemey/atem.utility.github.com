@@ -17,6 +17,7 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
+import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
@@ -63,7 +64,7 @@ public abstract class AbstractAttributeTransformationBuilder<A, B, T extends Abs
 		derivedAttribute.setTransformation(transformation);
 		Attribute metaAttribute = entityTypeRepository.getEntityType(
 				Attribute.class).getMetaAttribute(
-				DerivationMetaAttributeRegistrar.DERIVED_FROM);
+						DerivedObject.META_ATTRIBUTE_CODE);
 		if (metaAttribute != null) {
 			metaAttribute.setValue(newAttribute, derivedAttribute);
 		}

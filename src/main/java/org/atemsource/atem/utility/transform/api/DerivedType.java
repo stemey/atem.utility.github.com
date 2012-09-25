@@ -8,10 +8,11 @@
 package org.atemsource.atem.utility.transform.api;
 
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
 
-public class DerivedType
+public class DerivedType implements DerivedObject
 {
 
 	private EntityType<?> originalType;
@@ -36,6 +37,11 @@ public class DerivedType
 	public void setTransformation(EntityTypeTransformation<?, ?> transformation)
 	{
 		this.transformation = transformation;
+	}
+
+	@Override
+	public Object getOriginal() {
+		return originalType;
 	}
 
 }

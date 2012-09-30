@@ -19,11 +19,10 @@
 
 	<context:component-scan base-package="org.atemsource.atem.utility.doc.html">
 	</context:component-scan>
+	<import resource="classpath:/atem/dynamic/entitytype-example.xml" />
+	<import resource="classpath:/meta/utility/transform-example.xml" />
 
-	<bean class="org.atemsource.atem.utility.doc.html.DocBuilder">
-		<property name="subrepository" ref="atem-dynamicEntity-repository" />
-		<property name="transformationBuilderFactory" ref="atem-utility-transformationBuilderFactory" />
-	</bean>
+
 
 
 

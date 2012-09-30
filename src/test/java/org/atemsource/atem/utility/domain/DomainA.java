@@ -7,13 +7,32 @@ import org.atemsource.atem.utility.transform.api.annotation.Version;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-
-public class DomainA
-{
+public class DomainA {
 	private DomainB domainB;
 
 	@Association(targetType = DomainB.class)
 	private List<DomainB> domainBs;
+
+	private Vehicle vehicle;
+
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
+	}
+
+	@Association(targetType = Integer.class)
+	private List<Integer> ids;
+
+	public List<Integer> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<Integer> ids) {
+		this.ids = ids;
+	}
 
 	@Version(until = "1.1")
 	private String field10;
@@ -27,63 +46,51 @@ public class DomainA
 	@JsonProperty("renamed_property")
 	private String renamedProperty;
 
-	public DomainB getDomainB()
-	{
+	public DomainB getDomainB() {
 		return domainB;
 	}
 
-	public List<DomainB> getDomainBs()
-	{
+	public List<DomainB> getDomainBs() {
 		return domainBs;
 	}
 
-	public String getField10()
-	{
+	public String getField10() {
 		return field10;
 	}
 
-	public String getField11()
-	{
+	public String getField11() {
 		return field11;
 	}
 
-	public String getIgnoredProperty()
-	{
+	public String getIgnoredProperty() {
 		return ignoredProperty;
 	}
 
-	public String getRenamedProperty()
-	{
+	public String getRenamedProperty() {
 		return renamedProperty;
 	}
 
-	public void setDomainB(DomainB domainB)
-	{
+	public void setDomainB(DomainB domainB) {
 		this.domainB = domainB;
 	}
 
-	public void setDomainBs(List<DomainB> domainBs)
-	{
+	public void setDomainBs(List<DomainB> domainBs) {
 		this.domainBs = domainBs;
 	}
 
-	public void setField10(String field10)
-	{
+	public void setField10(String field10) {
 		this.field10 = field10;
 	}
 
-	public void setField11(String field11)
-	{
+	public void setField11(String field11) {
 		this.field11 = field11;
 	}
 
-	public void setIgnoredProperty(String ignoredProperty)
-	{
+	public void setIgnoredProperty(String ignoredProperty) {
 		this.ignoredProperty = ignoredProperty;
 	}
 
-	public void setRenamedProperty(String renamedProperty)
-	{
+	public void setRenamedProperty(String renamedProperty) {
 		this.renamedProperty = renamedProperty;
 	}
 }

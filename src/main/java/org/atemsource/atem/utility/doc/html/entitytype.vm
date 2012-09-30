@@ -1,26 +1,34 @@
+<html>
+<head>
+<title>$entityType.name</title>
+</head>
+<body>
 
-#macro( debug $dynamicEntity )
-#foreach( $attribute in $dynamicEntity.attributeNames )
-     $attribute :: $dynamicEntity.get($attribute) 
-#end
-#end
-
-<ol>
-$entityType.name
-$entityType.description
+<h1>$entityType.name</h1>
+<p>$entityType.description</p>
 <!--
-#debug($entityType)
+$entityType.getAsString()
 -->
-
-#foreach( $subtype in $entitytype.subtypes )
+<h2>subtypes</h2>
+<ul>
+#foreach( $subtype in $entityType.subtypes )
+<li>
 <a href="$subtype.url">$subtype.name</a> 
+</li>
 #end
-<a href="$entitytype.supertype.url">$entitytype.supertype.name</a> 
-
-
+</ul>
+#if ($entityType.supertype)
+  <h2>supertype</h2>
+  <a href="$entityType.supertype.url">$entitytype.supertype.name</a> 
+#end
+<ul>
 #foreach( $attribute in $entityType.attributes )
    <li>
    	#parse("attribute.vm")
     </li>
 #end
-</ol>
+</ul>
+
+
+</body>
+</html>

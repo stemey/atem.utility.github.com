@@ -1,8 +1,12 @@
 package org.atemsource.atem.utility.doc.html;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
@@ -13,33 +17,39 @@ import org.atemsource.atem.api.attribute.relation.ListAssociationAttribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
+import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.api.type.primitive.ChoiceType;
 import org.atemsource.atem.api.type.primitive.DateType;
 import org.atemsource.atem.api.type.primitive.IntegerType;
 import org.atemsource.atem.api.type.primitive.TextType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
-import org.atemsource.atem.impl.json.JsonUtils;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.schema.ValidTypes;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.JavaTransformation;
+import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
-import org.atemsource.atem.utility.transform.impl.builder.Embed;
 import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
-import org.springframework.stereotype.Component;
 
 public class DocBuilder
 {
+	public TypeCodeToUrlConverter getTypeCodeToUrlConverter() {
+		return typeCodeToUrlConverter;
+	}
+
+	public void setTypeCodeToUrlConverter(
+			TypeCodeToUrlConverter typeCodeToUrlConverter) {
+		this.typeCodeToUrlConverter = typeCodeToUrlConverter;
+	}
+
 	private static Logger logger = Logger.getLogger(DocBuilder.class);
 
 
@@ -84,14 +94,14 @@ public class DocBuilder
 			transformationBuilder.transformCustom(GenericTransformationBuilder.class);
 		Type type = getRepository().getType(targetType);
 		arrayTransform.to().addMultiAssociationAttribute("values", type, CollectionSortType.ORDERABLE);
-		arrayTransform.transform(new JavaTransformation<Object, ObjectNode>()
+		arrayTransform.transform(new JavaTransformation<Object, DynamicEntity>()
 		{
 
 			@Override
-			public void mergeAB(Object a, ObjectNode b, TransformationContext ctx)
+			public void mergeAB(Object a, DynamicEntity b, TransformationContext ctx)
 			{
 				ChoiceType<?> choiceType = (ChoiceType<?>) a;
-				ArrayNode arrayNode = b.arrayNode();
+				List<String> arrayNode = new ArrayList<String>();
 				for (Map.Entry<String, ?> entry : choiceType.getOptionsMap().entrySet())
 				{
 					arrayNode.add(String.valueOf(entry.getValue()));
@@ -100,7 +110,7 @@ public class DocBuilder
 			}
 
 			@Override
-			public void mergeBA(ObjectNode b, Object a, TransformationContext ctx)
+			public void mergeBA(DynamicEntity b, Object a, TransformationContext ctx)
 			{
 			}
 
@@ -137,14 +147,6 @@ public class DocBuilder
 		transformationBuilder.buildTypeTransformation();
 	}
 
-	private void createListTypeTransformation(EntityTypeTransformation<Type, ?> superTransformation)
-	{
-		EntityTypeBuilder typeBuilder = subrepository.createBuilder("list-type");
-		TypeTransformationBuilder<ListAssociationAttribute, ?> transformationBuilder =
-			transformationBuilderFactory.create(ListAssociationAttribute.class, typeBuilder);
-		transformationBuilder.includeSuper(superTransformation);
-		transformationBuilder.buildTypeTransformation();
-	}
 
 	private void createTextTypeTransformation(EntityTypeTransformation<Type, ?> superTransformation)
 	{
@@ -161,37 +163,20 @@ public class DocBuilder
 	protected EntityTypeTransformation<?, ?> createPrimitiveTypeRefTransformation(EntityTypeTransformation<?,?> typeRefTransformation)
 	{
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("schema.primitivetype");
-		TypeTransformationBuilder<Type, ?> transformationBuilder =
-			transformationBuilderFactory.create(Type.class, typeBuilder);
-		createTextTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder.getReference());
-		createEnumTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder.getReference());
-		createDateTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder.getReference());
-		createIntegerTypeTransformation((EntityTypeTransformation<Type, ?>) transformationBuilder.getReference());
+		TypeTransformationBuilder<PrimitiveType, ?> transformationBuilder =
+			transformationBuilderFactory.create(PrimitiveType.class, typeBuilder);
+		EntityTypeTransformation<Type, ?> primitiveTypeRefTransformation = (EntityTypeTransformation<Type, ?>) transformationBuilder.getReference();
+		createTextTypeTransformation(primitiveTypeRefTransformation);
+		createEnumTypeTransformation(primitiveTypeRefTransformation);
+		createDateTypeTransformation(primitiveTypeRefTransformation);
+		createIntegerTypeTransformation(primitiveTypeRefTransformation);
+		//createLongTypeTransformation(primitiveTypeRefTransformation);
 		transformationBuilder.includeSuper(typeRefTransformation);
 		
-		// TODO missing super transformation typeTransformation
 		return transformationBuilder.buildTypeTransformation();
 	}
 
-	private Converter<Attribute<?, ?>, String> getAttributeKeyConverter()
-	{
-		JavaConverter<Attribute<?, ?>, String> javaConverter = new JavaConverter<Attribute<?, ?>, String>()
-		{
 
-			@Override
-			public String convertAB(Attribute a)
-			{
-				return a.getCode();
-			}
-
-			@Override
-			public Attribute convertBA(String b)
-			{
-				return null;
-			}
-		};
-		return ConverterUtils.create(javaConverter);
-	}
 
 	private Converter<Object, Object> getAttributeTransformation(EntityTypeTransformation typeRefTransformation)
 	{
@@ -250,7 +235,12 @@ public class DocBuilder
 	{
 		return transformationBuilderFactory;
 	}
-
+	
+	protected String getUrlForEntityType(String typeCode) {
+		return typeCodeToUrlConverter.getUrl(typeCode);
+	}
+ 
+private TypeCodeToUrlConverter typeCodeToUrlConverter;
 	public EntityTypeTransformation<Type,?> createTypeRefTransformation()
 	{
 		EntityTypeBuilder typeRefBuilder = subrepository.createBuilder("schema.type.ref");
@@ -261,13 +251,21 @@ public class DocBuilder
 		typeRefTransformationBuilder.transform().from("code").to("name");
 		
 		EntityTypeBuilder entitytypeRefBuilder = subrepository.createBuilder("schema.entitytype.ref");
-		final TypeTransformationBuilder<Type, ?> entityTypeRefTransformationBuilder =
-				transformationBuilderFactory.create(Type.class, entitytypeRefBuilder);
+		final TypeTransformationBuilder<EntityType, ?> entityTypeRefTransformationBuilder =
+				transformationBuilderFactory.create(EntityType.class, entitytypeRefBuilder);
 
-		entityTypeRefTransformationBuilder.transform().from("code").to("url");
+		entityTypeRefTransformationBuilder.transform().from("code").to("url").convert(new JavaUniConverter<String,String>() {
+
+			@Override
+			public String convert(String a) {
+				return getUrlForEntityType(a);
+			}
+
+		});
 		
 		entityTypeRefTransformationBuilder.includeSuper(typeRefTransformationBuilder.getReference());
 		entityTypeRefTransformationBuilder.buildTypeTransformation();
+		createPrimitiveTypeRefTransformation(typeRefTransformationBuilder.getReference());
 		return  typeRefTransformationBuilder.buildTypeTransformation();
 
 	}
@@ -324,66 +322,5 @@ public class DocBuilder
 		this.transformationBuilderFactory = transformationBuilderFactory;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void transformValidTypes(TypeTransformationBuilder<Attribute, ?> attributeTransformationBuilder,
-		final EntityTypeTransformation<EntityType, ObjectNode> typeTransformation)
-	{
-		attributeTransformationBuilder
-			.transformCustom(GenericTransformationBuilder.class)
-			.transform(new JavaTransformation<Attribute<?, ?>, ObjectNode>()
-			{
 
-				@Override
-				public void mergeAB(Attribute<?, ?> a, ObjectNode b, TransformationContext ctx)
-				{
-					logger.debug("transforming " + a.getEntityType().getEntityClass().getSimpleName() + "." + a.getCode());
-
-					if (a.getTargetType() instanceof EntityType)
-					{
-
-						ValidTypes validTypes = ((JavaMetaData) a).getAnnotation(ValidTypes.class);
-
-						ArrayNode validTypesArray = b.arrayNode();
-						if (validTypes != null && validTypes.value().length == 0)
-						{
-							b.putNull("validTypes");
-						}
-						else if (validTypes != null && validTypes.value().length > 0)
-						{
-							for (Class clazz : validTypes.value())
-							{
-								EntityType type = entityTypeRepository.getEntityType(clazz);
-								UniTransformation<EntityType, ObjectNode> ab = typeTransformation.getAB();
-								ObjectNode value = ab.convert(type, ctx);
-								validTypesArray.add(value);
-							}
-							b.put("validTypes", validTypesArray);
-						}
-						else
-						{
-							for (EntityType entityType : ((EntityType<?>) a.getTargetType()).getSubEntityTypes())
-							{
-								UniTransformation<EntityType, ObjectNode> ab = typeTransformation.getAB();
-								ObjectNode value = ab.convert(entityType, ctx);
-								validTypesArray.add(value);
-							}
-							if (validTypesArray.size() > 0)
-							{
-								b.put("validTypes", validTypesArray);
-							}
-						}
-					}
-
-				}
-
-				@Override
-				public void mergeBA(ObjectNode b, Attribute a, TransformationContext ctx)
-				{
-				}
-
-			})
-			.to()
-			.addMultiAssociationAttribute("validTypes", entityTypeRepository.getType("schema"),
-				CollectionSortType.ORDERABLE);
-	}
 }

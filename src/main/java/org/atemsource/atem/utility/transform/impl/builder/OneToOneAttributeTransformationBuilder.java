@@ -9,9 +9,12 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
+import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
 
 public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends OneToOneAttributeTransformationBuilder<A, B, T>>
 		extends AbstractAttributeTransformationBuilder<A, B, T> {
@@ -30,6 +33,16 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 
 	public T convert(Converter<?, ?> converter) {
 		this.converter = converter;
+		return (T) this;
+	}
+
+	public T convert(JavaConverter<?, ?> javaConverter) {
+		this.converter = ConverterUtils.create(javaConverter);
+		return (T) this;
+	}
+
+	public T convert(JavaUniConverter<?, ?> javaConverter) {
+		this.converter = ConverterUtils.create(javaConverter);
 		return (T) this;
 	}
 

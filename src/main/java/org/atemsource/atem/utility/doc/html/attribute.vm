@@ -1,3 +1,29 @@
-      $attribute.name
-     $attribute.description
-   type: <a href="${attribute.targetType.url}">$attribute.targetType.name</a>
+ <h3>     $attribute.name<h3>
+  <p>   $attribute.description</p>
+ 
+ 
+ #if( $attribute.targetType.getTypeCode()=="schema.entitytype.ref" )
+  <h4>type:</h4> <a href="${attribute.targetType.url}">$attribute.targetType.name</a>
+ #else
+    <h4>type</h4>:$attribute.targetType.name
+  #if( $attribute.targetType.values )
+    <h5>values:</h5> 
+    <ul>
+	#foreach( $value in $attribute.targetType.values )
+	   <li>
+	   $value
+	    </li>
+	#end
+	</ul>
+ #end
+  #if( $attribute.targetType.format )
+    <h5>format:</h5> $attribute.targetType.format
+ #end
+ #end
+<h5> array:</h5>$attribute.array
+ 
+ <!--
+$attribute.getAsString()
+-----
+$attribute.targetType.getAsString()
+-->

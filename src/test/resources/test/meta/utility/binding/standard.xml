@@ -26,7 +26,6 @@
 	<bean class="org.atemsource.atem.utility.path.AttributePathBuilderFactory">
 	</bean>
 
-
 	<bean id="atem-utility-binder" class="org.atemsource.atem.utility.binding.Binder">
 		<property name="typeFilter">
 			<bean class="org.atemsource.atem.utility.binding.PackageTypeFilter">
@@ -39,7 +38,14 @@
 				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
 				<property name="converterFactory">
 					<bean
-						class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl" />
+						class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl">
+						<property name="factories">
+							<list>
+								<bean
+									class="org.atemsource.atem.utility.transform.impl.converter.EnumToStringConverterFactory" />
+							</list>
+						</property>
+					</bean>
 				</property>
 			</bean>
 		</property>
@@ -55,7 +61,7 @@
 		<property name="entityTypeClass"
 			value="org.atemsource.atem.impl.pojo.PlainPojoEntityType" />
 		<property name="entityClass" value="java.lang.Object" />
-		<property name="propertyDescriptorFactory" ref="pojoPropertyDescriptorFactory"/>
+		<property name="propertyDescriptorFactory" ref="pojoPropertyDescriptorFactory" />
 		<property name="includedPackage" value="org.atemsource.atem.utility.domain" />
 		<property name="attributeFactories">
 			<list>

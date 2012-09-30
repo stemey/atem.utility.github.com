@@ -23,25 +23,31 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class SingleAttributeTransformationBuilder<A, B> extends
-		OneToOneAttributeTransformationBuilder<A, B,SingleAttributeTransformationBuilder<A, B>> {
+public class SingleAttributeTransformationBuilder<A, B>
+		extends
+		OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> {
 	public void build(EntityTypeBuilder entityTypeBuilder) {
 		AttributePath sourcePath = attributePathBuilderFactory
 				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		Converter<?, ?> converter = getConverter(sourcePath.getTargetType()
+				.getType());
 		if (converter != null) {
 			attributeTargetType = converter.getTypeB();
 		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(getTargetAttribute(),
-				attributeTargetType);
-		if (converter!=null && converter instanceof Constraining) {
-			Constraining constraining=((Constraining)converter);
-			for (String name:constraining.getConstraintNamesAB()) {
-				Attribute metaAttribute = entityTypeRepository.getEntityType(Attribute.class).getMetaAttribute(name);
-				metaAttribute.setValue(attribute, constraining.getConstraintAB(name));
+		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(
+				getTargetAttribute(), attributeTargetType);
+		if (converter != null && converter instanceof Constraining) {
+			Constraining constraining = ((Constraining) converter);
+			for (String name : constraining.getConstraintNamesAB()) {
+				Attribute metaAttribute = entityTypeRepository.getEntityType(
+						Attribute.class).getMetaAttribute(name);
+				if (metaAttribute != null) {
+					metaAttribute.setValue(attribute,
+							constraining.getConstraintAB(name));
+				}
 			}
 		}
 	}
@@ -55,8 +61,9 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 				.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);
 		primitiveAttributeTransformation.setAttributeB(targetPath);
-		primitiveAttributeTransformation.setTransformation(getTransformation(sourcePath
-				.getTargetType().getType()));
+		primitiveAttributeTransformation
+				.setTransformation(getTransformation(sourcePath.getTargetType()
+						.getType()));
 		primitiveAttributeTransformation.setTypeA(sourceType);
 		primitiveAttributeTransformation.setTypeB(targetType);
 		primitiveAttributeTransformation.setMeta(meta);

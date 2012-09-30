@@ -15,10 +15,6 @@
            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-
-
-	<!-- Scans for application @Components to deploy -->
-
 	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
 	<import resource="classpath:/meta/utility/transform-example.xml" />
 	<import resource="classpath:/atem/dynamic/entitytype.xml" />
@@ -30,7 +26,6 @@
 		<property name="serializingPrimitiveValues" value="false" />
 	</bean>
 
-
 	<bean id="test-annotation-repository" parent="atem-annotation-repository">
 		<property name="includedPackage" value="org.atemsource.atem.pojo" />
 	</bean>
@@ -39,8 +34,6 @@
 		class="org.atemsource.atem.impl.annotation.AnnotationMetaAttributeService">
 		<property name="annotationTypeFilter" ref="test-annotation-repository" />
 	</bean>
-
-
 
 	<bean
 		class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
@@ -51,6 +44,7 @@
 		class="org.atemsource.atem.utility.transform.impl.constraint.ConstraintMetaAttributeRegistrar">
 		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
 	</bean>
+
 	<bean id="constraint-pojo-repository" parent="atem-scanned-pojo-repository">
 		<property name="includedPackage"
 			value="org.atemsource.atem.utility.transform.api.constraint" />
@@ -69,14 +63,8 @@
 				<ref bean="atem-dynamicEntity-repository" />
 				<ref bean="constraint-pojo-repository" />
 				<ref bean="atem-pojo-repository" />
-				
 			</list>
 		</property>
 	</bean>
-
-
-
-
-
 
 </beans>

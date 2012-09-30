@@ -1,5 +1,4 @@
 package org.atemsource.atem.utility.transform.impl.builder;
-
 import net.sf.cglib.proxy.Enhancer;
 
 import org.atemsource.atem.api.attribute.Attribute;

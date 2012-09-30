@@ -224,6 +224,18 @@ public class TypeTransformationBuilderTest
 	}
 
 	@Test
+	public void testSingleConversion()
+	{
+		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation = createEntityTypeTransformation("testSingleConversion");
+
+		EntityB a = new EntityB();
+		a.setInteger(5);
+		DynamicEntity b = entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext());
+		Assert.assertEquals(5, b.get("i"));
+		
+	}
+
+	@Test
 	public void testSinglePrimitiveDerivedAnnotation()
 	{
 		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation = createEntityTypeTransformation("testDerivedAnnotation");

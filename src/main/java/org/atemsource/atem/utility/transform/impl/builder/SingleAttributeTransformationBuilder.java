@@ -7,12 +7,16 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
+import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.impl.converter.Constraining;
 import org.atemsource.atem.utility.transform.impl.transformation.SingleAttributeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,14 +29,21 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 		AttributePath sourcePath = attributePathBuilderFactory
 				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null) {
-			attributeTargetType = getConverter(
-					sourcePath.getTargetType().getType()).getTypeB();
+		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		if (converter != null) {
+			attributeTargetType = converter.getTypeB();
 		} else {
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		entityTypeBuilder.addSingleAttribute(getTargetAttribute(),
+		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(getTargetAttribute(),
 				attributeTargetType);
+		if (converter!=null && converter instanceof Constraining) {
+			Constraining constraining=((Constraining)converter);
+			for (String name:constraining.getConstraintNamesAB()) {
+				Attribute metaAttribute = entityTypeRepository.getEntityType(Attribute.class).getMetaAttribute(name);
+				metaAttribute.setValue(attribute, constraining.getConstraintAB(name));
+			}
+		}
 	}
 
 	public AttributeTransformation<A, B> create(EntityType<B> targetType) {

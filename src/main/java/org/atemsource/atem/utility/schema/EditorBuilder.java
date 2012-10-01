@@ -216,6 +216,7 @@ public class EditorBuilder
 
 		transformationBuilder.transform().from("code").to("label");
 		transformationBuilder.transform().from("code").to("code");
+		transformationBuilder.transform().from("writable").to("writable");
 		// transformationBuilder.transform().from("@max-length").to("max-length");
 		getSingleAttributeTransformation(transformationBuilder.getReference());
 		getListAttributeTransformation(transformationBuilder.getReference());
@@ -290,6 +291,7 @@ public class EditorBuilder
 
 		transformationBuilder.transformCollection().from("attributes").to("attributes")
 			.convert(getAttributeTransformation());
+		// TODO add filter for writable attributes
 
 		basicTransformationBuilder.buildTypeTransformation();
 		transformationBuilder.includeSuper(basicTypeTransformation);

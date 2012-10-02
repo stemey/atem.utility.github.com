@@ -39,9 +39,19 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 	{
 		CollectionAttribute<Object, Object> attributeA =
 			(CollectionAttribute<Object, Object>) attributePathA.getAttribute(a);
+		if (attributeA == null)
+		{
+			// TODO above seems to be null sometimes
+			attributeA = (CollectionAttribute<Object, Object>) attributePathA.getAttribute();
+		}
 		CollectionAttribute<Object, Object> attributeB =
 			(CollectionAttribute<Object, Object>) attributePathB.getAttribute();
 		Object baseValueA = attributePathA.getBaseValue(a);
+
+		if (baseValueA == null)
+		{
+			return;
+		}
 
 		Collection<Object> associatedEntities = attributeA.getElements(baseValueA);
 

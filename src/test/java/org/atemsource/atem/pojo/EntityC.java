@@ -20,26 +20,14 @@ import java.io.Serializable;
 import org.atemsource.atem.utility.domain.Vehicle;
 import org.atemsource.atem.utility.transform.api.annotation.Conversion;
 
-public class EntityB implements Serializable {
-	@TestAnnotation
-	private int integer;
+public class EntityC implements Serializable {
+	private Vehicle vehicle;
 
-	private EntityA singleA;
-
-	public int getInteger() {
-		return integer;
+	public Vehicle getVehicle() {
+		return vehicle;
 	}
 
-	
-	public EntityA getSingleA() {
-		return singleA;
-	}
-
-	public void setInteger(int integer) {
-		this.integer = integer;
-	}
-
-	public void setSingleA(EntityA singleA) {
-		this.singleA = singleA;
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
 	}
 }

@@ -15,33 +15,25 @@
            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-	<import resource="classpath:/test/meta/pojo/entitytype.xml" />
-	<import resource="classpath:/meta/utility/transform-example.xml" />
-	<import resource="classpath:/atem/dynamic/entitytype.xml" />
+
+
+	<import resource="classpath:/atem/pojo/entitytype.xml" />
 	<import resource="classpath:/atem/annotation/entitytype.xml" />
-	<import resource="classpath:/atem/impl/memory-meta.xml" />
-	<import resource="classpath:/meta/utility/transform-constraint.xml" />
+	<import resource="classpath:/meta/utility/doc-html.xml" />
 
-	<bean id="atem-dynamicEntity-repository"
-		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
-		<property name="serializingPrimitiveValues" value="false" />
-	</bean>
-
-	<bean id="test-annotation-repository" parent="atem-annotation-repository">
+	<bean id="constraint-annotation-repository" parent="atem-annotation-repository">
 		<property name="includedPackage" value="org.atemsource.atem.pojo" />
 	</bean>
 
-	<bean id="constraint-annotation-metaAtributeService"
+	<bean id="constraint-annotation-metaAttributeService"
 		class="org.atemsource.atem.impl.annotation.AnnotationMetaAttributeService">
-		<property name="annotationTypeFilter" ref="test-annotation-repository" />
+		<property name="annotationTypeFilter" ref="constraint-annotation-repository" />
 	</bean>
 
-	<bean
-		class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
-		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
+	<bean id="atem-pojo-repository" parent="abstract-atem-scanned-pojo-repository">
+		<property name="includedPackage" value="org.atemsource.atem.utility.domain"></property>
 	</bean>
 
-	
 
 
 	<bean id="atem-repository"
@@ -51,12 +43,29 @@
 			<list>
 				<ref bean="atem-entityType-repository" />
 				<ref bean="atem-attribute-repository" />
-				<ref bean="test-annotation-repository" />
 				<ref bean="atem-dynamicEntity-repository" />
-				<ref bean="atem-constraint-transform-repository" />
+				<ref bean="constraint-annotation-repository" />
 				<ref bean="atem-pojo-repository" />
 			</list>
 		</property>
 	</bean>
+
+
+
+	<bean class="org.atemsource.atem.utility.doc.html.HtmlDocGenerator">
+		<property name="docBuilder">
+			<bean class="org.atemsource.atem.utility.doc.html.DocBuilder">
+				<property name="subrepository" ref="atem-dynamicEntity-repository" />
+				<property name="transformationBuilderFactory" ref="atem-utility-transformationBuilderFactory" />
+			</bean>
+		</property>
+		<property name="typeCodeToUrlConverter">
+			<bean class="org.atemsource.atem.utility.doc.html.TypeCodeToUrlConverter">
+				<property name="basePath" value="doc/" />
+			</bean>
+		</property>
+		<property name="typeFilter" ref="atem-pojo-repository" />
+	</bean>
+
 
 </beans>

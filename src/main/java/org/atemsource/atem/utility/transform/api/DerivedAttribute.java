@@ -16,9 +16,10 @@
 package org.atemsource.atem.utility.transform.api;
 
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.impl.meta.DerivedObject;
 
 
-public class DerivedAttribute
+public class DerivedAttribute implements DerivedObject
 {
 
 	private AttributeTransformation<?, ?> transformation;
@@ -43,6 +44,11 @@ public class DerivedAttribute
 	public void setTransformation(AttributeTransformation<?, ?> transformation)
 	{
 		this.transformation = transformation;
+	}
+
+	@Override
+	public Object getOriginal() {
+		return originalAttribute;
 	}
 
 }

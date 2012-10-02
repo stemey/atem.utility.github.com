@@ -40,7 +40,14 @@
 				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
 				<property name="converterFactory">
 					<bean
-						class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl" />
+						class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl">
+						<property name="factories">
+							<list>
+								<bean
+									class="org.atemsource.atem.utility.transform.impl.converter.EnumToStringConverterFactory" />
+							</list>
+						</property>
+					</bean>
 				</property>
 			</bean>
 		</property>
@@ -99,7 +106,6 @@
 				<ref bean="atem-attribute-repository" />
 				<ref bean="atem-json-repository" />
 				<ref bean="atem-pojo-repository" />
-				<ref bean="atem-dynamicEntity-repository" />
 				<ref bean="derivation-repository" />
 			</list>
 		</property>

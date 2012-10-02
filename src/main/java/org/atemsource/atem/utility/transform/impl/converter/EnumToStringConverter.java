@@ -8,42 +8,59 @@
 package org.atemsource.atem.utility.transform.impl.converter;
 
 import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
+public class EnumToStringConverter implements JavaConverter<Enum<?>, String>,
+		Constraining {
 
-public class EnumToStringConverter implements JavaConverter<Enum<?>, String>
-{
+	private Class<? extends Enum> enumClass;
+	private StringPossibleValues possibleValues;
 
-	private Class<Enum> enumClass;
-
-	EnumToStringConverter(Class<Enum> enumClass)
-	{
+	public EnumToStringConverter(Class<? extends Enum> enumClass) {
 		this.enumClass = enumClass;
+		String[] values = new String[enumClass.getEnumConstants().length];
+		for (int i = 0; i < enumClass.getEnumConstants().length; i++) {
+			values[i] = convertAB(enumClass.getEnumConstants()[i]);
+		}
+		this.possibleValues = new StringPossibleValues(values);
 	}
 
 	@Override
-	public String convertAB(Enum<?> a)
-	{
-		if (a == null)
-		{
+	public String convertAB(Enum<?> a) {
+		if (a == null) {
 			return null;
-		}
-		else
-		{
+		} else {
 			return a.name();
 		}
 	}
 
 	@Override
-	public Enum<?> convertBA(String b)
-	{
-		if (b == null || b.isEmpty())
-		{
+	public Enum<?> convertBA(String b) {
+		if (b == null || b.isEmpty()) {
 			return null;
-		}
-		else
-		{
+		} else {
 			return Enum.valueOf(enumClass, b);
 		}
+	}
+
+	@Override
+	public String[] getConstraintNamesAB() {
+		return new String[] { PossibleValues.META_ATTRIBUTE_CODE };
+	}
+
+	@Override
+	public Object getConstraintAB(String name) {
+		return possibleValues;
+	}
+
+	@Override
+	public String[] getConstraintNamesBA() {
+		return new String[] {};
+	}
+
+	@Override
+	public Object getConstraintBA(String name) {
+		return null;
 	}
 
 }

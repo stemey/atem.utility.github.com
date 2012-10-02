@@ -1,31 +1,21 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.path;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.atemsource.atem.api.attribute.Attribute;
 
 
 public class AttributePathImpl implements AttributePath
 {
 
-	private List<AttributePathElement> path;
+	private final List<AttributePathElement> path;
 
 	public AttributePathImpl()
 	{
@@ -45,6 +35,7 @@ public class AttributePathImpl implements AttributePath
 		this.path = path;
 	}
 
+	@Override
 	public String getAsString()
 	{
 		StringBuilder builder = new StringBuilder();
@@ -94,6 +85,7 @@ public class AttributePathImpl implements AttributePath
 
 	}
 
+	@Override
 	public Object getBaseValue(Object entity)
 	{
 		for (int index = 0; index < path.size() - 1; index++)
@@ -128,6 +120,7 @@ public class AttributePathImpl implements AttributePath
 		return path.get(path.size() - 1).getTargetType();
 	}
 
+	@Override
 	public Object getValue(Object entity)
 	{
 		for (int index = 0; index < path.size(); index++)
@@ -175,6 +168,7 @@ public class AttributePathImpl implements AttributePath
 		return getAttribute().isWriteable();
 	}
 
+	@Override
 	public void setValue(Object entity, Object value)
 	{
 		for (int index = 0; index < path.size() - 1; index++)

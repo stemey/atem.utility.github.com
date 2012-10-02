@@ -6,14 +6,16 @@ import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
-public class LocalConverter<A, B> implements Converter<A, B>
+public class LocalConverter<A, B> implements Converter<A, B>, Constraining
 {
 
-	private LocalUniConverter abConverter = new LocalUniConverter(this, true);
+	private final LocalUniConverter abConverter = new LocalUniConverter(this, true);
 
-	private LocalUniConverter baConverter = new LocalUniConverter(this, false);
+	private final LocalUniConverter baConverter = new LocalUniConverter(this, false);
 
-	private JavaConverter javaConverter;
+	private final boolean constraining;
+
+	private final JavaConverter javaConverter;
 
 	private Type<A> typeA;
 
@@ -23,6 +25,7 @@ public class LocalConverter<A, B> implements Converter<A, B>
 	{
 		super();
 		this.javaConverter = javaConverter;
+		this.constraining = javaConverter instanceof Constraining;
 		this.typeA = typeA;
 		this.typeB = typeB;
 	}
@@ -38,21 +41,77 @@ public class LocalConverter<A, B> implements Converter<A, B>
 
 	}
 
+	@Override
 	public UniConverter<A, B> getAB()
 	{
 		return (UniConverter<A, B>) abConverter;
 	}
 
+	@Override
 	public UniConverter<B, A> getBA()
 	{
 		return (UniConverter<B, A>) baConverter;
 	}
 
+	@Override
+	public Object getConstraintAB(String name)
+	{
+		if (constraining)
+		{
+			return ((Constraining) javaConverter).getConstraintAB(name);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public Object getConstraintBA(String name)
+	{
+		if (constraining)
+		{
+			return ((Constraining) javaConverter).getConstraintBA(name);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public String[] getConstraintNamesAB()
+	{
+		if (constraining)
+		{
+			return ((Constraining) javaConverter).getConstraintNamesAB();
+		}
+		else
+		{
+			return new String[0];
+		}
+	}
+
+	@Override
+	public String[] getConstraintNamesBA()
+	{
+		if (constraining)
+		{
+			return ((Constraining) javaConverter).getConstraintNamesBA();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
 	public Type<A> getTypeA()
 	{
 		return typeA;
 	}
 
+	@Override
 	public Type<B> getTypeB()
 	{
 		return typeB;

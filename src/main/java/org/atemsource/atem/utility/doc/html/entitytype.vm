@@ -1,16 +1,38 @@
-<ol>
-$entityType.name
-$entityType.description
+<html>
+<head>
+<title>$entityType.name</title>
+</head>
+<body>
 
-#foreach( $subtype in $entitytype.subtypes )
+<h1>$entityType.name</h1>
+<p>$entityType.description</p>
+<!--
+$entityType.getAsString()
+-->
+<h2>subtypes</h2>
+<ul> 
+#foreach( $subtype in $entityType.subtypes )
+<li>
 <a href="$subtype.url">$subtype.name</a> 
+</li>
 #end
-<a href="$entitytype.supertype.url">$entitytype.supertype.name</a> 
-
-
+</ul>
+#if ($entityType.supertype)
+  <h2>supertype</h2>
+  <a href="$entityType.supertype.url"> ${entityType.supertype.name} </a>
+  <!--
+  ${entityType.supertype.name}
+  --> 
+#end
+<h2>attributes</h2>
+<ul>
 #foreach( $attribute in $entityType.attributes )
    <li>
-   	#evaluate( ${attribute.template} )
+   	#parse("attribute.vm")
     </li>
 #end
-</ol>
+</ul>
+
+
+</body>
+</html>

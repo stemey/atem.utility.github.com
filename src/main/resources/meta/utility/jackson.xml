@@ -33,11 +33,11 @@
 	</bean>
 	<bean
 		class="org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar">
-		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService" />
+		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
 	</bean>
 	<bean
 		class="org.atemsource.atem.utility.transform.impl.BindingMetaAttributeRegistrar">
-		<property name="metaAttributeService" ref="atem-dynamic-MetaAttributeService" />
+		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
 	</bean>	
 
 

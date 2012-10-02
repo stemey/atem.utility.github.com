@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.CollectionSortType;
 import org.atemsource.atem.api.type.EntityType;
@@ -14,17 +15,17 @@ import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
-import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
-import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.impl.converter.Constraining;
 import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssociationAttributeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+
 @Component
 @Scope("prototype")
-public class CollectionAttributeTransformationBuilder<A, B>
-		extends
-		OneToOneAttributeTransformationBuilder<A, B, CollectionAttributeTransformationBuilder<A,B>>
+public class CollectionAttributeTransformationBuilder<A, B> extends
+	OneToOneAttributeTransformationBuilder<A, B, CollectionAttributeTransformationBuilder<A, B>>
 
 {
 	private CollectionSortType collectionSortType;
@@ -32,52 +33,65 @@ public class CollectionAttributeTransformationBuilder<A, B>
 	private boolean convertNullToEmpty;
 
 	@Override
-	public void build(EntityTypeBuilder entityTypeBuilder) {
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(getSourceAttribute(), sourceType);
+	public void build(EntityTypeBuilder entityTypeBuilder)
+	{
+		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null) {
-			attributeTargetType = getConverter(
-					sourcePath.getTargetType().getType()).getTypeB();
-		} else {
+		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		if (converter != null)
+		{
+			attributeTargetType = converter.getTypeB();
+		}
+		else
+		{
 			attributeTargetType = sourcePath.getTargetType().getType();
 		}
-		if (collectionSortType == null) {
-			collectionSortType = ((CollectionAttribute) sourcePath
-					.getAttribute()).getCollectionSortType();
+		if (collectionSortType == null)
+		{
+			collectionSortType = ((CollectionAttribute) sourcePath.getAttribute()).getCollectionSortType();
 		}
-		entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(),
-				attributeTargetType, collectionSortType);
+		CollectionAttribute<?, Object> attribute =
+			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, collectionSortType);
+		if (converter != null && converter instanceof Constraining)
+		{
+			Constraining constraining = ((Constraining) converter);
+			for (String name : constraining.getConstraintNamesAB())
+			{
+				Attribute metaAttribute = entityTypeRepository.getEntityType(Attribute.class).getMetaAttribute(name);
+				if (metaAttribute != null)
+				{
+					metaAttribute.setValue(attribute, constraining.getConstraintAB(name));
+				}
+			}
+		}
 	}
 
-	public CollectionAttributeTransformationBuilder convertNullToEmpty() {
+	public CollectionAttributeTransformationBuilder convertNullToEmpty()
+	{
 		convertNullToEmpty = true;
 		return this;
 	}
 
 	@Override
-	public AttributeTransformation<A, B> create(EntityType<B> targetType) {
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(getSourceAttribute(), sourceType);
-		AttributePath targetPath = attributePathBuilderFactory
-				.createAttributePath(getTargetAttribute(), targetType);
-		CollectionAssociationAttributeTransformation<A, B> transformation = beanLocator
-				.getInstance(CollectionAssociationAttributeTransformation.class);
+	public AttributeTransformation<A, B> create(EntityType<B> targetType)
+	{
+		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
+		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(getTargetAttribute(), targetType);
+		CollectionAssociationAttributeTransformation<A, B> transformation =
+			beanLocator.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setTransformation(getTransformation(sourcePath.getTargetType()
-				.getType()));
+		transformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
-		addDerivation(transformation, targetPath.getAttribute(),
-				sourcePath.getAttribute());
+		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
 
-	public CollectionAttributeTransformationBuilder sort(
-			CollectionSortType collectionSortType) {
+	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)
+	{
 		this.collectionSortType = collectionSortType;
 		return this;
 	}

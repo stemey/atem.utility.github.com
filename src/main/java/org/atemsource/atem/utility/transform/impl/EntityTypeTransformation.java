@@ -158,7 +158,15 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 						return ab.merge(a, b, ctx);
 					}
 				}
-				getTransformationByTypeA(entityType).transformABChildren(a, b, ctx);
+				EntityTypeTransformation<A, B> transformation = getTransformationByTypeA(entityType);
+				if (transformation != null)
+				{
+					transformation.transformABChildren(a, b, ctx);
+				}
+				else
+				{
+					throw new IllegalStateException("cannot find transformation for " + entityType.getCode());
+				}
 				return b;
 			}
 		};
@@ -231,6 +239,65 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 		return getTransformationByTypeA(entityType).getBA();
 	}
 
+	private EntityTypeTransformation<A, B> getBySubtypesA(EntityType<?> entityType)
+	{
+		if (entityType.equals(getEntityTypeA()))
+		{
+			return this;
+		}
+		EntityTypeTransformation<A, B> transformation = null;
+		for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
+		{
+			EntityTypeTransformation<A, B> otherTransformation = subTransformation.getBySubtypesA(entityType);
+			if (otherTransformation != null)
+			{
+				if (transformation != null)
+				{
+					throw new IllegalStateException("there are two transformations for the same type");
+				}
+				else
+				{
+					transformation = otherTransformation;
+				}
+			}
+
+		}
+		return transformation;
+	}
+
+	private EntityTypeTransformation<A, B> getBySubtypesB(EntityType<?> entityType)
+	{
+		if (entityType.equals(getEntityTypeB()))
+		{
+			return this;
+		}
+		EntityTypeTransformation<A, B> transformation = null;
+		for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
+		{
+			EntityTypeTransformation<A, B> otherTransformation = subTransformation.getBySubtypesB(entityType);
+			if (otherTransformation != null)
+			{
+				if (transformation != null)
+				{
+					throw new IllegalStateException("there are two transformations for the same type");
+				}
+				else
+				{
+					transformation = otherTransformation;
+				}
+			}
+
+		}
+		if (transformation != null)
+		{
+			return transformation;
+		}
+		else
+		{
+			return this;
+		}
+	}
+
 	public EntityType<A> getEntityTypeA()
 	{
 		return entityTypeA;
@@ -255,37 +322,29 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 		}
 		else if (entityType.isAssignableFrom(getEntityTypeA()))
 		{
-			return superTransformation.getTransformationByTypeA(entityType);
-		}
-		else if (getEntityTypeA().isAssignableFrom(entityType))
-		{
-			EntityTypeTransformation<A, B> transformation = null;
-			for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
-			{
-				EntityTypeTransformation<A, B> otherTransformation = subTransformation.getTransformationByTypeA(entityType);
-				if (otherTransformation != null)
-				{
-					if (transformation != null)
-					{
-						throw new IllegalStateException("there are two transformations for the same type");
-					}
-					else
-					{
-						transformation = otherTransformation;
-					}
-				}
-
-			}
-			if (transformation != null)
-			{
-				return transformation;
-			}
-			else
+			EntityTypeTransformation<A, B> transformation = superTransformation.getTransformationByTypeA(entityType);
+			if (transformation == null)
 			{
 				return this;
 			}
+			else
+			{
+				return transformation;
+			}
 		}
-		return null;
+		else if (getEntityTypeA().isAssignableFrom(entityType))
+		{
+			EntityTypeTransformation<A, B> transformation = getBySubtypesA(entityType);
+			if (transformation == null)
+			{
+				return this;
+			}
+			else
+			{
+				return transformation;
+			}
+		}
+		return this;
 	}
 
 	protected EntityTypeTransformation<A, B> getTransformationByTypeB(EntityType<?> entityType)
@@ -301,16 +360,8 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 		}
 		else
 		{
-			for (EntityTypeTransformation<A, B> subTransformation : subTransformations)
-			{
-				EntityTypeTransformation<A, B> transformation = subTransformation.getTransformationByTypeB(entityType);
-				if (transformation != null)
-				{
-					return transformation;
-				}
-			}
+			return getBySubtypesB(entityType);
 		}
-		throw new IllegalArgumentException("cannot transformation entity of type " + entityType.getCode());
 	}
 
 	@Override

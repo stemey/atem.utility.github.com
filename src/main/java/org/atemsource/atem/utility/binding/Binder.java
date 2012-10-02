@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.domain.DomainA;
 import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
@@ -55,7 +56,7 @@ public class Binder extends AbstractBinder implements BindingListener {
 		String targetTypeCode = typeNameConverter.convert(entityTypeRepository
 				.getEntityType(sourceClass));
 		 EntityType<Object> entityType = entityTypeRepository.getEntityType(targetTypeCode);
-		 SingleAttribute<DerivedType> metaAttribute = (SingleAttribute<DerivedType>) entityTypeRepository.getEntityType(EntityType.class).getMetaAttribute(DerivationMetaAttributeRegistrar.DERIVED_FROM);
+		 SingleAttribute<DerivedType> metaAttribute = (SingleAttribute<DerivedType>) entityTypeRepository.getEntityType(EntityType.class).getMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE);
 		 return (EntityTypeTransformation<A, B>) metaAttribute.getValue(entityType).getTransformation();
 	}
 

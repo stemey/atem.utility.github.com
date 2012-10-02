@@ -1,24 +1,14 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.path;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.MapAttribute;
 import org.atemsource.atem.api.attribute.OrderableCollection;
@@ -34,9 +24,9 @@ import org.springframework.stereotype.Component;
 public class AttributePathBuilder
 {
 
-	private List<AttributePathElement> newPath = new ArrayList<AttributePathElement>();
+	private final List<AttributePathElement> newPath = new ArrayList<AttributePathElement>();
 
-	public AttributePathBuilder addAttribute(Attribute<?,?> attribute)
+	public AttributePathBuilder addAttribute(Attribute<?, ?> attribute)
 	{
 		newPath.add(new AttributeAttributePathElement(attribute));
 		return this;
@@ -49,7 +39,8 @@ public class AttributePathBuilder
 		if (returnType instanceof EntityType)
 		{
 			EntityType entityType = (EntityType) returnType;
-			if (property.startsWith("@")) {
+			if (property.startsWith("@"))
+			{
 				Attribute metaAttribute = entityType.getMetaAttribute(property);
 				if (metaAttribute != null)
 				{
@@ -57,10 +48,10 @@ public class AttributePathBuilder
 				}
 				else
 				{
-					throw new IllegalStateException("meta attribute "+property+"  not found ");
+					throw new IllegalStateException("meta attribute " + property + "  not found ");
 				}
 			}
-			// TODO this searches the subtypes. Therefore there  can be more than one results.
+			// TODO this searches the subtypes. Therefore there can be more than one results.
 			Attribute attribute = AttributeUtils.findAttribute(property, entityType);
 			if (attribute != null)
 			{
@@ -163,7 +154,26 @@ public class AttributePathBuilder
 
 	public AttributePathBuilder start(String property, EntityType baseType)
 	{
-		addAttribute(baseType.getAttribute(property));
+		Attribute attribute = baseType.getAttribute(property);
+		if (attribute == null)
+		{
+			if (property.startsWith("@"))
+			{
+				Attribute metaAttribute = baseType.getMetaAttribute(property.substring(1));
+				if (metaAttribute != null)
+				{
+					addAttribute(metaAttribute);
+				}
+				else
+				{
+					throw new IllegalStateException("meta attribute " + property + "  not found on " + baseType.getCode());
+				}
+			}
+		}
+		else
+		{
+			addAttribute(attribute);
+		}
 		return this;
 	}
 

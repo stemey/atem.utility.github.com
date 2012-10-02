@@ -5,23 +5,19 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.atemsource.atem.utility.transform.impl;
+package org.atemsource.atem.utility.transform.impl.constraint;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.extension.MetaAttributeService;
-import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.impl.meta.DerivedObject;
-import org.atemsource.atem.utility.transform.api.DerivedAttribute;
-import org.atemsource.atem.utility.transform.api.DerivedType;
+import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
+import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
 
-public class DerivationMetaAttributeRegistrar
+public class ConstraintMetaAttributeRegistrar
 {
-
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -36,10 +32,10 @@ public class DerivationMetaAttributeRegistrar
 	@PostConstruct
 	public void initialize()
 	{
-		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(Attribute.class),
-			entityTypeRepository.getEntityType(DerivedAttribute.class));
-		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(EntityType.class),
-			entityTypeRepository.getEntityType(DerivedType.class));
+		metaAttributeService.addSingleMetaAttribute(PossibleValues.META_ATTRIBUTE_CODE,
+			entityTypeRepository.getEntityType(Attribute.class), entityTypeRepository.getEntityType(PossibleValues.class));
+		metaAttributeService.addSingleMetaAttribute(DateFormat.META_ATTRIBUTE_CODE,
+			entityTypeRepository.getEntityType(Attribute.class), entityTypeRepository.getEntityType(DateFormat.class));
 
 	}
 

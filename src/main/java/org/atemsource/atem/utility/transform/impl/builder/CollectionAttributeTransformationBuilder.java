@@ -30,6 +30,8 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 {
 	private CollectionSortType collectionSortType;
 
+	private boolean convertEmptyToNull;
+
 	private boolean convertNullToEmpty;
 
 	@Override
@@ -66,6 +68,12 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		}
 	}
 
+	public CollectionAttributeTransformationBuilder convertEmptyToNull()
+	{
+		convertEmptyToNull = true;
+		return this;
+	}
+
 	public CollectionAttributeTransformationBuilder convertNullToEmpty()
 	{
 		convertNullToEmpty = true;
@@ -84,6 +92,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		transformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
+		transformation.setConvertEmptyToNull(convertEmptyToNull);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());

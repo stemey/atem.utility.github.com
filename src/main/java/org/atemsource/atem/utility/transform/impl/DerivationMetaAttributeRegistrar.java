@@ -7,24 +7,20 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
 
-import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.extension.EntityTypeRepositoryPostProcessor;
 import org.atemsource.atem.api.extension.MetaAttributeService;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
-import org.atemsource.atem.utility.transform.api.DerivedAttribute;
-import org.atemsource.atem.utility.transform.api.DerivedType;
+import org.atemsource.atem.spi.EntityTypeCreationContext;
 
 
-public class DerivationMetaAttributeRegistrar
+public class DerivationMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
-
-
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
 
 	private MetaAttributeService metaAttributeService;
 
@@ -33,14 +29,15 @@ public class DerivationMetaAttributeRegistrar
 		return metaAttributeService;
 	}
 
-	@PostConstruct
-	public void initialize()
+	@Override
+	public void initialize(EntityTypeCreationContext entityTypeCreationContext)
 	{
-		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(Attribute.class),
-			entityTypeRepository.getEntityType(DerivedAttribute.class));
-		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE, entityTypeRepository.getEntityType(EntityType.class),
-			entityTypeRepository.getEntityType(DerivedType.class));
-
+		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE,
+			entityTypeCreationContext.getEntityTypeReference(Attribute.class),
+			entityTypeCreationContext.getEntityTypeReference(DerivedAttribute.class));
+		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE,
+			entityTypeCreationContext.getEntityTypeReference(EntityType.class),
+			entityTypeCreationContext.getEntityTypeReference(DerivedType.class));
 	}
 
 	public void setMetaAttributeService(MetaAttributeService metaAttributeService)

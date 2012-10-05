@@ -41,7 +41,7 @@ public class HtmlDocGenerator
 
 		Context context = new VelocityContext();
 		Object entityTypeDocument =
-			docBuilder.getEntityTypeTransformation().getAB().convert(entityType, new SimpleTransformationContext());
+			docBuilder.getEntityTypeTransformation().getAB().convert(entityType, new SimpleTransformationContext(null));
 
 		context.put("entityType", entityTypeDocument);
 		InputStream resourceAsStream = getClass().getResourceAsStream("entitytype.vm");

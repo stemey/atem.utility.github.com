@@ -21,11 +21,23 @@ import org.springframework.stereotype.Component;
 public class CollectionAssociationAttributeTransformation<A, B> extends OneToOneAttributeTransformation<A, B>
 {
 
+	private boolean convertEmptyToNull;
+
 	private boolean convertNullToEmpty;
+
+	public boolean isConvertEmptyToNull()
+	{
+		return convertEmptyToNull;
+	}
 
 	public boolean isConvertNullToEmpty()
 	{
 		return convertNullToEmpty;
+	}
+
+	public void setConvertEmptyToNull(boolean convertEmptyToNull)
+	{
+		this.convertEmptyToNull = convertEmptyToNull;
 	}
 
 	public void setConvertNullToEmpty(boolean convertNullToEmpty)
@@ -55,6 +67,10 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 
 		Collection<Object> associatedEntities = attributeA.getElements(baseValueA);
 
+		if (convertEmptyToNull && associatedEntities.size() == 0)
+		{
+			return;
+		}
 		Object emptyCollection = attributeB.getEmptyCollection(b);
 		if (associatedEntities != null)
 		{

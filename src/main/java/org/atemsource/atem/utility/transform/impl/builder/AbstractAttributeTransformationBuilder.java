@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,6 @@ import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.ConverterFactory;
 import org.atemsource.atem.utility.transform.api.CustomAttributeTransformationBuilder;
-import org.atemsource.atem.utility.transform.api.DerivedAttribute;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;

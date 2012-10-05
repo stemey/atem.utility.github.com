@@ -7,22 +7,18 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.atemsource.atem.utility.transform.api.meta.Binding;
 
-import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.extension.EntityTypeRepositoryPostProcessor;
 import org.atemsource.atem.api.extension.MetaAttributeService;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.utility.transform.api.Binding;
+import org.atemsource.atem.spi.EntityTypeCreationContext;
 
 
-public class BindingMetaAttributeRegistrar
+public class BindingMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
 
 	public static final String BINDING = "binding";
-
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
 
 	private MetaAttributeService metaAttributeService;
 
@@ -31,12 +27,12 @@ public class BindingMetaAttributeRegistrar
 		return metaAttributeService;
 	}
 
-	@PostConstruct
-	public void initialize()
+	@Override
+	public void initialize(EntityTypeCreationContext entityTypeCreationContext)
 	{
-		metaAttributeService.addSingleMetaAttribute(BINDING, entityTypeRepository.getEntityType(EntityType.class),
-			entityTypeRepository.getEntityType(Binding.class));
-
+		metaAttributeService.addSingleMetaAttribute(BINDING,
+			entityTypeCreationContext.getEntityTypeReference(EntityType.class),
+			entityTypeCreationContext.getEntityTypeReference(Binding.class));
 	}
 
 	public void setMetaAttributeService(MetaAttributeService metaAttributeService)

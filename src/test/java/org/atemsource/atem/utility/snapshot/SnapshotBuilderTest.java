@@ -9,11 +9,8 @@ package org.atemsource.atem.utility.snapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import junit.framework.Assert;
-
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
@@ -33,10 +30,10 @@ public class SnapshotBuilderTest
 {
 
 	@Inject
-	private SnapshotBuilderFactory snapshotBuilderFactory;
+	private EntityTypeRepository entityTypeRepository;
 
 	@Inject
-	private EntityTypeRepository entityTypeRepository;
+	private SnapshotBuilderFactory snapshotBuilderFactory;
 
 	@Test
 	public void test()
@@ -62,9 +59,10 @@ public class SnapshotBuilderTest
 
 		Transformation<EntityA, DynamicEntity> snapshotting = (Transformation<EntityA, DynamicEntity>) builder.create();
 
-		DynamicEntity snapshot = snapshotting.getAB().convert(entityA, new SimpleTransformationContext());
+		DynamicEntity snapshot =
+			snapshotting.getAB().convert(entityA, new SimpleTransformationContext(entityTypeRepository));
 
-		EntityA restored = snapshotting.getBA().convert(snapshot, new SimpleTransformationContext());
+		EntityA restored = snapshotting.getBA().convert(snapshot, new SimpleTransformationContext(entityTypeRepository));
 
 		Assert.assertFalse(((List) snapshot.get("list")).get(0) instanceof EntityB);
 		Assert.assertEquals(100, restored.getIntP());

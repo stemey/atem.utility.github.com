@@ -165,22 +165,29 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 			}
 			Converter<?, ?> converter = ConverterUtils.create(javaConverter);
 			convert(context, attribute, converter);
-
 		}
 		else
 		{
-			EntityType<?> targetType = (EntityType<?>) attribute.getTargetType();
-			// TODO in case of circular dependecies we need to lazily transform
-			// this attribute or create another
-			// transformation
-
-			context.cascade(targetType, attributeVisitor);
-			Transformation transformation = context.getTransformation(targetType);
-			if (transformation == null)
+			Converter<?, ?> converter = context.getCurrent().getConverterFactory().get(attribute.getTargetType());
+			if (converter != null)
 			{
-				throw new IllegalStateException("cannot tranform " + attribute);
+				convert(context, attribute, converter);
 			}
-			convert(context, attribute, transformation);
+			else
+			{
+				EntityType<?> targetType = (EntityType<?>) attribute.getTargetType();
+				// TODO in case of circular dependencies we need to lazily transform
+				// this attribute or create another
+				// transformation
+
+				context.cascade(targetType, attributeVisitor);
+				Transformation transformation = context.getTransformation(targetType);
+				if (transformation == null)
+				{
+					throw new IllegalStateException("cannot tranform " + attribute);
+				}
+				convert(context, attribute, transformation);
+			}
 		}
 	}
 

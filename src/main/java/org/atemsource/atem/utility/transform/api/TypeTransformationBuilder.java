@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+
 import java.util.ArrayList;
 import java.util.List;
 

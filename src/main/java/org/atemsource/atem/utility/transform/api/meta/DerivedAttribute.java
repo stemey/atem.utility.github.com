@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.atemsource.atem.utility.transform.api;
+package org.atemsource.atem.utility.transform.api.meta;
+
+import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.impl.meta.DerivedObject;

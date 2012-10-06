@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.inject.Inject;
-import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
@@ -35,9 +33,6 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 	private EntityType<A> entityTypeA;
 
 	private EntityType<B> entityTypeB;
-
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
 
 	private TransformationFinder<A, B> finder;
 
@@ -116,7 +111,7 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 				{
 					return null;
 				}
-				EntityType<A> entityType = entityTypeRepository.getEntityType(a);
+				EntityType<A> entityType = ctx.getEntityTypeByA(a);
 				if (finder != null)
 				{
 
@@ -149,7 +144,7 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 			@Override
 			public B merge(A a, B b, TransformationContext ctx)
 			{
-				EntityType<A> entityType = entityTypeRepository.getEntityType(a);
+				EntityType<A> entityType = ctx.getEntityTypeByA(a);
 				if (finder != null)
 				{
 					UniTransformation<A, B> ab = finder.getAB(a, ctx);
@@ -184,13 +179,6 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 		return getTransformationByTypeB((EntityType<?>) sourceType).getEntityTypeA();
 	}
 
-	protected UniTransformation getAB(Object value)
-	{
-
-		EntityType<?> entityType = entityTypeRepository.getEntityType(value);
-		return getTransformationByTypeA(entityType).getAB();
-	}
-
 	@Override
 	public UniTransformation<B, A> getBA()
 	{
@@ -200,7 +188,12 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 			@Override
 			public A convert(B b, TransformationContext ctx)
 			{
-				EntityType<B> entityType = entityTypeRepository.getEntityType(b);
+
+				EntityType<B> entityType = ctx.getEntityTypeByB(b);
+				if (entityType == null)
+				{
+					entityType = entityTypeB;
+				}
 				if (finder != null)
 				{
 					UniTransformation<B, A> ba = finder.getBA(b, ctx);
@@ -227,7 +220,11 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 			@Override
 			public A merge(B b, A a, TransformationContext ctx)
 			{
-				EntityType<B> entityType = entityTypeRepository.getEntityType(b);
+				EntityType<B> entityType = ctx.getEntityTypeByB(b);
+				if (entityType == null)
+				{
+					entityType = entityTypeB;
+				}
 				if (finder != null)
 				{
 					UniTransformation<B, A> ba = finder.getBA(b, ctx);
@@ -247,13 +244,6 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 			}
 
 		};
-	}
-
-	protected UniTransformation getBA(Object value)
-	{
-
-		EntityType<?> entityType = entityTypeRepository.getEntityType(value);
-		return getTransformationByTypeA(entityType).getBA();
 	}
 
 	private EntityTypeTransformation<A, B> getBySubtypesA(EntityType<?> entityType)
@@ -287,6 +277,10 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 		if (entityType.equals(getEntityTypeB()))
 		{
 			return this;
+		}
+		else if (!getEntityTypeB().isAssignableFrom(entityType))
+		{
+			return null;
 		}
 		EntityTypeTransformation<A, B> transformation = null;
 		for (EntityTypeTransformation<A, B> subTransformation : subTransformations)

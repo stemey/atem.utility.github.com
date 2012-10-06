@@ -5,15 +5,16 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.json.JsonEntityTypeImpl;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.binding.AbstractBinder;
 import org.atemsource.atem.utility.binding.AttributeFilter;
 import org.atemsource.atem.utility.binding.BindingListener;
 import org.atemsource.atem.utility.binding.BindingSession;
 import org.atemsource.atem.utility.binding.jackson.JacksonAttributeNameConverter;
-import org.atemsource.atem.utility.transform.api.Binding;
-import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
+import org.atemsource.atem.utility.transform.api.meta.Binding;
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
 import org.atemsource.atem.utility.transform.impl.BindingMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.version.VersionResolver;
@@ -126,6 +127,7 @@ public class VersionedBinder extends AbstractBinder
 			{
 				Binding binding = new Binding();
 				binding.setVersion(version);
+				binding.setExternalTypeCode(((JsonEntityTypeImpl) targetType).getExternalTypeCode());
 				bindingAttribute.setValue(targetType, binding);
 			}
 			logger.info("added version to type " + targetType.getCode());

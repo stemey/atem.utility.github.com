@@ -1,10 +1,11 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
-import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniConverter;

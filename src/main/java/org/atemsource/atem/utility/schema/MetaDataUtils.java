@@ -1,12 +1,13 @@
 package org.atemsource.atem.utility.schema;
 
+import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
+
 import java.lang.annotation.Annotation;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.JavaMetaData;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.utility.transform.api.DerivedAttribute;
 
 public class MetaDataUtils {
 

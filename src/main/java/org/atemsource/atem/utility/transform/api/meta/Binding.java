@@ -1,4 +1,4 @@
-package org.atemsource.atem.utility.transform.api;
+package org.atemsource.atem.utility.transform.api.meta;
 
 public class Binding
 {

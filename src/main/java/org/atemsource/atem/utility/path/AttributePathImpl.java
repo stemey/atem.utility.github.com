@@ -68,6 +68,10 @@ public class AttributePathImpl implements AttributePath
 	@Override
 	public Attribute getAttribute(Object entity)
 	{
+		if (entity == null)
+		{
+			return null;
+		}
 		Attribute attribute = getAttribute();
 		Object baseValue = getBaseValue(entity);
 		if (baseValue == null)

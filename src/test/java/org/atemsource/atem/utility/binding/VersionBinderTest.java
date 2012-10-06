@@ -1,5 +1,7 @@
 package org.atemsource.atem.utility.binding;
 
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -14,7 +16,6 @@ import org.atemsource.atem.utility.binding.version.VersionedBinder;
 import org.atemsource.atem.utility.domain.DomainA;
 import org.atemsource.atem.utility.domain.DomainB;
 import org.atemsource.atem.utility.domain.SubdomainA;
-import org.atemsource.atem.utility.transform.api.DerivedType;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;

@@ -166,8 +166,8 @@ public class TypeTransformationBuilder<A, B> {
 		this.targetTypeBuilder = targetTypeBuilder;
 	}
 
-	public SingleAttributeTransformationBuilder<A, B> transform() {
-		SingleAttributeTransformationBuilder builder = beanLocator
+	public OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> transform() {
+		OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> builder = beanLocator
 				.getInstance(SingleAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
@@ -222,7 +222,7 @@ public class TypeTransformationBuilder<A, B> {
 				// transformers
 				Converter converter = converterFactory.get(attribute
 						.getTargetType());
-				SingleAttributeTransformationBuilder<A, B> transform = transform();
+				OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> transform = transform();
 				transform.from(attribute.getCode()).to(attribute.getCode());// .convert(converter);
 				if (converter != null) {
 					transform.convert(converter);

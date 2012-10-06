@@ -13,16 +13,6 @@ public class DomainA {
 	@Association(targetType = DomainB.class)
 	private List<DomainB> domainBs;
 
-	private Vehicle vehicle;
-
-	public Vehicle getVehicle() {
-		return vehicle;
-	}
-
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
-	}
-
 	@Association(targetType = Integer.class)
 	private List<Integer> ids;
 

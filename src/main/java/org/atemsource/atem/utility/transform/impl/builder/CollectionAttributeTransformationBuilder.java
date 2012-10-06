@@ -38,20 +38,14 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
-		if (converter != null)
-		{
-			attributeTargetType = converter.getTypeB();
-		}
-		else
-		{
-			attributeTargetType = sourcePath.getTargetType().getType();
-		}
+		attributeTargetType=getTargetType(sourcePath, converter);
+		Type[] validTypes=getValidTargetTypes(sourcePath, converter);
 		if (collectionSortType == null)
 		{
 			collectionSortType = ((CollectionAttribute) sourcePath.getAttribute()).getCollectionSortType();
 		}
 		CollectionAttribute<?, Object> attribute =
-			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, collectionSortType);
+			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, validTypes,collectionSortType);
 		if (converter != null && converter instanceof Constraining)
 		{
 			Constraining constraining = ((Constraining) converter);

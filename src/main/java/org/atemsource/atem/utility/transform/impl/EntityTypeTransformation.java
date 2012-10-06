@@ -169,7 +169,19 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 				}
 				return b;
 			}
+
+			@Override
+			public Type<? extends B> getTargetType(Type<? extends A> sourceType) {
+				return getTypeB(sourceType);
+			}
 		};
+	}
+
+	protected Type<? extends B> getTypeB(Type<? extends A> sourceType) {
+		return getTransformationByTypeA((EntityType<?>) sourceType).getEntityTypeB();
+	}
+	protected Type<? extends A> getTypeA(Type<? extends B> sourceType) {
+		return getTransformationByTypeB((EntityType<?>) sourceType).getEntityTypeA();
 	}
 
 	protected UniTransformation getAB(Object value)
@@ -227,6 +239,11 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 				getTransformationByTypeB(entityType).transformBAChildren(b, a, ctx);
 
 				return a;
+			}
+
+			@Override
+			public Type<? extends A> getTargetType(Type<? extends B> sourceType) {
+				return getTypeA(sourceType);
 			}
 
 		};

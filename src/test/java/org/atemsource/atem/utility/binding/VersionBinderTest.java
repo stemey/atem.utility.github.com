@@ -65,7 +65,7 @@ public class VersionBinderTest
 		Assert.assertNotNull(entityType);
 		Assert.assertNull(entityType.getAttribute("field11"));
 		Assert.assertNotNull(entityType.getAttribute("field10"));
-		Assert.assertEquals(4, entityType.getAttributes().size());
+		Assert.assertEquals(5, entityType.getAttributes().size());
 		
 
 		
@@ -81,7 +81,7 @@ public class VersionBinderTest
 		Assert.assertNotNull(entityType);
 		Assert.assertNull(entityType.getAttribute("field10"));
 		Assert.assertNotNull(entityType.getAttribute("field11"));
-		Assert.assertEquals(4, entityType.getAttributes().size());
+		Assert.assertEquals(5, entityType.getAttributes().size());
 	}
 	
 	@Test

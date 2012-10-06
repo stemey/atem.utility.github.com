@@ -38,12 +38,9 @@ OneToOneAttributeTransformationBuilder<A, B, MapAttributeTransformationBuilder<A
 		AttributePath sourcePath = attributePathBuilderFactory
 				.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null) {
-			attributeTargetType = getConverter(
-					sourcePath.getTargetType().getType()).getTypeB();
-		} else {
-			attributeTargetType = sourcePath.getTargetType().getType();
-		}
+		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		attributeTargetType=getTargetType(sourcePath, converter);
+		Type[] validTypes=getValidTargetTypes(sourcePath, converter);
 		Type<?> keyType;
 		if (keyConverter != null) {
 			keyType = keyConverter.getTypeB();
@@ -51,7 +48,7 @@ OneToOneAttributeTransformationBuilder<A, B, MapAttributeTransformationBuilder<A
 			keyType = ((MapAttribute) sourcePath.getAttribute()).getKeyType();
 		}
 		entityTypeBuilder.addMapAssociationAttribute(getTargetAttribute(), keyType,
-				attributeTargetType);
+				attributeTargetType,validTypes);
 	}
 
 	public MapAttributeTransformationBuilder convertKey(Converter<?, ?> keyConverter) {

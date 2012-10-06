@@ -63,4 +63,9 @@ public class UniTypeCreator<A, B> implements UniTransformation<A, B> {
 		this.targetType = targetType;
 		this.sourceType = sourceType;
 	}
+
+	@Override
+	public Type<? extends B> getTargetType(Type<? extends A> sourceType) {
+		return targetType;
+	}
 }

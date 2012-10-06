@@ -29,4 +29,9 @@ public class PrimitiveUniTransformation<A,B> implements UniTransformation<A,B> {
 		super();
 		this.uniConverter = uniConverter;
 	}
+
+	@Override
+	public Type<? extends B> getTargetType(Type<? extends A> sourceType) {
+		return uniConverter.getTargetType(sourceType);
+	}
 }

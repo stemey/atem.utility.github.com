@@ -31,6 +31,7 @@ import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 
 
@@ -207,7 +208,7 @@ public class DocBuilder
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("attribute");
 		TypeTransformationBuilder<Attribute, ?> transformationBuilder =
 			transformationBuilderFactory.create(Attribute.class, typeBuilder);
-		SingleAttributeTransformationBuilder<Attribute, ?> requiredTransformer = transformationBuilder.transform();
+		OneToOneAttributeTransformationBuilder requiredTransformer = transformationBuilder.transform();
 		requiredTransformer.from("required");
 		requiredTransformer.to("required");
 		// transformationBuilder.transform().from("code").to("label");

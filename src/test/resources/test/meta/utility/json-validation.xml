@@ -15,18 +15,46 @@
            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-	<import resource="classpath:/atem/impl/memory-meta.xml" />
-	<import resource="classpath:/atem/pojo/entitytype.xml" />
 
-	<bean
-		class="org.atemsource.atem.utility.transform.impl.constraint.ConstraintMetaAttributeRegistrar">
-		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
+
+	<import resource="classpath:/atem/jackson/entitytype-example.xml" />
+	<import resource="classpath:/meta/utility/path.xml" />
+	<import resource="classpath:/meta/utility/transform-constraint.xml" />
+
+	<bean class="org.codehaus.jackson.map.ObjectMapper">
 	</bean>
 
-	<bean id="atem-constraint-transform-repository" parent="abstract-atem-scanned-pojo-repository">
-		<property name="includedPackage"
-			value="org.atemsource.atem.utility.transform.api.constraint" />
+
+	<bean id="atem-validation-json-repository" parent="atem-json-repository">
+		<property name="entityTypeServices">
+			<map>
+				<entry key="org.atemsource.atem.utility.validation.ValidationService">
+					<bean
+						class="org.atemsource.atem.utility.validation.AtemTypeAndConstraintValidationService">
+						<property name="attributePathBuilderFactory"><bean class="org.atemsource.atem.utility.path.AttributePathBuilderFactory"/></property>
+					</bean>
+
+				</entry>
+			</map>
+		</property>
 	</bean>
+
+	<bean id="atem-repository"
+		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
+		init-method="init">
+		<property name="repositories">
+			<list>
+				<ref bean="atem-entityType-repository" />
+				<ref bean="atem-attribute-repository" />
+				<ref bean="atem-constraint-transform-repository" />
+				<ref bean="atem-validation-json-repository" />
+			</list>
+		</property>
+	</bean>
+
+
+
+
 
 
 </beans>

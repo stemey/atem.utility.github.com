@@ -15,43 +15,41 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.path;
 
-
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.BeanLocator;
 
-
-public class AttributePathBuilderFactory
-{
+public class AttributePathBuilderFactory {
 
 	@Inject
 	private BeanLocator beanLocator;
 
-	public AttributePath createAttributePath(String path, EntityType<?> baseType)
-	{
-		AttributePathBuilder builder = beanLocator.getInstance(AttributePathBuilder.class);
+	public AttributePath createAttributePath(String path, EntityType<?> baseType) {
+		AttributePathBuilder builder = beanLocator
+				.getInstance(AttributePathBuilder.class);
 
 		String[] pathElements = path.split("\\.");
 		builder.start(pathElements[0], baseType);
-		for (int index = 1; index < pathElements.length; index++)
-		{
+		for (int index = 1; index < pathElements.length; index++) {
 			String pathElement = pathElements[index];
 			builder.addElement(pathElement);
 		}
 		return builder.createPath();
 	}
 
-	public AttributePathBuilder createBuilder()
-	{
-		AttributePathBuilder builder = beanLocator.getInstance(AttributePathBuilder.class);
+	public AttributePathBuilder createBuilder() {
+		AttributePathBuilder builder = beanLocator
+				.getInstance(AttributePathBuilder.class);
 		return builder;
 	}
 
-	public AttributePathBuilder createBuilder(AttributePath basePath)
-	{
-		AttributePathBuilder builder = beanLocator.getInstance(AttributePathBuilder.class);
-		builder.addPath(basePath);
+	public AttributePathBuilder createBuilder(AttributePath basePath) {
+		AttributePathBuilder builder = beanLocator
+				.getInstance(AttributePathBuilder.class);
+		if (basePath != null) {
+			builder.addPath(basePath);
+		}
 		return builder;
 	}
 

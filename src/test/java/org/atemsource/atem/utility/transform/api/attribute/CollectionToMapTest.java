@@ -15,6 +15,7 @@ import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionToMap;
@@ -59,13 +60,13 @@ public class CollectionToMapTest
 		{
 
 			@Override
-			public String convertAB(EntityB a)
+			public String convertAB(EntityB a, TransformationContext ctx)
 			{
 				return String.valueOf(a.getInteger());
 			}
 
 			@Override
-			public EntityB convertBA(String b)
+			public EntityB convertBA(String b, TransformationContext ctx)
 			{
 				// TODO Auto-generated method stub
 				return null;

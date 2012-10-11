@@ -54,8 +54,9 @@ public class ConverterUtils
 			// TODO fix dependency to JsonNode. Provide proper type for JsonNode
 			throw new IllegalArgumentException("cannot create converter. " + classB.getName() + " is not an atem type");
 		}
-		LocalConverter localConverter = new LocalConverter(new JavaBiConverter<A, B>(javaConverter), typeA, typeB);
-		return localConverter;
+		JavaConverterWrapper javaConverterWrapper =
+			new JavaConverterWrapper(new JavaBiConverter<A, B>(javaConverter), typeA, typeB);
+		return javaConverterWrapper;
 	}
 
 	private static final class JavaBiConverter<A, B> implements JavaConverter<A, B>

@@ -1,16 +1,20 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.sf.cglib.proxy.Enhancer;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.impl.meta.DerivedObject;
+import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
+import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
 
 
@@ -95,6 +99,21 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		return targetAttribute;
 	}
 
+	protected Type<?> getTargetType(AttributePath sourcePath, Converter<?, ?> converter)
+	{
+		Type<?> attributeTargetType;
+		if (converter != null)
+		{
+			attributeTargetType = converter.getTypeB();
+
+		}
+		else
+		{
+			attributeTargetType = sourcePath.getTargetType().getType();
+		}
+		return attributeTargetType;
+	}
+
 	protected Transformation<?, ?> getTransformation(Type<?> type)
 	{
 		if (converter != null && converter instanceof Transformation)
@@ -110,6 +129,47 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		{
 			return null;
 		}
+	}
+
+	protected Type[] getValidTargetTypes(AttributePath sourcePath, Converter<?, ?> converter)
+	{
+		if (true)
+			return null;
+		Type[] validTypes;
+		if (converter != null)
+		{
+			Type[] validTargetTypes = sourcePath.getAttribute().getValidTargetTypes();
+			if (validTargetTypes == null)
+			{
+				validTypes = null;
+			}
+			else
+			{
+				Set<Type> validTypeSet = new HashSet<Type>();
+				for (Type validTargetType : validTargetTypes)
+				{
+					if (converter instanceof EntityTypeTransformation
+						&& ((EntityTypeTransformation) converter).getTypeA() == null)
+					{
+						// TODO in the case of binding the converter might not be
+						// fully initialized.
+					}
+					else
+					{
+						Type targetType = converter.getAB().getTargetType(validTargetType);
+						validTypeSet.add(targetType);
+					}
+				}
+				validTypes = validTypeSet.toArray(new Type[validTypeSet.size()]);
+			}
+
+		}
+		else
+		{
+
+			validTypes = sourcePath.getAttribute().getValidTargetTypes();
+		}
+		return validTypes;
 	}
 
 	public T to(String targetAttribute)

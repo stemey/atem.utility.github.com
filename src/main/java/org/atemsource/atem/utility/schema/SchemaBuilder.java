@@ -22,6 +22,7 @@ import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionToMap;
 import org.atemsource.atem.utility.transform.impl.builder.Embed;
 import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
 import org.codehaus.jackson.node.ObjectNode;
@@ -108,9 +109,9 @@ public class SchemaBuilder
 	private Converter<Object, Object> getAttributeTransformation()
 	{
 		EntityTypeBuilder typeBuilder = subrepository.createBuilder("attribute");
-		TypeTransformationBuilder<Attribute, ?> transformationBuilder =
+		TypeTransformationBuilder<Attribute, ?> transformationBuilder = 
 			transformationBuilderFactory.create(Attribute.class, typeBuilder);
-		SingleAttributeTransformationBuilder<Attribute, ?> requiredTransformer = transformationBuilder.transform();
+		SingleAttributeTransformationBuilder requiredTransformer = (SingleAttributeTransformationBuilder) transformationBuilder.transform();
 		requiredTransformer.from("required");
 		requiredTransformer.to("required");
 		transformationBuilder.transformCustom(Embed.class).from("targetType").transform(getTypeTransformation());

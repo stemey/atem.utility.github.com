@@ -18,7 +18,6 @@ import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.annotation.Conversion;
 import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
-import org.atemsource.atem.utility.transform.impl.builder.SingleAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
 
 
@@ -48,7 +47,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 		OneToOneAttributeTransformationBuilder<A, B, ?> builder;
 		if (attribute instanceof SingleAttribute<?>)
 		{
-			builder = (SingleAttributeTransformationBuilder<A, B>) context.getCurrent().transform();
+			builder = (OneToOneAttributeTransformationBuilder) context.getCurrent().transform();
 		}
 		else if (attribute instanceof CollectionAttribute)
 		{

@@ -8,11 +8,9 @@ import org.atemsource.atem.utility.transform.impl.EntityUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class UniTypeCreator<A, B> implements UniTransformation<A, B>
-{
+public class UniTypeCreator<A, B> implements UniTransformation<A, B> {
 
 	@Inject
 	private EntityTypeRepository entityTypeRepository;
@@ -22,60 +20,50 @@ public class UniTypeCreator<A, B> implements UniTransformation<A, B>
 	private Type<B> targetType;
 
 	@Override
-	public B convert(A a, TransformationContext ctx)
-	{
-		if (ctx.isTransformed(a))
-		{
+	public B convert(A a, TransformationContext ctx) {
+		if (ctx.isTransformed(a)) {
 			return (B) ctx.getTransformed(a);
-		}
-		else
-		{
+		} else {
 			return ((EntityType<B>) getTargetType()).createEntity();
 		}
 	}
 
 	@Override
-	public Type<A> getSourceType()
-	{
+	public Type<A> getSourceType() {
 		return this.sourceType;
 	}
 
 	@Override
-	public Type<B> getTargetType()
-	{
+	public Type<B> getTargetType() {
 		return this.targetType;
 	}
 
-	public void initialize(Type<A> sourceType, Type<B> targetType)
-	{
+	public void initialize(Type<A> sourceType, Type<B> targetType) {
 		this.targetType = targetType;
 		this.sourceType = sourceType;
 	}
 
 	@Override
-	public B merge(A a, B b, TransformationContext ctx)
-	{
-		if (ctx.isTransformed(a))
-		{
+	public Type<? extends B> getTargetType(Type<? extends A> sourceType) {
+		return targetType;
+	}
+
+	@Override
+	public B merge(A a, B b, TransformationContext ctx) {
+		if (ctx.isTransformed(a)) {
 			return (B) ctx.getTransformed(a);
-		}
-		else
-		{
+		} else {
 			EntityType<B> entityTypeB = ctx.getEntityTypeByB(b);
-			if (entityTypeB == null)
-			{
+			if (entityTypeB == null) {
 				entityTypeB = (EntityType<B>) targetType;
 			}
-			if (entityTypeB.equals(getTargetType()))
-			{
+			if (entityTypeB.equals(getTargetType())) {
 				return b;
-			}
-			else
-			{
+			} else {
 				B newB = ((EntityType<B>) getTargetType()).createEntity();
-				EntityType<B> commonAncestor = EntityUtils.getCommonAncestor((EntityType<A>) getSourceType(), entityTypeB);
-				if (commonAncestor != null)
-				{
+				EntityType<B> commonAncestor = EntityUtils.getCommonAncestor(
+						(EntityType<A>) getSourceType(), entityTypeB);
+				if (commonAncestor != null) {
 					EntityUtils.merge(b, newB, commonAncestor);
 				}
 				return newB;

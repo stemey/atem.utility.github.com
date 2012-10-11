@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.builder;
 
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -15,6 +16,7 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.converter.Constraining;
 import org.atemsource.atem.utility.transform.impl.transformation.SingleAttributeTransformation;
 import org.springframework.context.annotation.Scope;
@@ -32,15 +34,10 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
-		if (converter != null)
-		{
-			attributeTargetType = converter.getTypeB();
-		}
-		else
-		{
-			attributeTargetType = sourcePath.getTargetType().getType();
-		}
-		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(getTargetAttribute(), attributeTargetType);
+		Type[] validTypes;
+		attributeTargetType = getTargetType(sourcePath, converter);
+		validTypes = getValidTargetTypes(sourcePath, converter);
+		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(getTargetAttribute(), attributeTargetType,validTypes);
 		if (converter != null && converter instanceof Constraining)
 		{
 			Constraining constraining = ((Constraining) converter);

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.Difference;
@@ -39,6 +40,9 @@ public class EntityObserver
 
 	private EntityType<?> entityType;
 
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
+
 	private EntityHandle handle;
 
 	private final Map<String, Set<AttributeListener>> listeners = new HashMap<String, Set<AttributeListener>>();
@@ -50,7 +54,7 @@ public class EntityObserver
 	public void check()
 	{
 		Object entity = handle.getEntity();
-		Object snapshot = snapshotting.convert(entity, new SimpleTransformationContext(null));
+		Object snapshot = snapshotting.convert(entity, new SimpleTransformationContext(entityTypeRepository));
 		if (previousSnapshot != null)
 		{
 			EntityObserverContext ctx = beanLocator.getInstance(EntityObserverContext.class);

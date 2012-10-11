@@ -5,13 +5,13 @@ import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
-public class LocalUniConverter implements UniConverter<Object, Object>
+public class JavaUniConverterWrapper implements UniConverter<Object, Object>
 {
-	private final LocalConverter<Object, Object> converter;
+	private final JavaConverterWrapper<Object, Object> converter;
 
 	private final boolean direction;
 
-	public LocalUniConverter(LocalConverter converter, boolean direction)
+	public JavaUniConverterWrapper(JavaConverterWrapper converter, boolean direction)
 	{
 		super();
 		this.direction = direction;
@@ -60,7 +60,14 @@ public class LocalUniConverter implements UniConverter<Object, Object>
 	@Override
 	public Type<? extends Object> getTargetType(Type<? extends Object> sourceType)
 	{
-		return getTargetType();
+		if (direction)
+		{
+			return converter.getTypeB();
+		}
+		else
+		{
+			return converter.getTypeA();
+		}
 	}
 
 }

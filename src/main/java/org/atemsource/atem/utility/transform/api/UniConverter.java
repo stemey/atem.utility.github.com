@@ -31,5 +31,7 @@ public interface UniConverter<A, B>
 	Type<A> getSourceType();
 
 	Type<B> getTargetType();
+	
+	Type<? extends B> getTargetType(Type<? extends A> sourceType);
 
 }

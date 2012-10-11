@@ -8,59 +8,76 @@
 package org.atemsource.atem.utility.transform.impl.converter;
 
 import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
-public class EnumToStringConverter implements JavaConverter<Enum<?>, String>,
-		Constraining {
 
-	private Class<? extends Enum> enumClass;
-	private StringPossibleValues possibleValues;
+public class EnumToStringConverter implements JavaConverter<Enum<?>, String>, Constraining
+{
 
-	public EnumToStringConverter(Class<? extends Enum> enumClass) {
+	private final Class<? extends Enum> enumClass;
+
+	private final StringPossibleValues possibleValues;
+
+	public EnumToStringConverter(Class<? extends Enum> enumClass)
+	{
 		this.enumClass = enumClass;
 		String[] values = new String[enumClass.getEnumConstants().length];
-		for (int i = 0; i < enumClass.getEnumConstants().length; i++) {
-			values[i] = convertAB(enumClass.getEnumConstants()[i]);
+		for (int i = 0; i < enumClass.getEnumConstants().length; i++)
+		{
+			values[i] = convertAB(enumClass.getEnumConstants()[i], null);
 		}
 		this.possibleValues = new StringPossibleValues(values);
 	}
 
 	@Override
-	public String convertAB(Enum<?> a) {
-		if (a == null) {
+	public String convertAB(Enum<?> a, TransformationContext ctx)
+	{
+		if (a == null)
+		{
 			return null;
-		} else {
+		}
+		else
+		{
 			return a.name();
 		}
 	}
 
 	@Override
-	public Enum<?> convertBA(String b) {
-		if (b == null || b.isEmpty()) {
+	public Enum<?> convertBA(String b, TransformationContext ctx)
+	{
+		if (b == null || b.isEmpty())
+		{
 			return null;
-		} else {
+		}
+		else
+		{
 			return Enum.valueOf(enumClass, b);
 		}
 	}
 
 	@Override
-	public String[] getConstraintNamesAB() {
-		return new String[] { PossibleValues.META_ATTRIBUTE_CODE };
-	}
-
-	@Override
-	public Object getConstraintAB(String name) {
+	public Object getConstraintAB(String name)
+	{
 		return possibleValues;
 	}
 
 	@Override
-	public String[] getConstraintNamesBA() {
-		return new String[] {};
+	public Object getConstraintBA(String name)
+	{
+		return null;
 	}
 
 	@Override
-	public Object getConstraintBA(String name) {
-		return null;
+	public String[] getConstraintNamesAB()
+	{
+		return new String[]{PossibleValues.META_ATTRIBUTE_CODE};
+	}
+
+	@Override
+	public String[] getConstraintNamesBA()
+	{
+		return new String[]{};
 	}
 
 }

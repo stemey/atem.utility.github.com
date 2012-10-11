@@ -88,6 +88,10 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 
 	public String getTargetAttribute()
 	{
+		if (targetAttribute == null)
+		{
+			return sourceAttribute;
+		}
 		return targetAttribute;
 	}
 

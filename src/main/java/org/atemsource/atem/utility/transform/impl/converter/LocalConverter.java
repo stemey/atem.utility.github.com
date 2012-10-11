@@ -3,6 +3,7 @@ package org.atemsource.atem.utility.transform.impl.converter;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
@@ -30,14 +31,14 @@ public class LocalConverter<A, B> implements Converter<A, B>, Constraining
 		this.typeB = typeB;
 	}
 
-	public Object convertAB(Object a)
+	public Object convertAB(Object a, TransformationContext ctx)
 	{
-		return javaConverter.convertAB(a);
+		return javaConverter.convertAB(a, ctx);
 	}
 
-	public Object convertBA(Object a)
+	public Object convertBA(Object a, TransformationContext ctx)
 	{
-		return javaConverter.convertBA(a);
+		return javaConverter.convertBA(a, ctx);
 
 	}
 

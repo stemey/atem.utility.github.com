@@ -7,9 +7,9 @@ import org.atemsource.atem.utility.transform.api.UniConverter;
 
 public class LocalUniConverter implements UniConverter<Object, Object>
 {
-	private LocalConverter<Object, Object> converter;
+	private final LocalConverter<Object, Object> converter;
 
-	private boolean direction;
+	private final boolean direction;
 
 	public LocalUniConverter(LocalConverter converter, boolean direction)
 	{
@@ -18,18 +18,20 @@ public class LocalUniConverter implements UniConverter<Object, Object>
 		this.converter = converter;
 	}
 
+	@Override
 	public Object convert(Object a, TransformationContext ctx)
 	{
 		if (direction)
 		{
-			return converter.convertAB(a);
+			return converter.convertAB(a, ctx);
 		}
 		else
 		{
-			return converter.convertBA(a);
+			return converter.convertBA(a, ctx);
 		}
 	}
 
+	@Override
 	public Type<Object> getSourceType()
 	{
 		if (direction)
@@ -42,6 +44,7 @@ public class LocalUniConverter implements UniConverter<Object, Object>
 		}
 	}
 
+	@Override
 	public Type<Object> getTargetType()
 	{
 		if (direction)
@@ -53,7 +56,5 @@ public class LocalUniConverter implements UniConverter<Object, Object>
 			return converter.getTypeA();
 		}
 	}
-
-	
 
 }

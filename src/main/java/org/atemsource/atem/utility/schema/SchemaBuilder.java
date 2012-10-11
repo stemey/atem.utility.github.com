@@ -91,13 +91,13 @@ public class SchemaBuilder
 		{
 
 			@Override
-			public String convertAB(Attribute a)
+			public String convertAB(Attribute a, TransformationContext ctx)
 			{
 				return a.getCode();
 			}
 
 			@Override
-			public Attribute convertBA(String b)
+			public Attribute convertBA(String b, TransformationContext ctx)
 			{
 				return null;
 			}

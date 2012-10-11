@@ -7,30 +7,33 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
+import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.codehaus.jackson.JsonNode;
 
 
 public class ConverterUtils
 {
-	
-	private static final class JavaBiConverter<A,B> implements JavaConverter<A, B>{
-		private JavaUniConverter<A, B> uniConverter;
 
-		public JavaBiConverter(JavaUniConverter<A, B> uniConverter) {
-			super();
-			this.uniConverter = uniConverter;
+	public static <A, B> Converter<A, B> create(JavaConverter<A, B> javaConverter)
+	{
+		EntityTypeRepository entityTypeRepository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);
+		Class[] actualTypeParameters =
+			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
+		Class classB = actualTypeParameters[1];
+		Type typeB = entityTypeRepository.getType(classB);
+		Class classA = actualTypeParameters[0];
+		Type typeA = entityTypeRepository.getType(classA);
+		if (typeA == null && !classA.equals(Object.class))
+		{
+			throw new IllegalArgumentException("cannot create converter. " + classA.getName() + " is not an atem type");
 		}
-
-		@Override
-		public B convertAB(A a) {
-			return uniConverter.convert(a);
+		if (typeB == null && !classB.equals(Object.class) && !classB.equals(JsonNode.class))
+		{
+			// TODO fix dependency to JsonNode. Provide proper type for JsonNode
+			throw new IllegalArgumentException("cannot create converter. " + classB.getName() + " is not an atem type");
 		}
-
-		@Override
-		public A convertBA(B b) {
-			throw new UnsupportedOperationException("this is a unidrirectional convreter");
-		}
-		
+		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
+		return localConverter;
 	}
 
 	public static <A, B> Converter<A, B> create(JavaUniConverter<A, B> javaConverter)
@@ -54,25 +57,28 @@ public class ConverterUtils
 		LocalConverter localConverter = new LocalConverter(new JavaBiConverter<A, B>(javaConverter), typeA, typeB);
 		return localConverter;
 	}
-	public static <A, B> Converter<A, B> create(JavaConverter<A, B> javaConverter)
+
+	private static final class JavaBiConverter<A, B> implements JavaConverter<A, B>
 	{
-		EntityTypeRepository entityTypeRepository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);
-		Class[] actualTypeParameters =
-			ReflectionUtils.getActualTypeParameters(javaConverter.getClass(), JavaConverter.class);
-		Class classB = actualTypeParameters[1];
-		Type typeB = entityTypeRepository.getType(classB);
-		Class classA = actualTypeParameters[0];
-		Type typeA = entityTypeRepository.getType(classA);
-		if (typeA == null && !classA.equals(Object.class))
+		private final JavaUniConverter<A, B> uniConverter;
+
+		public JavaBiConverter(JavaUniConverter<A, B> uniConverter)
 		{
-			throw new IllegalArgumentException("cannot create converter. " + classA.getName() + " is not an atem type");
+			super();
+			this.uniConverter = uniConverter;
 		}
-		if (typeB == null && !classB.equals(Object.class) && !classB.equals(JsonNode.class))
+
+		@Override
+		public B convertAB(A a, TransformationContext ctx)
 		{
-			// TODO fix dependency to JsonNode. Provide proper type for JsonNode
-			throw new IllegalArgumentException("cannot create converter. " + classB.getName() + " is not an atem type");
+			return uniConverter.convert(a, ctx);
 		}
-		LocalConverter localConverter = new LocalConverter(javaConverter, typeA, typeB);
-		return localConverter;
+
+		@Override
+		public A convertBA(B b, TransformationContext ctx)
+		{
+			throw new UnsupportedOperationException("this is a unidrirectional convreter");
+		}
+
 	}
 }

@@ -9,9 +9,11 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.TypeFilter;
 import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
@@ -21,6 +23,9 @@ public class HtmlDocGenerator
 {
 
 	private DocBuilder docBuilder;
+
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
 
 	private TypeCodeToUrlConverter typeCodeToUrlConverter;
 
@@ -36,12 +41,16 @@ public class HtmlDocGenerator
 	public void generate(EntityType<?> entityType, Writer writer)
 	{
 		VelocityEngine engine = new VelocityEngine();
-		String directory = new File(getClass().getResource("entitytype.vm").getFile()).getParent();
-		engine.addProperty("file.resource.loader.path", directory);
+		// String directory = new File(getClass().getResource("entitytype.vm").getFile()).getParent();
+		// engine.addProperty("file.resource.loader.path", directory);
+		engine.addProperty("class.resource.loader.class",
+			"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		engine.addProperty("resource.loader", "class");
 
 		Context context = new VelocityContext();
 		Object entityTypeDocument =
-			docBuilder.getEntityTypeTransformation().getAB().convert(entityType, new SimpleTransformationContext(null));
+			docBuilder.getEntityTypeTransformation().getAB()
+				.convert(entityType, new SimpleTransformationContext(entityTypeRepository));
 
 		context.put("entityType", entityTypeDocument);
 		InputStream resourceAsStream = getClass().getResourceAsStream("entitytype.vm");

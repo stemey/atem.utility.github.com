@@ -76,7 +76,8 @@ public class VersionedBinder extends AbstractBinder
 				{
 					setAttributeNameConverter(new JacksonAttributeNameConverter());
 				}
-				BindingSession bindingSession = beanLocator.getInstance(getBindingSessionClass());
+				@SuppressWarnings("unchecked")
+				BindingSession bindingSession = (BindingSession) beanLocator.getInstance(getBindingSessionClass());
 				bindingSession.setTypeNameConverter(createTypeCode(version));
 				bindingSession.setAttributeNameConverter(getAttributeNameConverter());
 				bindingSession.setSubRepository(getSubRepository());

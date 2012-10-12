@@ -50,7 +50,7 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 		return attributeNameConverter;
 	}
 
-	public Class<BindingSession> getBindingSessionClass()
+	public Class<? extends BindingSession> getBindingSessionClass()
 	{
 		return bindingSessionClass;
 	}

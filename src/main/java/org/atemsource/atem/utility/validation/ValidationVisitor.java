@@ -57,13 +57,18 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 
 	}
 
-	private void visitSingle(ValidationContext context,
-			SingleAttribute<?> attribute, AttributeVisitor attributeVisitor,AttributePath newPath) {
+	private <V>void visitSingle(ValidationContext context,
+			SingleAttribute<V> attribute, AttributeVisitor attributeVisitor,
+			AttributePath newPath) {
 		GraphNode node = entityStack.peek();
 		if (node.getEntity() != null) {
 
 			try {
-				Object value = attribute.getValue(node.getEntity());
+				V value = attribute.getValue(node.getEntity());
+				// validate target type
+				if (attribute.getTargetType() instanceof EntityType<?>) {
+				validateEntityType(attribute,value);
+				}
 				if (value == null) {
 					if (attribute.isRequired()) {
 						context.addRequiredError(newPath);
@@ -72,11 +77,11 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 					Constraint[] constraints = getConstraints(attribute);
 					for (Constraint constraint : constraints) {
 						if (!constraint.isValid(value)) {
-							context.addConstraintError(newPath,
-									constraint);
+							context.addConstraintError(newPath, constraint);
 						}
 					}
-					visitAttribute(context, attribute, attributeVisitor, value,newPath);
+					visitAttribute(context, attribute, attributeVisitor, value,
+							newPath);
 
 				}
 			} catch (ConversionException e) {
@@ -124,8 +129,8 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 					boolean correctType = attribute.getTargetType()
 							.getJavaType().isInstance(value);
 					if (!correctType) {
-						context.addTypeMismatchError(elementPath,
-								attribute.getTargetType(), value.getClass().getName());
+						context.addTypeMismatchError(elementPath, attribute
+								.getTargetType(), value.getClass().getName());
 					} else {
 						Constraint[] constraints = getConstraints(attribute);
 						for (Constraint constraint : constraints) {
@@ -167,8 +172,8 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 						elementPath = node.getPath();
 					}
 					if (!correctType) {
-						context.addTypeMismatchError(elementPath,
-								attribute.getTargetType(), value.getClass().getName());
+						context.addTypeMismatchError(elementPath, attribute
+								.getTargetType(), value.getClass().getName());
 					} else {
 						Constraint[] constraints = getConstraints(attribute);
 						for (Constraint constraint : constraints) {
@@ -206,16 +211,19 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 					attributeVisitor);
 		} else {
 			visitSingle(context, (SingleAttribute<?>) attribute,
-					attributeVisitor,path);
+					attributeVisitor, path);
 		}
 
 	}
 
 	protected void visitAttribute(ValidationContext context,
-			Attribute attribute, AttributeVisitor attributeVisitor, Object value,AttributePath newPath) {
-		entityStack.push(new GraphNode(newPath, value));
-		attributeVisitor.visit(context);
-		entityStack.pop();
+			Attribute attribute, AttributeVisitor attributeVisitor,
+			Object value, AttributePath newPath) {
+		if (attributeVisitor != null) {
+			entityStack.push(new GraphNode(newPath, value));
+			attributeVisitor.visit(context);
+			entityStack.pop();
+		}
 	}
 
 	@Override

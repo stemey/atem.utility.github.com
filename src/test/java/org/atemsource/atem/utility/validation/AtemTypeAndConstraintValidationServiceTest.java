@@ -33,13 +33,14 @@ public class AtemTypeAndConstraintValidationServiceTest {
 	public static void setup() {
 		mapper=new ObjectMapper();
 		mapper.getJsonFactory().enable(Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+		mapper.getJsonFactory().enable(Feature.ALLOW_SINGLE_QUOTES);
 		
 	}
 	
 	@Test
 	public void testTypeMismatch() throws JsonProcessingException, IOException {
 		
-		EntityTypeBuilder builder = repository.createBuilder("test");
+		EntityTypeBuilder builder = repository.createBuilder("test1");
 		builder.addSingleAttribute("textProperty", String.class);
 		EntityType<ObjectNode> type = (EntityType<ObjectNode>) builder.createEntityType();
 		
@@ -51,14 +52,19 @@ public class AtemTypeAndConstraintValidationServiceTest {
 		
 	}
 	
+
 	@Test
-	public void testWrongExtType() throws JsonProcessingException, IOException {
+	public void testNegative() throws JsonProcessingException, IOException {
 		
-		EntityTypeBuilder builder = repository.createBuilder("test");
-		builder.addSingleAttribute("textProperty", String.class);
+		EntityTypeBuilder subBuilder = repository.createBuilder("sub1");
+		subBuilder.addSingleAttribute("textProperty", String.class);
+		EntityType<?> subType = subBuilder.createEntityType();
+		
+		EntityTypeBuilder builder = repository.createBuilder("test12");
+		builder.addSingleAttribute("property", subType);
 		EntityType<ObjectNode> type = (EntityType<ObjectNode>) builder.createEntityType();
 		
-		ObjectNode node= (ObjectNode) mapper.readTree("{textProperty:12}");
+		ObjectNode node= (ObjectNode) mapper.readTree("{property:{ext_type:'subrr',textProperty:'12'}}");
 		ValidationService validationService = type.getService(ValidationService.class);
 		SimpleValidationContext context= new SimpleValidationContext();
 		validationService.validate(type, context, node);

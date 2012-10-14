@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
+import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
@@ -26,7 +27,7 @@ public class TransformationContext {
 	}
 
 	public void cascade(EntityType<?> entityType,
-			AttributeVisitor<TransformationContext> visitor) {
+			Visitor<TransformationContext> visitor) {
 
 		switch (getState(entityType)) {
 		case STARTED:

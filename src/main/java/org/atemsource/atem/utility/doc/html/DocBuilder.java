@@ -179,7 +179,7 @@ public class DocBuilder
 			{
 
 				@Override
-				public String convert(String a)
+				public String convert(String a, TransformationContext ctx)
 				{
 					return getUrlForEntityType(a);
 				}

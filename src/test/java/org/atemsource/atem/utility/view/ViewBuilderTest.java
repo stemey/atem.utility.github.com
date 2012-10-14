@@ -21,6 +21,7 @@ import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.pojo.EntityA;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -75,6 +76,7 @@ public class ViewBuilderTest
 		view.visit(mockViewVisitor, null);
 	}
 
+
 	@Test
 	public void testRemoveAndIncludePrimitives()
 	{
@@ -106,23 +108,21 @@ public class ViewBuilderTest
 			}
 
 			@Override
-			public void visit(Object context, Attribute attribute, AttributeVisitor<Object> attributeVisitor)
+			public void visit(Object context, Attribute attribute, Visitor<Object> visitor)
 			{
 				Assert.fail("not a primitive " + attribute.getCode());
 			}
 
 			@Override
-			public void visitSubView(Object context, View view)
+			public boolean visitSubView(Object context, View view)
 			{
-				// TODO Auto-generated method stub
-
+				return false;
 			}
 
 			@Override
-			public void visitSuperView(Object context, View view)
+			public boolean visitSuperView(Object context, View view)
 			{
-				// TODO Auto-generated method stub
-
+				return false;
 			}
 		};
 		view.visit(mockViewVisitor, null);

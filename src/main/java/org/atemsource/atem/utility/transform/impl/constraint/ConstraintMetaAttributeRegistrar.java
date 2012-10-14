@@ -7,20 +7,17 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.constraint;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.extension.EntityTypeRepositoryPostProcessor;
 import org.atemsource.atem.api.extension.MetaAttributeService;
+import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.spi.EntityTypeCreationContext;
 import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
 
-public class ConstraintMetaAttributeRegistrar
+public class ConstraintMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
-
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
 
 	private MetaAttributeService metaAttributeService;
 
@@ -29,14 +26,14 @@ public class ConstraintMetaAttributeRegistrar
 		return metaAttributeService;
 	}
 
-	@PostConstruct
-	public void initialize()
+	@Override
+	public void initialize(EntityTypeCreationContext entityTypeCreationContext)
 	{
-		metaAttributeService.addSingleMetaAttribute(PossibleValues.META_ATTRIBUTE_CODE,
-			entityTypeRepository.getEntityType(Attribute.class), entityTypeRepository.getEntityType(PossibleValues.class));
-		metaAttributeService.addSingleMetaAttribute(DateFormat.META_ATTRIBUTE_CODE,
-			entityTypeRepository.getEntityType(Attribute.class), entityTypeRepository.getEntityType(DateFormat.class));
-
+		EntityType<?> attributeType = entityTypeCreationContext.getEntityTypeReference(Attribute.class);
+		metaAttributeService.addSingleMetaAttribute(PossibleValues.META_ATTRIBUTE_CODE, attributeType,
+			entityTypeCreationContext.getEntityTypeReference(PossibleValues.class));
+		metaAttributeService.addSingleMetaAttribute(DateFormat.META_ATTRIBUTE_CODE, attributeType,
+			entityTypeCreationContext.getEntityTypeReference(DateFormat.class));
 	}
 
 	public void setMetaAttributeService(MetaAttributeService metaAttributeService)

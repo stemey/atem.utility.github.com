@@ -78,7 +78,7 @@ public class AttributePathImpl implements AttributePath
 		{
 			return null;
 		}
-		else if (attribute.getEntityType().isAssignableFrom(entity))
+		else if (attribute.getEntityType().isInstance(entity))
 		{
 			return attribute;
 		}

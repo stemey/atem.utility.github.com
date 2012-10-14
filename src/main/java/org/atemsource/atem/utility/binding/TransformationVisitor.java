@@ -11,6 +11,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.utility.transform.api.AttributeNameConverter;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
@@ -134,7 +135,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 
 	@Override
 	public void visit(TransformationContext context, Attribute attribute,
-		AttributeVisitor<TransformationContext> attributeVisitor)
+		Visitor<TransformationContext> attributeVisitor)
 	{
 		if (filters != null)
 		{
@@ -191,17 +192,22 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 	}
 
 	@Override
-	public void visitSubView(TransformationContext context, View view)
+	public boolean visitSubView(TransformationContext context, View view)
 	{
+		
 		EntityType<?> subType = (EntityType<?>) view;
 		context.visitSubview(subType);
+		// we handle the visiting ourselves
+		return false;
 	}
 
 	@Override
-	public void visitSuperView(TransformationContext context, View view)
+	public boolean visitSuperView(TransformationContext context, View view)
 	{
 		EntityType<?> superType = (EntityType<?>) view;
 		context.visitSuperType(superType, this);
+		// we handle the visiting ourselves
+		return false;
 
 	}
 }

@@ -42,7 +42,7 @@ public class SimpleValidationContext implements ValidationContext {
 	@Override
 	public void addTypeMismatchError(AttributePath path, Type expectedType,
 			String actualValue) {
-		errors.add(new Error(path.getAsString(), "validation.typemismatch"));
+		errors.add(new Error(path==null?"":path.getAsString(), "validation.typemismatch"));
 	}
 
 	@Override

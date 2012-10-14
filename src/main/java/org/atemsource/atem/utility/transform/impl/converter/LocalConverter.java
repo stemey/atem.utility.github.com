@@ -7,12 +7,12 @@ import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 
 
-public class JavaConverterWrapper<A, B> implements Converter<A, B>, Constraining
+public class LocalConverter<A, B> implements Converter<A, B>, Constraining
 {
 
-	private final JavaUniConverterWrapper abConverter = new JavaUniConverterWrapper(this, true);
+	private final LocalUniConverter abConverter = new LocalUniConverter(this, true);
 
-	private final JavaUniConverterWrapper baConverter = new JavaUniConverterWrapper(this, false);
+	private final LocalUniConverter baConverter = new LocalUniConverter(this, false);
 
 	private final boolean constraining;
 
@@ -22,7 +22,7 @@ public class JavaConverterWrapper<A, B> implements Converter<A, B>, Constraining
 
 	private Type<B> typeB;
 
-	public JavaConverterWrapper(JavaConverter javaConverter, Type<A> typeA, Type<B> typeB)
+	public LocalConverter(JavaConverter javaConverter, Type<A> typeA, Type<B> typeB)
 	{
 		super();
 		this.javaConverter = javaConverter;

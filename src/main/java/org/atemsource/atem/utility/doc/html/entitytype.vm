@@ -28,7 +28,7 @@ $entityType.getAsString()
 <ul>
 #foreach( $attribute in $entityType.attributes )
    <li>
-   	#parse("attribute.vm")
+   	#parse("org/atemsource/atem/utility/doc/html/attribute.vm")
     </li>
 #end
 </ul>

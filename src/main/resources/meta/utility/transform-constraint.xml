@@ -18,7 +18,7 @@
 	<import resource="classpath:/atem/impl/memory-meta.xml" />
 	<import resource="classpath:/atem/pojo/entitytype.xml" />
 
-	<bean
+	<bean id="atem-constraint-metaAttributeRegistrar" 
 		class="org.atemsource.atem.utility.transform.impl.constraint.ConstraintMetaAttributeRegistrar">
 		<property name="metaAttributeService" ref="atem-memory-metaAttributeService" />
 	</bean>

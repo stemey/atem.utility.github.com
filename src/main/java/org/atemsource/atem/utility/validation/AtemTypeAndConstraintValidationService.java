@@ -2,6 +2,9 @@ package org.atemsource.atem.utility.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
@@ -24,10 +27,16 @@ public class AtemTypeAndConstraintValidationService implements ValidationService
 	{
 		this.attributePathBuilderFactory = attributePathBuilderFactory;
 	}
+	
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
 
 	@Override
 	public <J> void validate(EntityType<J> entityType, ValidationContext context, J entity)
 	{
+		if (entityType.isAbstractType()) {
+			context.addTypeMismatchError(null, entityType, entity.toString());
+		}
 		ValidationVisitor visitor = new ValidationVisitor();
 		visitor.setAttributePathBuilderFactory(attributePathBuilderFactory);
 		EntityType<Attribute> attributeType =

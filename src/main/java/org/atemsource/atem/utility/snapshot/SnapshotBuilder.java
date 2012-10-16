@@ -18,6 +18,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
@@ -29,11 +30,9 @@ import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTrans
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
-{
+public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder> {
 
 	protected AttributePathBuilderFactory attributePathBuilderFactory;
 
@@ -52,126 +51,120 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 
 	private TransformationBuilderFactory transformationBuilderFactory;
 
-	public Transformation<?, ?> create()
-	{
-		for (SnapshotAttributeBuilder subBuilder : subBuilders)
-		{
+	public Transformation<?, ?> create() {
+		for (SnapshotAttributeBuilder subBuilder : subBuilders) {
 			subBuilder.preCreate();
 		}
 		return transformationBuilder.buildTypeTransformation();
 	}
 
-	public AttributePathBuilderFactory getAttributePathBuilderFactory()
-	{
+	public AttributePathBuilderFactory getAttributePathBuilderFactory() {
 		return attributePathBuilderFactory;
 	}
 
-	public DynamicEntityTypeSubrepository<?> getDynamicEntityTypeRepository()
-	{
+	public DynamicEntityTypeSubrepository<?> getDynamicEntityTypeRepository() {
 		return dynamicEntityTypeRepository;
 	}
 
-	private EntityType<?> getEntityType()
-	{
+	private EntityType<?> getEntityType() {
 		return entityType;
 	}
 
-	public SnapshotBuilderFactory getFactory()
-	{
+	public SnapshotBuilderFactory getFactory() {
 		return factory;
 	}
 
-	public TransformationBuilderFactory getTransformationBuilderFactory()
-	{
+	public TransformationBuilderFactory getTransformationBuilderFactory() {
 		return transformationBuilderFactory;
 	}
 
-	public SnapshotAttributeBuilder include(Attribute attribute)
-	{
-		OneToOneAttributeTransformationBuilder<?,?,?> attributeTransformationBuilder =
-			transformationBuilder.transform(attribute.getClass()).from(attribute.getCode()).to(attribute.getCode());
-		SnapshotAttributeBuilder attributeBuilder = beanLocator.getInstance(SnapshotAttributeBuilder.class);
+	public SnapshotAttributeBuilder include(Attribute attribute) {
+		OneToOneAttributeTransformationBuilder<?, ?, ?> attributeTransformationBuilder = transformationBuilder
+				.transform(attribute.getClass()).from(attribute.getCode())
+				.to(attribute.getCode());
+		SnapshotAttributeBuilder attributeBuilder = beanLocator
+				.getInstance(SnapshotAttributeBuilder.class);
 		attributeBuilder.setSnapshotBuilderFactory(this.factory);
-		attributeBuilder.initialize(attributeTransformationBuilder, attribute.getTargetType());
+		attributeBuilder.initialize(attributeTransformationBuilder,
+				attribute.getTargetType());
 		subBuilders.add(attributeBuilder);
 		return attributeBuilder;
 	}
 
-	public SnapshotAttributeBuilder include(String path)
-	{
-		AttributePath attributePath = attributePathBuilderFactory.createAttributePath(path, entityType);
+	public SnapshotAttributeBuilder include(String path) {
+		AttributePath attributePath = attributePathBuilderFactory
+				.createAttributePath(path, entityType);
 		String targetAttributePath = path.replace('.', '_');
-		OneToOneAttributeTransformationBuilder<?,?,?> attributeTransformationBuilder =
-			transformationBuilder.transform(attributePath.getAttribute().getClass()).from(path).to(targetAttributePath);
-		SnapshotAttributeBuilder attributeBuilder = beanLocator.getInstance(SnapshotAttributeBuilder.class);
-		attributeBuilder.initialize(attributeTransformationBuilder, attributePath.getAttribute().getTargetType());
+		OneToOneAttributeTransformationBuilder<?, ?, ?> attributeTransformationBuilder = transformationBuilder
+				.transform(attributePath.getAttribute().getClass()).from(path)
+				.to(targetAttributePath);
+		SnapshotAttributeBuilder attributeBuilder = beanLocator
+				.getInstance(SnapshotAttributeBuilder.class);
+		attributeBuilder.initialize(attributeTransformationBuilder,
+				attributePath.getAttribute().getTargetType());
 		subBuilders.add(attributeBuilder);
 		return attributeBuilder;
 	}
 
-	public void include(View view)
-	{
+	public void include(View view) {
 		view.visit(this, this);
 	}
 
-	public void initialize()
-	{
-		transformationBuilder = (TypeTransformationBuilder<Object, Object>) transformationBuilderFactory.create();
+	public void initialize() {
+		transformationBuilder = (TypeTransformationBuilder<Object, Object>) transformationBuilderFactory
+				.create();
 		transformationBuilder.setSourceType(entityType);
-		transformationBuilder.setTargetTypeBuilder(dynamicEntityTypeRepository.createBuilder("snapshot::"
-			+ entityType.getCode()));
+		transformationBuilder.setTargetTypeBuilder(dynamicEntityTypeRepository
+				.createBuilder("snapshot::" + entityType.getCode()));
 	}
 
-	public void setAttributePathBuilderFactory(AttributePathBuilderFactory attributePathBuilderFactory)
-	{
+	public void setAttributePathBuilderFactory(
+			AttributePathBuilderFactory attributePathBuilderFactory) {
 		this.attributePathBuilderFactory = attributePathBuilderFactory;
 	}
 
-	public void setDynamicEntityTypeRepository(DynamicEntityTypeSubrepository<?> dynamicEntityTypeRepository)
-	{
+	public void setDynamicEntityTypeRepository(
+			DynamicEntityTypeSubrepository<?> dynamicEntityTypeRepository) {
 		this.dynamicEntityTypeRepository = dynamicEntityTypeRepository;
 	}
 
-	public void setEntityType(EntityType<?> entityType)
-	{
+	public void setEntityType(EntityType<?> entityType) {
 		this.entityType = entityType;
 	}
 
-	public void setFactory(SnapshotBuilderFactory factory)
-	{
+	public void setFactory(SnapshotBuilderFactory factory) {
 		this.factory = factory;
 	}
 
-	public void setTransformationBuilderFactory(TransformationBuilderFactory transformationBuilderFactory)
-	{
+	public void setTransformationBuilderFactory(
+			TransformationBuilderFactory transformationBuilderFactory) {
 		this.transformationBuilderFactory = transformationBuilderFactory;
 	}
 
 	@Override
-	public void visit(SnapshotBuilder context, Attribute attribute)
-	{
-		context.include(context.getEntityType().getAttribute(attribute.getCode()));
+	public void visit(SnapshotBuilder context, Attribute attribute) {
+		context.include(context.getEntityType().getAttribute(
+				attribute.getCode()));
 	}
 
 	@Override
-	public void visit(SnapshotBuilder context, Attribute attribute, AttributeVisitor<SnapshotBuilder> attributeVisitor)
-	{
+	public void visit(SnapshotBuilder context, Attribute attribute,
+			Visitor<SnapshotBuilder> attributeVisitor) {
 
-		SnapshotBuilder snapshotBuilder =
-			context.include(context.getEntityType().getAttribute(attribute.getCode())).cascade();
+		SnapshotBuilder snapshotBuilder = context.include(
+				context.getEntityType().getAttribute(attribute.getCode()))
+				.cascade();
 		attributeVisitor.visit(snapshotBuilder);
 
 	}
 
 	@Override
-	public void visitSubView(SnapshotBuilder context, View view)
-	{
-
+	public boolean visitSubView(SnapshotBuilder context, View view) {
+		return true;
 	}
 
 	@Override
-	public void visitSuperView(SnapshotBuilder context, View view)
-	{
-
-	}
+	public boolean visitSuperView(SnapshotBuilder context, View view) {
+		return true;
+	} 
 }

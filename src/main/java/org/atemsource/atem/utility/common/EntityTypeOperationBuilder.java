@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.atemsource.atem.api.view.Visitor;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
@@ -110,22 +111,22 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 			}
 
 			@Override
-			public void visit(EntityTypeOperationBuilder context, Attribute attribute, AttributeVisitor attributeVisitor)
+			public void visit(EntityTypeOperationBuilder context, Attribute attribute, Visitor<EntityTypeOperationBuilder> visitor)
 			{
 				EntityTypeOperationBuilder builder = context.include(attribute.getCode()).cascade();
-				attributeVisitor.visit(builder);
+				visitor.visit(builder);
 			}
 
 			@Override
-			public void visitSubView(EntityTypeOperationBuilder context, View view)
+			public boolean visitSubView(EntityTypeOperationBuilder context, View view)
 			{
-				return;
+				return false;
 			}
 
 			@Override
-			public void visitSuperView(EntityTypeOperationBuilder context, View view)
+			public boolean visitSuperView(EntityTypeOperationBuilder context, View view)
 			{
-				return;
+				return false;
 			}
 		}, this);
 		return (V) this;

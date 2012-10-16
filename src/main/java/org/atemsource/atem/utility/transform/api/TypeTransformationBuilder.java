@@ -94,6 +94,7 @@ public class TypeTransformationBuilder<A, B>
 		{
 			transformation.build(targetTypeBuilder);
 		}
+		targetTypeBuilder.setAbstract(sourceType.isAbstractType());
 		EntityType targetType = targetTypeBuilder.createEntityType();
 		if (transformation != null)
 		{

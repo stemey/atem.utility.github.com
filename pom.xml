@@ -216,12 +216,12 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.1.4-SNAPSHOT</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-api</artifactId>
-			<version>0.1.3-SNAPSHOT</version>
+			<version>0.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>

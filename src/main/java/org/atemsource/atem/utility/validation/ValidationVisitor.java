@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
-
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.CollectionSortType;
@@ -21,158 +20,181 @@ import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.constraint.Constraint;
 
-public class ValidationVisitor implements ViewVisitor<ValidationContext> {
+
+public class ValidationVisitor implements ViewVisitor<ValidationContext>
+{
 	private AttributePathBuilderFactory attributePathBuilderFactory;
 
-	public void setEntity(Object entity) {
-		entityStack.push(new GraphNode(null, entity));
+	private Collection<? extends SingleAttribute<? extends Constraint>> constraintAttributess;
+
+	private final Stack<GraphNode> entityStack = new Stack<ValidationVisitor.GraphNode>();
+
+	public AttributePathBuilderFactory getAttributePathBuilderFactory()
+	{
+		return attributePathBuilderFactory;
 	}
 
-	private static class GraphNode {
-		private AttributePath path;
-
-		public GraphNode(AttributePath path, Object entity) {
-			super();
-			this.path = path;
-			this.entity = entity;
-		}
-
-		public AttributePath getPath() {
-			return path;
-		}
-
-		public Object getEntity() {
-			return entity;
-		}
-
-		private Object entity;
-	}
-
-	private Stack<GraphNode> entityStack = new Stack<ValidationVisitor.GraphNode>();
-
-	@Override
-	public void visit(ValidationContext context, Attribute attribute) {
-		visit(context, attribute, null);
-
-	}
-
-	private <V> void visitSingle(ValidationContext context,
-			SingleAttribute<V> attribute,
-			Visitor<ValidationContext> visitor, AttributePath newPath) {
-		GraphNode node = entityStack.peek();
-		if (node.getEntity() != null) {
-
-			try {
-				// will throw ConversionEception for primitive types
-				V value = attribute.getValue(node.getEntity());
-				// validate target type
-				if (value == null) {
-					if (attribute.isRequired()) {
-						context.addRequiredError(newPath);
-					}
-				} else {
-					validateValue(context, (Attribute<Object, ?>) attribute, visitor, value, newPath);
-
-				}
-			} catch (ConversionException e) {
-				context.addTypeMismatchError(newPath,
-						attribute.getTargetType(), e.getValueAsText());
-			}
-
-		}
-	}
-
-	private Constraint[] getConstraints(Attribute<?, ?> attribute) {
-		Constraint[] constraints = new Constraint[this.constraintAttributess
-				.size()];
+	private Constraint[] getConstraints(Attribute<?, ?> attribute)
+	{
+		Constraint[] constraints = new Constraint[this.constraintAttributess.size()];
 		int index = 0;
-		for (SingleAttribute<? extends Constraint> constraintAttribute : this.constraintAttributess) {
+		for (SingleAttribute<? extends Constraint> constraintAttribute : this.constraintAttributess)
+		{
 			constraints[index++] = constraintAttribute.getValue(attribute);
 		}
 		return constraints;
 	}
 
-	private void visitCollection(ValidationContext context,
-			CollectionAttribute<?, ?> attribute,
-			Visitor<ValidationContext> visitor) {
-		GraphNode node = entityStack.peek();
-		Object entity = node.getEntity();
-		if (node.getEntity() != null) {
-			if (attribute.getValue(entity) == null) {
-				if (attribute.isRequired()) {
-					context.addRequiredError(node.getPath());
-				}
-			} else {
-				int index = 0;
-				Iterator<?> iterator = attribute.getIterator(node.getEntity());
-				for (; iterator.hasNext();) {
-					Object value = iterator.next();
-					AttributePath elementPath;
-					if (attribute.getCollectionSortType() != CollectionSortType.NONE) {
-						elementPath = attributePathBuilderFactory
-								.createBuilder(node.getPath()).addIndex(index)
-								.createPath();
-						index++;
-					} else {
-						elementPath = node.getPath();
-					}
-					validateValue(context, (CollectionAttribute<Object, ?>) attribute, visitor, value,
-							elementPath);
-				}
-			}
-		}
+	public void setAttributePathBuilderFactory(AttributePathBuilderFactory attributePathBuilderFactory)
+	{
+		this.attributePathBuilderFactory = attributePathBuilderFactory;
 	}
 
-	protected void validateValue(ValidationContext context,
-			Attribute<Object, ?> attribute,
-			Visitor<ValidationContext> visitor, Object value,
-			AttributePath elementPath) {
+	public void setConstraints(Collection<? extends SingleAttribute<? extends Constraint>> constraints)
+	{
+		this.constraintAttributess = constraints;
+	}
+
+	public void setEntity(Object entity)
+	{
+		entityStack.push(new GraphNode(null, entity));
+	}
+
+	protected void validateValue(ValidationContext context, Attribute<Object, ?> attribute,
+		Visitor<ValidationContext> visitor, Object value, AttributePath elementPath)
+	{
 		boolean correctType = attribute.getTargetType().isInstance(value);
-		if (!correctType) {
-			context.addTypeMismatchError(elementPath,
-					attribute.getTargetType(), value.getClass().getName());
+		if (!correctType)
+		{
+			context.addTypeMismatchError(elementPath, attribute.getTargetType(), value.getClass().getName());
 			return;
 		}
 		Type<Object> targetType = attribute.getTargetType(value);
-		if (targetType instanceof EntityType<?>
-				&& ((EntityType) targetType).isAbstractType()) {
-			context.addTypeMismatchError(elementPath,
-					targetType, targetType.getCode());
+		if (targetType instanceof EntityType<?> && ((EntityType) targetType).isAbstractType())
+		{
+			context.addTypeMismatchError(elementPath, targetType, targetType.getCode());
 			return;
 		}
 		Constraint[] constraints = getConstraints(attribute);
-		for (Constraint constraint : constraints) {
-			if (!constraint.isValid(value)) {
+		for (Constraint constraint : constraints)
+		{
+			if (!constraint.isValid(value))
+			{
 				context.addConstraintError(elementPath, constraint);
 			}
 		}
-		if (visitor != null) {
+		if (visitor != null)
+		{
 			visitor.visit(context);
 		}
 
 	}
 
-	private <K, V> void visitMap(ValidationContext context,
-			MapAttribute<K, V, ?> attribute, Visitor<ValidationContext> visitor) {
+	@Override
+	public void visit(ValidationContext context, Attribute attribute)
+	{
+		visit(context, attribute, null);
+
+	}
+
+	@Override
+	public void visit(ValidationContext context, Attribute attribute, Visitor<ValidationContext> visitor)
+	{
+		AttributePathBuilder pathBuilder = attributePathBuilderFactory.createBuilder(entityStack.peek().getPath());
+		pathBuilder.addAttribute(attribute);
+		AttributePath path = pathBuilder.createPath();
+
+		if (attribute instanceof CollectionAttribute<?, ?>)
+		{
+			visitCollection(context, (CollectionAttribute<?, ?>) attribute, visitor);
+		}
+		else if (attribute instanceof MapAttribute<?, ?, ?>)
+		{
+			visitMap(context, (MapAttribute<?, ?, ?>) attribute, visitor);
+		}
+		else
+		{
+			visitSingle(context, (SingleAttribute<?>) attribute, visitor, path);
+		}
+
+	}
+
+	protected void visitAttribute(ValidationContext context, Attribute attribute,
+		Visitor<ValidationContext> attributeVisitor, Object value, AttributePath newPath)
+	{
+		if (attributeVisitor != null)
+		{
+			entityStack.push(new GraphNode(newPath, value));
+			attributeVisitor.visit(context);
+			entityStack.pop();
+		}
+	}
+
+	private void visitCollection(ValidationContext context, CollectionAttribute<?, ?> attribute,
+		Visitor<ValidationContext> visitor)
+	{
 		GraphNode node = entityStack.peek();
 		Object entity = node.getEntity();
-		if (node.getEntity() != null) {
-			if (attribute.getValue(entity) == null) {
-				if (attribute.isRequired()) {
+		if (node.getEntity() != null)
+		{
+			if (attribute.getValue(entity) == null)
+			{
+				if (attribute.isRequired())
+				{
 					context.addRequiredError(node.getPath());
 				}
-			} else {
-				Set<K> keySet = attribute.getKeySet(node.getEntity());
-				for (K key : keySet) {
-					V value = attribute.getElement(node.getEntity(), key);
-					boolean correctType = attribute.getTargetType()
-							.getJavaType().isInstance(value);
+			}
+			else
+			{
+				int index = 0;
+				Iterator<?> iterator = attribute.getIterator(node.getEntity());
+				for (; iterator.hasNext();)
+				{
+					Object value = iterator.next();
 					AttributePath elementPath;
-					if (attribute.getCollectionSortType() != CollectionSortType.NONE) {
-						elementPath = attributePathBuilderFactory
-								.createBuilder(node.getPath()).addMapKey(key)
-								.createPath();
-					} else {
+					if (attribute.getCollectionSortType() != CollectionSortType.NONE)
+					{
+						elementPath = attributePathBuilderFactory.createBuilder(node.getPath()).addIndex(index).createPath();
+						index++;
+					}
+					else
+					{
+						elementPath = node.getPath();
+					}
+					validateValue(context, (CollectionAttribute<Object, ?>) attribute, visitor, value, elementPath);
+				}
+			}
+		}
+	}
+
+	private <K, V> void visitMap(ValidationContext context, MapAttribute<K, V, ?> attribute,
+		Visitor<ValidationContext> visitor)
+	{
+		GraphNode node = entityStack.peek();
+		Object entity = node.getEntity();
+		if (node.getEntity() != null)
+		{
+			if (attribute.getValue(entity) == null)
+			{
+				if (attribute.isRequired())
+				{
+					context.addRequiredError(node.getPath());
+				}
+			}
+			else
+			{
+				Set<K> keySet = attribute.getKeySet(node.getEntity());
+				for (K key : keySet)
+				{
+					V value = attribute.getElement(node.getEntity(), key);
+					boolean correctType = attribute.getTargetType().getJavaType().isInstance(value);
+					AttributePath elementPath;
+					if (attribute.isSorted())
+					{
+						elementPath = attributePathBuilderFactory.createBuilder(node.getPath()).addMapKey(key).createPath();
+					}
+					else
+					{
 						elementPath = node.getPath();
 					}
 					validateValue(context, (Attribute<Object, ?>) attribute, visitor, value, elementPath);
@@ -181,63 +203,81 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext> {
 		}
 	}
 
-	private Collection<? extends SingleAttribute<? extends Constraint>> constraintAttributess;
+	private <V> void visitSingle(ValidationContext context, SingleAttribute<V> attribute,
+		Visitor<ValidationContext> visitor, AttributePath newPath)
+	{
+		GraphNode node = entityStack.peek();
+		if (node.getEntity() != null)
+		{
 
-	public void setConstraints(
-			Collection<? extends SingleAttribute<? extends Constraint>> constraints) {
-		this.constraintAttributess = constraints;
-	}
+			SingleAttribute generalAttribute = attribute;
+			try
+			{
+				// will throw ConversionEception for primitive types
+				V value = attribute.getValue(node.getEntity());
+				// validate target type
+				if (value == null)
+				{
+					if (generalAttribute.isRequired())
+					{
+						context.addRequiredError(newPath);
+					}
+				}
+				else
+				{
+					validateValue(context, generalAttribute, visitor, value, newPath);
 
-	@Override
-	public void visit(ValidationContext context, Attribute attribute,
-			Visitor<ValidationContext> visitor) {
-		AttributePathBuilder pathBuilder = attributePathBuilderFactory
-				.createBuilder(entityStack.peek().getPath());
-		pathBuilder.addAttribute(attribute);
-		AttributePath path = pathBuilder.createPath();
+				}
+			}
+			catch (ConversionException e)
+			{
+				context.addTypeMismatchError(newPath, generalAttribute.getTargetType(), e.getValueAsText());
+			}
 
-		if (attribute instanceof CollectionAttribute<?, ?>) {
-			visitCollection(context, (CollectionAttribute<?, ?>) attribute,
-					visitor);
-		} else if (attribute instanceof MapAttribute<?, ?, ?>) {
-			visitMap(context, (MapAttribute<?, ?, ?>) attribute, visitor);
-		} else {
-			visitSingle(context, (SingleAttribute<?>) attribute, visitor, path);
-		}
-
-	}
-
-	protected void visitAttribute(ValidationContext context,
-			Attribute attribute, Visitor<ValidationContext> attributeVisitor,
-			Object value, AttributePath newPath) {
-		if (attributeVisitor != null) {
-			entityStack.push(new GraphNode(newPath, value));
-			attributeVisitor.visit(context);
-			entityStack.pop();
 		}
 	}
 
 	@Override
-	public boolean visitSubView(ValidationContext context, View view) {
-		if (((EntityType<?>) view).isInstance(entityStack.peek().getEntity())) {
+	public boolean visitSubView(ValidationContext context, View view)
+	{
+		if (((EntityType<?>) view).isInstance(entityStack.peek().getEntity()))
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
 
 	@Override
-	public boolean visitSuperView(ValidationContext context, View view) {
+	public boolean visitSuperView(ValidationContext context, View view)
+	{
 		return true;
 	}
 
-	public AttributePathBuilderFactory getAttributePathBuilderFactory() {
-		return attributePathBuilderFactory;
-	}
+	private static class GraphNode
+	{
+		private final Object entity;
 
-	public void setAttributePathBuilderFactory(
-			AttributePathBuilderFactory attributePathBuilderFactory) {
-		this.attributePathBuilderFactory = attributePathBuilderFactory;
+		private final AttributePath path;
+
+		public GraphNode(AttributePath path, Object entity)
+		{
+			super();
+			this.path = path;
+			this.entity = entity;
+		}
+
+		public Object getEntity()
+		{
+			return entity;
+		}
+
+		public AttributePath getPath()
+		{
+			return path;
+		}
 	}
 
 }

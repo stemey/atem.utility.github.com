@@ -47,6 +47,8 @@ public class EntityObserver
 
 	private final Map<String, Set<AttributeListener>> listeners = new HashMap<String, Set<AttributeListener>>();
 
+	private final String DEFAULT_LISTENER = "DEFAULT";
+	
 	private Object previousSnapshot;
 
 	private UniTransformation<Object, Object> snapshotting;
@@ -63,8 +65,12 @@ public class EntityObserver
 			for (Difference difference : differences)
 			{
 				AttributePath path = difference.getPath();
-				Set<AttributeListener> attributeListeners = listeners.get(path.getAsString());
-				if (attributeListeners != null)
+				Set<AttributeListener> attributeListeners = new HashSet<AttributeListener>();
+				if (listeners.get(path.getAsString()) != null)
+					attributeListeners.addAll(listeners.get(path.getAsString()));
+				if (listeners.get(DEFAULT_LISTENER) != null)
+					attributeListeners.addAll(listeners.get(DEFAULT_LISTENER));
+				if (!attributeListeners.isEmpty())
 				{
 					for (AttributeListener attributeListener : attributeListeners)
 					{
@@ -135,5 +141,17 @@ public class EntityObserver
 		}
 		attributeListeners.add(listener);
 		return new WatchHandle(this, attributePath, listener);
+	}
+
+	public WatchHandle watch(AttributeListener listener)
+	{
+		Set<AttributeListener> attributeListeners = listeners.get(DEFAULT_LISTENER);
+		if (attributeListeners == null)
+		{
+			attributeListeners = new HashSet<AttributeListener>();
+			listeners.put(DEFAULT_LISTENER, attributeListeners);
+		}
+		attributeListeners.add(listener);
+		return new WatchHandle(this, null, listener);
 	}
 }

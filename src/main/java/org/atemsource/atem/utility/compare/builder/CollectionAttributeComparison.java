@@ -86,7 +86,7 @@ public class CollectionAttributeComparison extends AttributeComparison
 	}
 	
 	private Type getTargetType(CollectionAttribute associationAttribute, Object value) {
-		Type targetType = associationAttribute.getTargetType(value);
+		Type targetType = value != null ? associationAttribute.getTargetType(value) : associationAttribute.getTargetType();
 		if (targetType == null)
 			targetType = associationAttribute.getTargetType();
 		return targetType;

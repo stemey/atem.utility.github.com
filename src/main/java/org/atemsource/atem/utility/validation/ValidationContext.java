@@ -4,13 +4,16 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.constraint.Constraint;
 
-public interface ValidationContext {
+
+public interface ValidationContext
+{
+
+	void addConstraintError(AttributePath path, Constraint constraint);
 
 	void addRequiredError(AttributePath path);
 
-	void addTypeMismatchError(AttributePath path, Type targetType,
-			String actualValue);
+	void addTypeMismatchError(AttributePath path, Type targetType, String actualValue);
 
-	void addConstraintError(AttributePath path, Constraint constraint);
+	<T> Type<T> getEntityType(T value);
 
 }

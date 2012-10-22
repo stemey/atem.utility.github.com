@@ -69,7 +69,7 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext>
 			context.addTypeMismatchError(elementPath, attribute.getTargetType(), value.getClass().getName());
 			return;
 		}
-		Type<Object> targetType = attribute.getTargetType(value);
+		Type<Object> targetType = context.getEntityType(value);
 		if (targetType instanceof EntityType<?> && ((EntityType) targetType).isAbstractType())
 		{
 			context.addTypeMismatchError(elementPath, targetType, targetType.getCode());

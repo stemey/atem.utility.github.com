@@ -55,7 +55,8 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 			throw new IllegalStateException("cannot convert dynamically if metaAttribute is missing");
 		}
 		this.converter =
-			new DynamicTransformation(typeCodeConverter, sourceType, entityTypeRepository, (SingleAttribute) metaAttribute);
+			new DynamicTransformation(typeCodeConverter, sourceType, entityTypeRepository,
+				(SingleAttribute) metaAttribute, converterFactory);
 		return (T) this;
 	}
 

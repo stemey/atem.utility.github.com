@@ -53,14 +53,13 @@ public class CollectionAttributeComparison extends AttributeComparison
 			for (; ib.hasNext();)
 			{
 				Object valueB = ib.next();
-				Type targetType = associationAttribute.getTargetType(valueA);
-				Type compareType = associationAttribute.getTargetType(valueB);
+				Type targetType = getTargetType(associationAttribute, valueA);
+				Type compareType = getTargetType(associationAttribute, valueB);
 				if (targetType.equals(compareType) && getEntityOperation(compareType) != null)
 				{
 					Set<Difference> localDifferences = getEntityOperation(compareType).getDifferences(context, valueA, valueB);
 					if (localDifferences.size() == 0)
 					{
-
 						additions.remove(valueB);
 						removals.remove(valueA);
 						break;
@@ -85,5 +84,11 @@ public class CollectionAttributeComparison extends AttributeComparison
 		}
 		return differences;
 	}
-
+	
+	private Type getTargetType(CollectionAttribute associationAttribute, Object value) {
+		Type targetType = value != null ? associationAttribute.getTargetType(value) : associationAttribute.getTargetType();
+		if (targetType == null)
+			targetType = associationAttribute.getTargetType();
+		return targetType;
+	}
 }

@@ -87,7 +87,7 @@ public class VersionedBinder extends AbstractBinder
 				filters.addAll(getFilters());
 				filters.add(new VersionFilter(version, versionResolver));
 				bindingSession.setAttributeFilters(filters);
-				bindingSession.process(getSourceTypes());
+				bindingSession.process(getTypeFilter().getEntityTypes());
 			}
 		}
 

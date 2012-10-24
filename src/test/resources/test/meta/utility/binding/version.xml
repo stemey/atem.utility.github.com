@@ -17,40 +17,39 @@
 
 
 
-	<!-- Scans for application @Components to deploy -->
-
-	<import resource="classpath:/meta/utility/jackson.xml" />
+	<import resource="classpath:/meta/utility/transform-complete.xml" />
+	<import resource="classpath:/meta/utility/binding.xml" />
 	<import resource="classpath:/atem/pojo/entitytype.xml" />
+	<import resource="classpath:/atem/jackson/entitytype.xml" />
 
 
-	<bean class="org.atemsource.atem.utility.path.AttributePathBuilderFactory">
+
+	<bean id="domain-pojo-repository"
+		parent="abstract-atem-scanned-pojo-repository">
+		<property name="includedPackage" value="org.atemsource.atem.utility.domain" />
 	</bean>
 
+	<bean id="atem-json-repository" parent="atem-abstract-json-repository"/>
+
+	<bean id="atem-repository"
+		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
+		init-method="init">
+		<property name="repositories">
+			<list>
+				<ref bean="atem-entityType-repository" />
+				<ref bean="atem-attribute-repository" />
+				<ref bean="atem-json-repository" />
+				<ref bean="domain-pojo-repository" />
+				<ref bean="atem-transformation-subrepository" />
+			</list>
+		</property>
+	</bean>
 
 	<bean id="atem-utility-bindingProcessor"
 		class="org.atemsource.atem.utility.binding.version.VersionedBinder">
-		<property name="typeFilter">
-			<bean class="org.atemsource.atem.utility.binding.PackageTypeFilter">
-				<property name="includedPackage" value="org.atemsource.atem.utility.domain" />
-			</bean>
-		</property>
+		<property name="typeFilter" ref="domain-pojo-repository"/>
 		<property name="subRepository" ref="atem-json-repository" />
-		<property name="transformationBuilderFactory">
-			<bean
-				class="org.atemsource.atem.utility.transform.api.TransformationBuilderFactory">
-				<property name="converterFactory">
-					<bean
-						class="org.atemsource.atem.utility.transform.impl.converter.ConverterFactoryImpl">
-						<property name="factories">
-							<list>
-								<bean
-									class="org.atemsource.atem.utility.transform.impl.converter.EnumToStringConverterFactory" />
-							</list>
-						</property>
-					</bean>
-				</property>
-			</bean>
-		</property>
+		<property name="transformationBuilderFactory" ref="atem-utility-transformationBuilderFactory"/>
 		<property name="filters">
 			<list>
 				<bean
@@ -71,50 +70,6 @@
 			</list>
 		</property>
 	</bean>
-
-	<bean id="atem-pojo-repository"
-		class="org.atemsource.atem.impl.pojo.ScannedPojoEntityTypeRepository">
-		<property name="entityTypeClass"
-			value="org.atemsource.atem.impl.pojo.PlainPojoEntityType" />
-		<property name="entityClass" value="java.lang.Object" />
-		<property name="propertyDescriptorFactory" ref="pojoPropertyDescriptorFactory" />
-		<property name="includedPackage" value="org.atemsource.atem.utility.domain" />
-		<property name="attributeFactories">
-			<list>
-				<bean
-					class="org.atemsource.atem.impl.pojo.attribute.PrimitiveAttributeFactory"></bean>
-				<bean
-					class="org.atemsource.atem.impl.pojo.attribute.ArrayAttributeFactory"></bean>
-				<bean
-					class="org.atemsource.atem.impl.pojo.attribute.CollectionAttributeFactory"></bean>
-				<bean
-					class="org.atemsource.atem.impl.pojo.attribute.MapAssociationAttributeFactory"></bean>
-				<bean
-					class="org.atemsource.atem.impl.pojo.attribute.SingleAssociationAttributeFactory"></bean>
-			</list>
-		</property>
-	</bean>
-
-
-
-	<bean id="atem-repository"
-		class="org.atemsource.atem.impl.common.EntityTypeRepositoryImpl"
-		init-method="init">
-		<property name="repositories">
-			<list>
-				<ref bean="atem-entityType-repository" />
-				<ref bean="atem-attribute-repository" />
-				<ref bean="atem-json-repository" />
-				<ref bean="atem-pojo-repository" />
-				<ref bean="derivation-repository" />
-			</list>
-		</property>
-	</bean>
-
-
-
-
-
 
 
 </beans>

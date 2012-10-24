@@ -38,7 +38,15 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 
 	protected TransformationBuilderFactory transformationBuilderFactory;
 
-	private TypeFilter typeFilter;
+	private org.atemsource.atem.api.type.TypeFilter<?> typeFilter;
+
+	public org.atemsource.atem.api.type.TypeFilter<?> getTypeFilter() {
+		return typeFilter;
+	}
+
+	public void setTypeFilter(org.atemsource.atem.api.type.TypeFilter<?> typeFilter) {
+		this.typeFilter = typeFilter;
+	}
 
 	public AbstractBinder()
 	{
@@ -66,19 +74,7 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 		return filters;
 	}
 
-	protected Collection<EntityType<?>> getSourceTypes()
-	{
-		Collection<EntityType<?>> types = entityTypeRepository.getEntityTypes();
-		List<EntityType<?>> filteredList = new ArrayList<EntityType<?>>();
-		for (EntityType<?> entityType : types)
-		{
-			if (!typeFilter.isExcluded(entityType))
-			{
-				filteredList.add(entityType);
-			}
-		}
-		return filteredList;
-	}
+	
 
 	public DynamicEntityTypeSubrepository<?> getSubRepository()
 	{
@@ -90,10 +86,7 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 		return transformationBuilderFactory;
 	}
 
-	public TypeFilter getTypeFilter()
-	{
-		return typeFilter;
-	}
+	
 
 	public void setAttributeNameConverter(AttributeNameConverter attributeNameConverter)
 	{
@@ -120,9 +113,5 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 		this.transformationBuilderFactory = transformationBuilderFactory;
 	}
 
-	public void setTypeFilter(TypeFilter typeFilter)
-	{
-		this.typeFilter = typeFilter;
-	}
 
 }

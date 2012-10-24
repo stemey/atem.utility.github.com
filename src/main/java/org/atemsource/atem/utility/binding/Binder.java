@@ -49,7 +49,7 @@ public class Binder extends AbstractBinder implements BindingListener
 		bindingSession.setSubRepository(subRepository);
 		bindingSession.setTransformationBuilderFactory(transformationBuilderFactory);
 		bindingSession.addListener(this);
-		bindingSession.process(getSourceTypes());
+		bindingSession.process(getTypeFilter().getEntityTypes());
 
 	}
 

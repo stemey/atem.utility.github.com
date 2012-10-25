@@ -55,11 +55,6 @@
 
 	<repositories>
 		<repository>
-			<id>sinnerschrader-repository</id>
-			<name>SinnerSchrader-Maven-Repository</name>
-			<url>http://maven</url>
-		</repository>
-		<repository>
 			<id>ops4j</id>
 			<url>http://repository.ops4j.org/maven2/</url>
 		</repository>
@@ -67,6 +62,11 @@
 			<id>jboss-repository</id>
 			<name>The JBoss maven repository</name>
 			<url>http://repository.jboss.org/maven2</url>
+		</repository>
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>apache.org</id>

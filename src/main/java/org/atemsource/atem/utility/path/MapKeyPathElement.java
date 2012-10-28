@@ -75,7 +75,7 @@ public class MapKeyPathElement implements AttributePathElement
 	@Override
 	public PathType getSourceType()
 	{
-		return new PathType(Cardinality.MAP, attribute.getTargetType());
+		return new PathType(Cardinality.MAP, attribute.getEntityType());
 	}
 
 	@Override

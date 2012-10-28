@@ -69,7 +69,7 @@ public class IndexPathElement<J> implements AttributePathElement
 	@Override
 	public PathType getSourceType()
 	{
-		return new PathType(Cardinality.INDEXED, attribute.getTargetType());
+		return new PathType(Cardinality.INDEXED, attribute.getEntityType());
 	}
 
 	@Override

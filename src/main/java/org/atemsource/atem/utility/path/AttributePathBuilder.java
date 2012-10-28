@@ -76,17 +76,19 @@ public class AttributePathBuilder
 		{
 			if (getAttribute() instanceof MapAttribute)
 			{
-				throw new UnsupportedOperationException(
-					"converting from string based key to object based is notimplemented");
+				addMapKey(pathElement);
 			}
 			else if (getAttribute() instanceof OrderableCollection)
 			{
-				addIndex(Integer.parseInt("pathElement"));
+				addIndex(Integer.parseInt(pathElement));
 			}
 			else
 			{
 				addAttribute(pathElement);
 			}
+		}else{
+			// index or map key
+			addAttribute(pathElement);
 		}
 	}
 
@@ -99,7 +101,9 @@ public class AttributePathBuilder
 			{
 				throw new IllegalStateException("cannot handle index here" + newPath.toString());
 			}
-			newPath.add(new IndexPathElement(index, (OrderableCollection) attribute));
+			newPath.remove(newPath.size() - 1);
+			newPath.add(new IndexPathElement(index,
+					(OrderableCollection) attribute));
 			return this;
 		}
 		catch (ClassCastException e)
@@ -113,6 +117,7 @@ public class AttributePathBuilder
 		try
 		{
 			Attribute attribute = getAttribute();
+			newPath.remove(newPath.size() - 1);
 			newPath.add(new MapKeyPathElement(key, (MapAttribute) attribute));
 			return this;
 		}
@@ -122,9 +127,8 @@ public class AttributePathBuilder
 		}
 	}
 
-	public void addPath(AttributePath basePath)
-	{
-		newPath.add(new AttributePathAttributePathElement(basePath));
+	public AttributePathBuilder addPath(AttributePath basePath) {
+		return start(basePath.getAsString(),basePath.getAttribute().getEntityType());
 	}
 
 	public AttributePath createPath()

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.path;
 
+import org.atemsource.atem.api.path.Cardinality;
 import org.atemsource.atem.api.type.Type;
 
 

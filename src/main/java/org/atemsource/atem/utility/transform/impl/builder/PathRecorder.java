@@ -2,15 +2,12 @@ package org.atemsource.atem.utility.transform.impl.builder;
 
 import java.lang.reflect.Method;
 
-import org.atemsource.atem.api.attribute.Attribute;
-import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.utility.path.AttributePath;
-import org.atemsource.atem.utility.path.AttributePathBuilder;
-
-import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+
+import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.type.EntityType;
 
 public class PathRecorder implements MethodInterceptor {
 

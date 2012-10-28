@@ -18,9 +18,9 @@ package org.atemsource.atem.utility.compare;
 
 import javax.inject.Inject;
 
-import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.BeanLocator;
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.utility.path.AttributePathBuilder;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.springframework.context.annotation.Scope;

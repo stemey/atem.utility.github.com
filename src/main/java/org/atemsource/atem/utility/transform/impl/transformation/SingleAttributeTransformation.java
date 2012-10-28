@@ -7,7 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.transformation;
 
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
@@ -23,9 +24,10 @@ public class SingleAttributeTransformation<A, B> extends OneToOneAttributeTransf
 	protected void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
 		TransformationContext ctx, UniTransformation<Object, Object> converter)
 	{
-		if (attributeB.isWriteable())
+		Attribute attribute=attributeB.getAttribute();
+		if (attribute.isWriteable())
 		{
-			Object valueA = attributeA.getValue(a);
+			Object valueA = attributeA.getAttribute().getValue(a);
 			if (valueA == null)
 			{
 				return;
@@ -35,14 +37,14 @@ public class SingleAttributeTransformation<A, B> extends OneToOneAttributeTransf
 			{
 				valueA = converter.convert(valueA, ctx);
 			}
-			if (attributeB.getAttribute().isRequired() && valueA == null)
+			if (attribute.isRequired() && valueA == null)
 			{
 
 				// TODO
 			}
 			else
 			{
-				attributeB.setValue(b, valueA);
+				attribute.setValue(b, valueA);
 
 			}
 		}

@@ -10,13 +10,12 @@ package org.atemsource.atem.utility.transform.impl.builder;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
-import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.converter.Constraining;
 import org.atemsource.atem.utility.transform.impl.transformation.SingleAttributeTransformation;
 import org.springframework.context.annotation.Scope;
@@ -33,7 +32,7 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		Converter<?, ?> converter = getConverter(sourcePath.getAttribute().getTargetType());
 		Type[] validTypes;
 		attributeTargetType = getTargetType(sourcePath, converter);
 		validTypes = getValidTargetTypes(sourcePath, converter);
@@ -61,7 +60,7 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 			beanLocator.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);
 		primitiveAttributeTransformation.setAttributeB(targetPath);
-		primitiveAttributeTransformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
+		primitiveAttributeTransformation.setTransformation(getTransformation(sourcePath.getAttribute().getTargetType()));
 		primitiveAttributeTransformation.setTypeA(sourceType);
 		primitiveAttributeTransformation.setTypeB(targetType);
 		primitiveAttributeTransformation.setMeta(meta);

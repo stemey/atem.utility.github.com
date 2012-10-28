@@ -7,7 +7,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare;
 
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.api.path.AttributePath;
 
 
 public class Rearrangement extends Difference

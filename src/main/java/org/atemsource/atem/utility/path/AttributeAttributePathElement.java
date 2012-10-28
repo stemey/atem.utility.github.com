@@ -11,6 +11,7 @@ import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.CollectionSortType;
 import org.atemsource.atem.api.attribute.MapAttribute;
+import org.atemsource.atem.api.path.Cardinality;
 
 
 public class AttributeAttributePathElement implements AttributePathElement

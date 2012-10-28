@@ -17,6 +17,7 @@ package org.atemsource.atem.utility.path;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.MapAttribute;
+import org.atemsource.atem.api.path.Cardinality;
 
 
 public class MapKeyPathElement implements AttributePathElement
@@ -75,7 +76,7 @@ public class MapKeyPathElement implements AttributePathElement
 	@Override
 	public PathType getSourceType()
 	{
-		return new PathType(Cardinality.MAP, attribute.getTargetType());
+		return new PathType(Cardinality.MAP, attribute.getEntityType());
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.impl.transformation.CollectionToMapAttributeTransformation;
@@ -25,13 +25,13 @@ public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Obje
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		if (getConverter(sourcePath.getTargetType().getType()) != null)
+		if (getConverter(sourcePath.getAttribute().getTargetType()) != null)
 		{
-			attributeTargetType = getConverter(sourcePath.getTargetType().getType()).getTypeB();
+			attributeTargetType = getConverter(sourcePath.getAttribute().getTargetType()).getTypeB();
 		}
 		else
 		{
-			attributeTargetType = sourcePath.getTargetType().getType();
+			attributeTargetType = sourcePath.getAttribute().getTargetType();
 		}
 		entityTypeBuilder.addMapAssociationAttribute(getTargetAttribute(), keyConverter.getTypeB(), attributeTargetType,
 			false);
@@ -46,7 +46,7 @@ public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Obje
 		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(getTargetAttribute(), targetType);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
+		transformation.setTransformation(getTransformation(sourcePath.getAttribute().getTargetType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);

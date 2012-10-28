@@ -8,8 +8,10 @@
 package org.atemsource.atem.utility.transform.impl.transformation;
 
 import java.util.HashSet;
+
+import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.springframework.context.annotation.Scope;
@@ -37,9 +39,10 @@ public class EmbedAttributeTransformation<A, B> extends AbstractAttributeTransfo
 	public void mergeAB(A a, B b, TransformationContext ctx)
 	{
 		AttributePath attributeA = getAttributeA();
-		if (attributeA.getValue(a) != null)
+		Object valueA = attributeA.getAttribute().getValue(a);
+		if (valueA != null)
 		{
-			transformation.getAB().merge(attributeA.getValue(a), b, ctx);
+			transformation.getAB().merge(valueA, b, ctx);
 		}
 	}
 
@@ -47,11 +50,12 @@ public class EmbedAttributeTransformation<A, B> extends AbstractAttributeTransfo
 	public void mergeBA(B b, A a, TransformationContext ctx)
 	{
 		AttributePath attributeA = getAttributeA();
-		Object property = attributeA.getValue(a);
+		Attribute attribute = attributeA.getAttribute();
+		Object property = attribute.getValue(a);
 		if (property != null)
 		{
-			property = ((EntityType<?>) attributeA.getTargetType().getType()).createEntity();
-			attributeA.setValue(a, property);
+			property = ((EntityType<?>) attribute.getTargetType()).createEntity();
+			attribute.setValue(a, property);
 		}
 		transformation.getBA().merge(b, property, ctx);
 	}

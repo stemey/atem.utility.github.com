@@ -14,15 +14,13 @@ import javax.inject.Inject;
 
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
-import org.atemsource.atem.utility.transform.api.AttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;

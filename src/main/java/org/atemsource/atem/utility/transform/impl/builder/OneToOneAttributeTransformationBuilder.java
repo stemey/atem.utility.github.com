@@ -2,13 +2,15 @@ package org.atemsource.atem.utility.transform.impl.builder;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import net.sf.cglib.proxy.Enhancer;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.impl.meta.DerivedObject;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.JavaUniConverter;
@@ -110,7 +112,7 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		}
 		else
 		{
-			attributeTargetType = sourcePath.getTargetType().getType();
+			attributeTargetType = sourcePath.getAttribute().getTargetType();
 		}
 		return attributeTargetType;
 	}

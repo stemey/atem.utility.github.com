@@ -3,15 +3,11 @@ package org.atemsource.atem.utility.transform.impl.builder;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
-import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
-import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
-import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssociationAttributeTransformation;
-import org.atemsource.atem.utility.transform.impl.transformation.CollectionToMapAttributeTransformation;
 import org.atemsource.atem.utility.transform.impl.transformation.EmbedAttributeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

@@ -8,8 +8,9 @@
 package org.atemsource.atem.utility.transform.impl.transformation;
 
 import java.util.Collection;
+
 import org.atemsource.atem.api.attribute.CollectionAttribute;
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
@@ -50,7 +51,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 		TransformationContext ctx, UniTransformation<Object, Object> converter)
 	{
 		CollectionAttribute<Object, Object> attributeA =
-			(CollectionAttribute<Object, Object>) attributePathA.getAttribute(a);
+			(CollectionAttribute<Object, Object>) attributePathA.getAttribute();
 		if (attributeA == null)
 		{
 			// TODO above seems to be null sometimes
@@ -58,14 +59,13 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 		}
 		CollectionAttribute<Object, Object> attributeB =
 			(CollectionAttribute<Object, Object>) attributePathB.getAttribute();
-		Object baseValueA = attributePathA.getBaseValue(a);
 
-		if (baseValueA == null)
+		if (attributeA.getElements(a) == null)
 		{
 			return;
 		}
 
-		Collection<Object> associatedEntities = attributeA.getElements(baseValueA);
+		Collection<Object> associatedEntities = attributeA.getElements(a);
 
 		if (convertEmptyToNull && associatedEntities.size() == 0)
 		{

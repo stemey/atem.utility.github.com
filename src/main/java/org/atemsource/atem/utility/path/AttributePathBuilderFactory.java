@@ -17,8 +17,9 @@ package org.atemsource.atem.utility.path;
 
 import javax.inject.Inject;
 
-import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.path.AttributePath;
+import org.atemsource.atem.api.type.EntityType;
 
 public class AttributePathBuilderFactory {
 

@@ -10,10 +10,10 @@ package org.atemsource.atem.utility.transform.impl.builder;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.CollectionSortType;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.impl.converter.Constraining;
@@ -39,7 +39,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		Converter<?, ?> converter = getConverter(sourcePath.getAttribute().getTargetType());
 		attributeTargetType=getTargetType(sourcePath, converter);
 		Type[] validTypes=getValidTargetTypes(sourcePath, converter);
 		if (collectionSortType == null)
@@ -83,7 +83,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 			beanLocator.getInstance(CollectionAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
+		transformation.setTransformation(getTransformation(sourcePath.getAttribute().getTargetType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setConvertEmptyToNull(convertEmptyToNull);

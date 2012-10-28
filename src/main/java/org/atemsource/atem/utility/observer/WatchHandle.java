@@ -15,7 +15,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.observer;
 
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.api.path.AttributePath;
 
 
 public class WatchHandle

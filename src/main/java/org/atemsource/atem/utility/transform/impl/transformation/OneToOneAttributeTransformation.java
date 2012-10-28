@@ -3,11 +3,9 @@ package org.atemsource.atem.utility.transform.impl.transformation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.atemsource.atem.utility.path.AttributePath;
-import org.atemsource.atem.utility.transform.api.Converter;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
-import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 
 public abstract  class OneToOneAttributeTransformation<A, B>  extends AbstractAttributeTransformation<A, B>{

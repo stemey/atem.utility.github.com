@@ -17,9 +17,9 @@ package org.atemsource.atem.utility.observer;
 
 
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.compare.CompareContext;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

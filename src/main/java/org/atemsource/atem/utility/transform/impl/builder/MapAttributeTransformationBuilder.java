@@ -8,12 +8,13 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.MapAttribute;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.impl.transformation.MapAssociationAttributeTransformation;
@@ -40,7 +41,7 @@ public class MapAttributeTransformationBuilder<A, B> extends
 	{
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
-		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
+		Converter<?, ?> converter = getConverter(sourcePath.getAttribute().getTargetType());
 		attributeTargetType = getTargetType(sourcePath, converter);
 		Type[] validTypes = getValidTargetTypes(sourcePath, converter);
 		Type<?> keyType;
@@ -78,7 +79,7 @@ public class MapAttributeTransformationBuilder<A, B> extends
 			beanLocator.getInstance(MapAssociationAttributeTransformation.class);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
-		transformation.setTransformation(getTransformation(sourcePath.getTargetType().getType()));
+		transformation.setTransformation(getTransformation(sourcePath.getAttribute().getTargetType()));
 		transformation.setTypeA(sourceType);
 		transformation.setConvertNullToEmpty(convertNullToEmpty);
 		transformation.setTypeB(targetType);

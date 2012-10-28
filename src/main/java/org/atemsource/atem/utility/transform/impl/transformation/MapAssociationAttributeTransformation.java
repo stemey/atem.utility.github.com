@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.atemsource.atem.api.attribute.MapAttribute;
-import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.api.path.AttributePath;
 import org.atemsource.atem.api.type.Type;
-import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniConverter;
@@ -91,11 +90,10 @@ OneToOneAttributeTransformation<A, B> {
 			TransformationContext ctx, UniConverter<Object, Object> converter,
 			UniConverter<Object, Object> keyConverter) {
 		MapAttribute<Object, Object, Object> attributeA = (MapAttribute<Object, Object, Object>) attributePathA
-				.getAttribute(a);
+				.getAttribute();
 		MapAttribute<Object, Object, Object> attributeB = (MapAttribute<Object, Object, Object>) attributePathB
-				.getAttribute(b);
-		Object baseValueU = attributePathA.getBaseValue(a);
-
+				.getAttribute();
+		
 		Object valueB = attributeB.getValue(b);
 		if (valueB == null) {
 			Object emptyCollection = attributeB.getEmptyMap();

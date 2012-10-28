@@ -29,12 +29,7 @@ public class AttributePathBuilderFactory {
 		AttributePathBuilder builder = beanLocator
 				.getInstance(AttributePathBuilder.class);
 
-		String[] pathElements = path.split("\\.");
-		builder.start(pathElements[0], baseType);
-		for (int index = 1; index < pathElements.length; index++) {
-			String pathElement = pathElements[index];
-			builder.addElement(pathElement);
-		}
+		builder.start(path, baseType);
 		return builder.createPath();
 	}
 

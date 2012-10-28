@@ -69,7 +69,7 @@ public class MapKeyPathElement implements AttributePathElement
 	@Override
 	public String getName()
 	{
-		return String.valueOf(key);
+		return attribute.getCode()+"."+String.valueOf(key);
 	}
 
 	@Override

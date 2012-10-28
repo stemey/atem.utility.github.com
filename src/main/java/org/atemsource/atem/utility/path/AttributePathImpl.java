@@ -16,6 +16,7 @@ public class AttributePathImpl implements AttributePath
 {
 
 	private final List<AttributePathElement> path;
+	private String asString;
 
 	public AttributePathImpl()
 	{
@@ -29,26 +30,17 @@ public class AttributePathImpl implements AttributePath
 		path.add(new AttributeAttributePathElement(newAttribute));
 	}
 
-	AttributePathImpl(List<AttributePathElement> path)
+	AttributePathImpl(List<AttributePathElement> path,String asString)
 	{
 		super();
 		this.path = path;
+		this.asString=asString;
 	}
 
 	@Override
 	public String getAsString()
 	{
-		StringBuilder builder = new StringBuilder();
-		for (int index = 0; index < path.size(); index++)
-		{
-			if (index > 0)
-			{
-				builder.append(".");
-			}
-			AttributePathElement pathElement = path.get(index);
-			builder.append(pathElement.getName());
-		}
-		return builder.toString();
+		return asString;
 	}
 
 	@Override

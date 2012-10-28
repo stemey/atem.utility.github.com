@@ -18,165 +18,163 @@ import org.atemsource.atem.utility.type.AttributeUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class AttributePathBuilder
-{
+public class AttributePathBuilder {
 
+	private EntityType baseType;
 	private final List<AttributePathElement> newPath = new ArrayList<AttributePathElement>();
 
-	public AttributePathBuilder addAttribute(Attribute<?, ?> attribute)
-	{
+	public AttributePathBuilder addAttribute(Attribute<?, ?> attribute) {
 		newPath.add(new AttributeAttributePathElement(attribute));
 		return this;
 	}
 
-	public AttributePathBuilder addAttribute(String property)
-	{
+	public AttributePathBuilder addAttribute(String property) {
 
 		Type<?> returnType = getTargetType();
-		if (returnType instanceof EntityType)
-		{
+		if (returnType instanceof EntityType) {
 			EntityType entityType = (EntityType) returnType;
-			if (property.startsWith("@"))
-			{
+			if (property.startsWith("@")) {
 				Attribute metaAttribute = entityType.getMetaAttribute(property);
-				if (metaAttribute != null)
-				{
+				if (metaAttribute != null) {
 					newPath.add(new AttributeAttributePathElement(metaAttribute));
-				}
-				else
-				{
-					throw new IllegalStateException("meta attribute " + property + "  not found ");
+				} else {
+					throw new IllegalStateException("meta attribute "
+							+ property + "  not found ");
 				}
 			}
-			// TODO this searches the subtypes. Therefore there can be more than one results.
-			Attribute attribute = AttributeUtils.findAttribute(property, entityType);
-			if (attribute != null)
-			{
+			// TODO this searches the subtypes. Therefore there can be more than
+			// one results.
+			Attribute attribute = AttributeUtils.findAttribute(property,
+					entityType);
+			if (attribute != null) {
 				newPath.add(new AttributeAttributePathElement(attribute));
+			} else {
+				throw new IllegalStateException(
+						"evaluation time attribute not implemented yet"
+								+ newPath.toString());
 			}
-			else
-			{
-				throw new IllegalStateException("evaluation time attribute not implemented yet" + newPath.toString());
-			}
-		}
-		else
-		{
-			throw new IllegalStateException("no attributes possible" + newPath.toString());
+		} else {
+			throw new IllegalStateException("no attributes possible"
+					+ newPath.toString());
 		}
 
 		return this;
 	}
 
-	public void addElement(String pathElement)
-	{
-		if (getAttribute() != null)
-		{
-			if (getAttribute() instanceof MapAttribute)
-			{
-				addMapKey(pathElement);
+	public void addElement(String pathElement) {
+		if (newPath.size() == 0) {
+			Attribute attribute = baseType.getAttribute(pathElement);
+			if (attribute == null) {
+				if (pathElement.startsWith("@")) {
+					Attribute metaAttribute = baseType
+							.getMetaAttribute(pathElement.substring(1));
+					if (metaAttribute != null) {
+						addAttribute(metaAttribute);
+					} else {
+						throw new IllegalStateException("meta attribute "
+								+ pathElement + "  not found on "
+								+ baseType.getCode());
+					}
+				}
+			} else {
+				addAttribute(attribute);
 			}
-			else if (getAttribute() instanceof OrderableCollection)
-			{
-				addIndex(Integer.parseInt(pathElement));
-			}
-			else
-			{
+		} else {
+			if (getAttribute() != null) {
+				if (getAttribute() instanceof MapAttribute) {
+					addMapKey(pathElement);
+				} else if (getAttribute() instanceof OrderableCollection) {
+					addIndex(Integer.parseInt(pathElement));
+				} else {
+					addAttribute(pathElement);
+				}
+			} else {
+				// index or map key
 				addAttribute(pathElement);
 			}
-		}else{
-			// index or map key
-			addAttribute(pathElement);
 		}
 	}
 
-	public AttributePathBuilder addIndex(int index)
-	{
-		try
-		{
+	public AttributePathBuilder addIndex(int index) {
+		try {
 			Attribute attribute = getAttribute();
-			if (attribute == null)
-			{
-				throw new IllegalStateException("cannot handle index here" + newPath.toString());
+			if (attribute == null) {
+				throw new IllegalStateException("cannot handle index here"
+						+ newPath.toString());
 			}
 			newPath.remove(newPath.size() - 1);
 			newPath.add(new IndexPathElement(index,
 					(OrderableCollection) attribute));
 			return this;
-		}
-		catch (ClassCastException e)
-		{
-			throw new IllegalStateException("cannot add index here: " + newPath.toString());
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("cannot add index here: "
+					+ newPath.toString());
 		}
 	}
 
-	public AttributePathBuilder addMapKey(Object key)
-	{
-		try
-		{
+	public AttributePathBuilder addMapKey(Object key) {
+		try {
 			Attribute attribute = getAttribute();
 			newPath.remove(newPath.size() - 1);
 			newPath.add(new MapKeyPathElement(key, (MapAttribute) attribute));
 			return this;
-		}
-		catch (ClassCastException e)
-		{
-			throw new IllegalStateException("cannot add index here: " + newPath.toString());
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("cannot add index here: "
+					+ newPath.toString());
 		}
 	}
 
 	public AttributePathBuilder addPath(AttributePath basePath) {
-		return start(basePath.getAsString(),basePath.getAttribute().getEntityType());
+		if (newPath.size() == 0) {
+			return start(basePath.getAsString(), (EntityType) basePath
+					.getSourceType().getType());
+		} else {
+			return start(getAsString() + "." + basePath.getAsString(), baseType);
+		}
 	}
 
-	public AttributePath createPath()
-	{
-		return new AttributePathImpl(newPath);
+	public AttributePath createPath() {
+		return new AttributePathImpl(newPath, getAsString());
 	}
 
-	private Attribute getAttribute()
-	{
+	private String getAsString() {
+		StringBuilder builder = new StringBuilder();
+		for (int index = 0; index < newPath.size(); index++) {
+			if (index > 0) {
+				builder.append(".");
+			}
+			AttributePathElement pathElement = newPath.get(index);
+			builder.append(pathElement.getName());
+		}
+		return builder.toString();
+	}
+
+	private Attribute getAttribute() {
 		AttributePathElement element = newPath.get(newPath.size() - 1);
 		Attribute attribute = element.getAttribute();
-		if (attribute == null)
-		{
+		if (attribute == null) {
 			return null;
-		}
-		else
-		{
+		} else {
 			return attribute;
 		}
 	}
 
-	public Type<?> getTargetType()
-	{
+	public Type<?> getTargetType() {
 		AttributePathElement element = newPath.get(newPath.size() - 1);
 		return element.getTargetType().getType();
 	}
 
-	public AttributePathBuilder start(String property, EntityType baseType)
-	{
-		Attribute attribute = baseType.getAttribute(property);
-		if (attribute == null)
-		{
-			if (property.startsWith("@"))
-			{
-				Attribute metaAttribute = baseType.getMetaAttribute(property.substring(1));
-				if (metaAttribute != null)
-				{
-					addAttribute(metaAttribute);
-				}
-				else
-				{
-					throw new IllegalStateException("meta attribute " + property + "  not found on " + baseType.getCode());
-				}
+	public AttributePathBuilder start(String path, EntityType baseType) {
+		this.baseType = baseType;
+		this.newPath.clear();
+		if (path != null) {
+			String[] pathElements = path.split("\\.");
+			for (int index = 0; index < pathElements.length; index++) {
+				String pathElement = pathElements[index];
+				addElement(pathElement);
 			}
-		}
-		else
-		{
-			addAttribute(attribute);
 		}
 		return this;
 	}

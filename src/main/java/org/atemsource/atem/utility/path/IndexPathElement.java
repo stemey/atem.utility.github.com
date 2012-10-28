@@ -63,7 +63,7 @@ public class IndexPathElement<J> implements AttributePathElement
 	@Override
 	public String getName()
 	{
-		return String.valueOf(index);
+		return attribute.getCode()+"."+String.valueOf(index);
 	}
 
 	@Override

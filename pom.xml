@@ -7,7 +7,7 @@
 	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<groupId>org.atemsource</groupId>
-	<artifactId>atem-utility</artifactId>
+	<artifactId>atem-utility-s2</artifactId>
 	<version>0.1.7-SNAPSHOT</version>
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
@@ -27,18 +27,26 @@
 		<url>https://github.com/stemey/atem.utility.github.com.git</url>
 	</scm>
 
+<!-- 	<distributionManagement> -->
+<!-- 		<repository> -->
+<!-- 			<id>sonatype-nexus-staging</id> -->
+<!-- 			<name>sonatype-nexus-staging</name> -->
+<!-- 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url> -->
+<!-- 		</repository> -->
+<!-- 		<snapshotRepository> -->
+<!-- 			<id>sonatype-nexus-snapshots</id> -->
+<!-- 			<name>Sonatype Nexus Snapshots</name> -->
+<!-- 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url> -->
+<!-- 		</snapshotRepository> -->
+<!-- 	</distributionManagement> -->
 	<distributionManagement>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>sonatype-nexus-staging</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <repository>
+            <id>s2-repository</id>
+            <name>se repository</name>
+            <url>scpexe://maven/home/maven/repository</url>
+        </repository>
+    </distributionManagement>
+
 	<licenses>
 		<license>
 			<name>Apache 2</name>
@@ -216,7 +224,7 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.1.6</version>
+			<version>0.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>

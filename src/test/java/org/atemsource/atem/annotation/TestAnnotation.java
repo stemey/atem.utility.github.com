@@ -1,4 +1,4 @@
-package org.atemsource.atem.pojo;
+package org.atemsource.atem.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

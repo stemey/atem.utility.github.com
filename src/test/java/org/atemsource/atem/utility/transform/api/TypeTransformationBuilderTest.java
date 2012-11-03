@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import junit.framework.Assert;
+
+import org.atemsource.atem.annotation.TestAnnotation;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
-import org.atemsource.atem.pojo.TestAnnotation;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.GenericTransformationBuilder;

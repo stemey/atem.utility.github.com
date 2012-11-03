@@ -17,6 +17,7 @@ package org.atemsource.atem.pojo;
 
 import java.io.Serializable;
 
+import org.atemsource.atem.annotation.TestAnnotation;
 import org.atemsource.atem.utility.domain.Vehicle;
 import org.atemsource.atem.utility.transform.api.annotation.Conversion;
 

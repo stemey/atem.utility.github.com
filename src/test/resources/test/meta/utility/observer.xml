@@ -39,7 +39,7 @@
 				<ref bean="atem-entityType-repository" />
 				<ref bean="atem-attribute-repository" />
 				<ref bean="atem-snapshot-repository" />
-				<ref bean="atem-pojo-repository" />
+				<ref bean="test-repository" />
 			</list>
 		</property>
 	</bean>

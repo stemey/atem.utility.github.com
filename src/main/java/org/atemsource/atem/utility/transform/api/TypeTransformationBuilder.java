@@ -170,6 +170,9 @@ public class TypeTransformationBuilder<A, B>
 	public void setSourceType(Class sourceType)
 	{
 		this.sourceType = entityTypeRepository.getEntityType(sourceType);
+		if (this.sourceType==null) {
+			throw new IllegalArgumentException("source type is not an atem type "+sourceType.getName());
+		}
 	}
 
 	public void setSourceType(EntityType sourceType)

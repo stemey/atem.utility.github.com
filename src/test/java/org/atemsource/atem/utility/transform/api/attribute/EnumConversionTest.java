@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.pojo.EntityA;
+import org.atemsource.atem.pojo.EntityB;
 import org.atemsource.atem.pojo.EntityC;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.domain.Vehicle;

@@ -55,12 +55,18 @@ public class AttributePathBuilder {
 						"evaluation time attribute not implemented yet"
 								+ newPath.toString());
 			}
+		} else if (returnType == null) {
+			addDynamicPathElement(property);
 		} else {
 			throw new IllegalStateException("no attributes possible"
 					+ newPath.toString());
 		}
 
 		return this;
+	}
+
+	private void addDynamicPathElement(String property) {
+		newPath.add(new DynamicAttributePathElement(property));
 	}
 
 	public void addElement(String pathElement) {
@@ -101,12 +107,14 @@ public class AttributePathBuilder {
 		try {
 			Attribute attribute = getAttribute();
 			if (attribute == null) {
-				throw new IllegalStateException("cannot handle index here"
-						+ newPath.toString());
+				String property=getProperty();
+				newPath.remove(newPath.size() - 1);
+				newPath.add(new DynamicIndexPathElement(property,index));
+			} else {
+				newPath.remove(newPath.size() - 1);
+				newPath.add(new IndexPathElement(index,
+						(OrderableCollection) attribute));
 			}
-			newPath.remove(newPath.size() - 1);
-			newPath.add(new IndexPathElement(index,
-					(OrderableCollection) attribute));
 			return this;
 		} catch (ClassCastException e) {
 			throw new IllegalStateException("cannot add index here: "
@@ -114,11 +122,21 @@ public class AttributePathBuilder {
 		}
 	}
 
+	private String getProperty() {
+		return newPath.get(newPath.size()-1).getName();
+	}
+
 	public AttributePathBuilder addMapKey(Object key) {
 		try {
 			Attribute attribute = getAttribute();
-			newPath.remove(newPath.size() - 1);
-			newPath.add(new MapKeyPathElement(key, (MapAttribute) attribute));
+			if (attribute == null) {
+				String property=getProperty();
+				newPath.remove(newPath.size() - 1);
+				newPath.add(new DynamicMapKeyPathElement(property,(String)key));
+			} else {
+				newPath.remove(newPath.size() - 1);
+				newPath.add(new MapKeyPathElement(key, (MapAttribute) attribute));
+			}
 			return this;
 		} catch (ClassCastException e) {
 			throw new IllegalStateException("cannot add index here: "

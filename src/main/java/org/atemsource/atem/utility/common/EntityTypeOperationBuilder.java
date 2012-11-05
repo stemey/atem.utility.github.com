@@ -7,20 +7,19 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.atemsource.atem.api.view.Visitor;
-
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.PrimitiveType;
-import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.api.view.Visitor;
 
 
 public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBuilder<P, O, A, ?>, V extends EntityTypeOperationBuilder, O extends EntityOperation, P extends AttributeOperation>
@@ -28,7 +27,11 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	private EntityType<?> entityType;
 
-	private Map<String, A> includedAttributes = new HashMap<String, A>();
+	private final Map<String, A> includedAttributes = new HashMap<String, A>();
+
+	private final List<O> includeSubTypes = new ArrayList<O>();
+
+	private O includeSuperType;
 
 	private EntityOperationReference<O> self;
 
@@ -85,6 +88,16 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 		return self;
 	}
 
+	protected List<O> getSubOperations()
+	{
+		return includeSubTypes;
+	}
+
+	protected O getSuperOperation()
+	{
+		return includeSuperType;
+	}
+
 	public A include(Attribute attribute)
 	{
 		A a = createAttributeOperationBuilder(attribute);
@@ -102,7 +115,8 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	public V include(View view)
 	{
-		view.visit(new ViewVisitor<EntityTypeOperationBuilder>() {
+		view.visit(new ViewVisitor<EntityTypeOperationBuilder>()
+		{
 
 			@Override
 			public void visit(EntityTypeOperationBuilder context, Attribute attribute)
@@ -111,7 +125,8 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 			}
 
 			@Override
-			public void visit(EntityTypeOperationBuilder context, Attribute attribute, Visitor<EntityTypeOperationBuilder> visitor)
+			public void visit(EntityTypeOperationBuilder context, Attribute attribute,
+				Visitor<EntityTypeOperationBuilder> visitor)
 			{
 				EntityTypeOperationBuilder builder = context.include(attribute.getCode()).cascade();
 				visitor.visit(builder);
@@ -132,6 +147,16 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 		return (V) this;
 	}
 
+	public V includeAll()
+	{
+		List<Attribute> attributes = entityType.getDeclaredAttributes();
+		for (Attribute attribute : attributes)
+		{
+			include(attribute);
+		}
+		return (V) this;
+	}
+
 	public V includePrimitives(boolean includeSuperTypes)
 	{
 		List<Attribute> attributes = includeSuperTypes ? entityType.getAttributes() : entityType.getDeclaredAttributes();
@@ -142,6 +167,18 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 				include(attribute);
 			}
 		}
+		return (V) this;
+	}
+
+	public V includeSub(O subOperation)
+	{
+		this.includeSubTypes.add(subOperation);
+		return (V) this;
+	}
+
+	public V includeSuper(O superOperation)
+	{
+		this.includeSuperType = superOperation;
 		return (V) this;
 	}
 

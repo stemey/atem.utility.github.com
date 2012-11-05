@@ -7,8 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.common;
 
+import java.util.List;
 import java.util.Set;
-
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
@@ -16,11 +16,15 @@ import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 
 
-public class EntityOperation<A extends AttributeOperation> implements View
+public class EntityOperation<A extends AttributeOperation, O extends EntityOperation<A, O>> implements View
 {
 	private Set<A> attributeOperations;
 
 	private EntityType entityType;
+
+	private List<O> subOperations;
+
+	private O superOperation;
 
 	public Set<A> getAttributeOperations()
 	{
@@ -40,6 +44,16 @@ public class EntityOperation<A extends AttributeOperation> implements View
 	public void setEntityType(EntityType entityType)
 	{
 		this.entityType = entityType;
+	}
+
+	public void setSubOperations(List<O> subOperations)
+	{
+		this.subOperations = subOperations;
+	}
+
+	public void setSuperOperation(O superOperation)
+	{
+		this.superOperation = superOperation;
 	}
 
 	@Override
@@ -65,19 +79,32 @@ public class EntityOperation<A extends AttributeOperation> implements View
 		return builder.toString();
 	}
 
+	@Override
 	public <C> void visit(ViewVisitor<C> visitor, C context)
 	{
+		if (superOperation != null)
+		{
+			superOperation.visit(visitor, context);
+		}
 		for (A attributeViewing : attributeOperations)
 		{
 			Attribute attribute = attributeViewing.getAttribute();
 			if (attributeViewing.getEntityOperation(attribute.getTargetType()) != null)
 			{
-				visitor.visit(context, attribute, new AttributeVisitor<C>(visitor, attributeViewing.getEntityOperation(attribute.getTargetType())));
+				visitor.visit(context, attribute,
+					new AttributeVisitor<C>(visitor, attributeViewing.getEntityOperation(attribute.getTargetType())));
 			}
 			else
 			{
 				visitor.visit(context, attribute);
 
+			}
+		}
+		if (subOperations != null)
+		{
+			for (O subOperation : subOperations)
+			{
+				subOperation.visit(visitor, context);
 			}
 		}
 	}

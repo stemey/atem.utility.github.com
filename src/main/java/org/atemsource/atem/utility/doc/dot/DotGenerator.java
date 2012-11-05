@@ -3,26 +3,21 @@ package org.atemsource.atem.utility.doc.dot;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.api.view.ViewVisitor;
 
 
 public class DotGenerator
 {
-	public static void main(String[] args)
-	{
-
-	}
-
 	private String basePackage;
 
-	private Map<EntityType<?>, NodeBuilder> processedTypes = new HashMap<EntityType<?>, NodeBuilder>();
+	private final Map<EntityType<?>, NodeBuilder> processedTypes = new HashMap<EntityType<?>, NodeBuilder>();
 
-	private EntityType<?> root;
+	private final EntityType<?> root;
 
 	public DotGenerator(EntityType<?> root)
 	{
@@ -30,14 +25,19 @@ public class DotGenerator
 		this.root = root;
 	}
 
+	public static void main(String[] args)
+	{
+
+	}
+
 	public String create()
 	{
 		DotBuilder builder = new DotBuilder();
-		createDot(builder, root);
+		createDot(builder, root,null);
 		return builder.create();
 	}
 
-	public NodeBuilder createDot(DotBuilder builder, EntityType<?> entityType)
+	public NodeBuilder createDot(DotBuilder builder, EntityType<?> entityType, ViewVisitor<Object> visitor)
 	{
 		if (processedTypes.containsKey(entityType))
 		{
@@ -65,14 +65,14 @@ public class DotGenerator
 					ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
 					connectionBuilder.target(normalizeId(attribute.getTargetType()));
 					connectionBuilder.label(attribute.getCode());
-					createDot(builder, (EntityType<?>) attribute.getTargetType());
+					createDot(builder, (EntityType<?>) attribute.getTargetType(),visitor);
 				}
 			}
 		}
 		EntityType<?> superEntityType = entityType.getSuperEntityType();
 		if (superEntityType != null)
 		{
-			NodeBuilder parent = createDot(builder, superEntityType);
+			NodeBuilder parent = createDot(builder, superEntityType,visitor);
 			if (parent != null)
 			{
 				ConnectionBuilder connectionBuilder = nodeBuilder.createConnection();
@@ -88,7 +88,7 @@ public class DotGenerator
 			{
 				if (subtype != entityType)
 				{
-					NodeBuilder subTypeBuilder = createDot(builder, subtype);
+					NodeBuilder subTypeBuilder = createDot(builder, subtype,visitor);
 					ConnectionBuilder connectionBuilder = subTypeBuilder.createConnection();
 					connectionBuilder.target(normalizeId(subtype));
 					connectionBuilder.label("extends");

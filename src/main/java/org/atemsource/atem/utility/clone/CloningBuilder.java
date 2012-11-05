@@ -17,6 +17,7 @@ package org.atemsource.atem.utility.clone;
 
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -46,7 +47,10 @@ public class CloningBuilder extends
 	@Override
 	protected Cloning createInternally()
 	{
+		Set<AttributeCloning> operations = createOperations();
 		Cloning cloning = new Cloning();
+		cloning.setEntityType(getEntityType());
+		cloning.setAttributeOperations(operations);
 		return cloning;
 	}
 

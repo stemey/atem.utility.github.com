@@ -10,13 +10,13 @@ package org.atemsource.atem.utility.clone;
 import org.atemsource.atem.utility.common.EntityOperationSelector;
 
 
-public class CollectionAttributeCloningBuilder extends CloningAttributeBuilder
+public class MapAttributeCloningBuilder extends CloningAttributeBuilder
 {
 
 	@Override
 	protected AttributeCloning createOperation()
 	{
-		CollectionAttributeCloning cloning = new CollectionAttributeCloning();
+		MapAttributeCloning cloning = new MapAttributeCloning();
 		cloning.setAttribute(getAttribute());
 		EntityOperationSelector<Cloning> selector = createEntityOperation();
 		if (selector != null)

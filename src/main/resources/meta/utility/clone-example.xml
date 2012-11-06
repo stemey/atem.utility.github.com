@@ -26,9 +26,19 @@
 
 	<import resource="clone.xml"/>
 
-	<bean id="meta-utility-cloningBuilderFactory" class="org.atemsource.atem.utility.clone.CloningBuilderFactory">
+	<bean id="atem-utility-cloningBuilderFactory" class="org.atemsource.atem.utility.clone.CloningBuilderFactory">
+		<property name="beanName"><idref local="atem-utility-cloningBuilder"></idref></property>
 	</bean>
 
+	<bean id="atem-utility-cloningBuilder" scope="prototype" class="org.atemsource.atem.utility.clone.CloningBuilder">
+		<property name="attributeFactories">
+			<list>
+				<bean class="org.atemsource.atem.utility.clone.SingleAttributeCloningBuilderFactory"/>
+				<bean class="org.atemsource.atem.utility.clone.CollectionAttributeCloningBuilderFactory"/>
+				<bean class="org.atemsource.atem.utility.clone.MapAttributeCloningBuilderFactory"/>
+			</list>
+		</property>
+	</bean>
 
 
 </beans>

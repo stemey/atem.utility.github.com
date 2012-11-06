@@ -7,23 +7,23 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.clone;
 
-import org.atemsource.atem.utility.common.EntityOperationSelector;
+import org.atemsource.atem.api.attribute.MapAttribute;
 
 
-public class CollectionAttributeCloningBuilder extends CloningAttributeBuilder
+public class MapAttributeCloningBuilderFactory implements
+	AttributeCloningBuilderFactory<Object, Object, MapAttribute<Object, Object, Object>>
 {
 
 	@Override
-	protected AttributeCloning createOperation()
+	public boolean canCreate(MapAttribute<Object, Object, Object> attribute, Object context)
 	{
-		CollectionAttributeCloning cloning = new CollectionAttributeCloning();
-		cloning.setAttribute(getAttribute());
-		EntityOperationSelector<Cloning> selector = createEntityOperation();
-		if (selector != null)
-		{
-			cloning.setSelector(selector);
-		}
-		return cloning;
+		return true;
+	}
+
+	@Override
+	public CloningAttributeBuilder create(MapAttribute<Object, Object, Object> attribute, Object context)
+	{
+		return new MapAttributeCloningBuilder();
 	}
 
 }

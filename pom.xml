@@ -39,10 +39,11 @@
 <!-- 	</distributionManagement> -->
 	<distributionManagement>
 		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>sonatype-nexus-staging</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository>
++        <repository>
++            <id>s2-repository</id>
++            <name>se repository</name>
++            <url>scpexe://maven/home/maven/repository</url>
++        </repository>		</repository>
 		<snapshotRepository>
 			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>

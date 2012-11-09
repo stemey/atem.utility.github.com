@@ -7,8 +7,8 @@
 	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<groupId>org.atemsource</groupId>
-	<artifactId>atem-utility</artifactId>
-	<version>0.1.10-SNAPSHOT</version>
+	<artifactId>atem-utility-s2</artifactId>
+	<version>0.1.9-SNAPSHOT</version>
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
 	<name>Atem utilities</name>
@@ -48,10 +48,6 @@
 			<name>se repository</name>
 			<url>scpexe://maven/home/maven/repository</url>
 		</snapshotRepository>
-		<site>
-			<id>ftp-atemsource</id>
-			<url>ftp://ftp.atemsource.org:21/maven/utility/site</url>
-		</site>
 	</distributionManagement>
 	<licenses>
 		<license>

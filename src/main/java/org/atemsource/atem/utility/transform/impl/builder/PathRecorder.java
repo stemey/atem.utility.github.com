@@ -8,16 +8,23 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.utility.path.AttributePathBuilder;
 
 public class PathRecorder implements MethodInterceptor {
 
-	private AbstractAttributeTransformationBuilder<?, ?,?> builder;
+	private EntityType<?> entityType;
+	private AttributePathBuilder attributePathBuilder;
 
-	public PathRecorder(
-			AbstractAttributeTransformationBuilder<?, ?,?> builder) {
-		this.builder=builder;
-	}
+
 	
+
+	public PathRecorder(EntityType<?> entityType,
+			AttributePathBuilder attributePathBuilder) {
+		super();
+		this.entityType = entityType;
+		this.attributePathBuilder = attributePathBuilder;
+	}
+
 
 	@Override
 	public Object intercept(Object obj, Method method, Object[] args,
@@ -37,11 +44,11 @@ public class PathRecorder implements MethodInterceptor {
 
 
 	protected Object interceptAttribute(Method method, String name) {
-		Attribute<?,?> attribute=((EntityType)builder.getSourcePathBuilder().getTargetType()).getAttribute(name);
+		Attribute<?,?> attribute=entityType.getAttribute(name);
 		if (attribute==null) {
 			throw new IllegalStateException("cannot find attribute for method "+method.getName());
 		}else{
-			builder.getSourcePathBuilder().addAttribute(attribute);
+			attributePathBuilder.addAttribute(attribute);
 			Enhancer enhancer = new Enhancer();
 			return enhancer.create(attribute.getTargetType().getJavaType(),this);
 		}

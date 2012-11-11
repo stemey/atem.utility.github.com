@@ -23,7 +23,7 @@ public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Obje
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder)
 	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
+		AttributePath sourcePath = sourcePathFactory.create(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		if (getConverter(sourcePath.getAttribute().getTargetType()) != null)
 		{
@@ -42,8 +42,8 @@ public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Obje
 	{
 		CollectionToMapAttributeTransformation transformation =
 			beanLocator.getInstance(CollectionToMapAttributeTransformation.class);
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
-		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(getTargetAttribute(), targetType);
+		AttributePath sourcePath = sourcePathFactory.create(getSourceAttribute(), sourceType);
+		AttributePath targetPath = targetPathFactory.create(getTargetAttribute(), targetType);
 		transformation.setAttributeA(sourcePath);
 		transformation.setAttributeB(targetPath);
 		transformation.setTransformation(getTransformation(sourcePath.getAttribute().getTargetType()));

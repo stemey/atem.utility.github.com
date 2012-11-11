@@ -134,7 +134,7 @@ public class EntityObserver
 
 	public WatchHandle watch(String path, AttributeListener listener)
 	{
-		AttributePath attributePath = attributePathBuilderFactory.createAttributePath(path, entityType);
+		AttributePath attributePath = attributePathBuilderFactory.create(path, entityType);
 		Set<AttributeListener> attributeListeners = listeners.get(attributePath.getAsString());
 		if (attributeListeners == null)
 		{

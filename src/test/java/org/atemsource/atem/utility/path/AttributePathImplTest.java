@@ -48,7 +48,7 @@ public class AttributePathImplTest {
 	public void testPrimitive() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityB.class);
-		AttributePath path = builderFactory.createAttributePath("integer",
+		AttributePath path = builderFactory.create("integer",
 				entityType);
 		EntityB b = new EntityB();
 		path.getAttribute().setValue(b, 6);
@@ -63,9 +63,9 @@ public class AttributePathImplTest {
 	public void testExtend() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path1 = builderFactory.createAttributePath("list",
+		AttributePath path1 = builderFactory.create("list",
 				entityType);
-		AttributePath path2 = builderFactory.createAttributePath("integer",
+		AttributePath path2 = builderFactory.create("integer",
 				entityTypeRepository
 				.getEntityType(EntityB.class));
 		AttributePath path =builderFactory.createBuilder(path1).addIndex(0).addPath(path2).createPath();
@@ -81,7 +81,7 @@ public class AttributePathImplTest {
 	public void testSingleAssociation() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path = builderFactory.createAttributePath("entityB",
+		AttributePath path = builderFactory.create("entityB",
 				entityType);
 		EntityA a = new EntityA();
 		EntityB b = new EntityB2();
@@ -95,7 +95,7 @@ public class AttributePathImplTest {
 	public void testSubtypeProperty() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path = builderFactory.createAttributePath("entityB.value",
+		AttributePath path = builderFactory.create("entityB.value",
 				entityType);
 		EntityA a = new EntityA();
 		EntityB2 b = new EntityB2();
@@ -110,7 +110,7 @@ public class AttributePathImplTest {
 	public void testSubtypePropertyButWrongType() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path = builderFactory.createAttributePath("entityB.value",
+		AttributePath path = builderFactory.create("entityB.value",
 				entityType);
 		EntityA a = new EntityA();
 		EntityB b = new EntityB();
@@ -125,7 +125,7 @@ public class AttributePathImplTest {
 	public void testIndexCollection() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path = builderFactory.createAttributePath("list.0.integer",
+		AttributePath path = builderFactory.create("list.0.integer",
 				entityType);
 		EntityA a = new EntityA();
 		EntityB b = new EntityB2();
@@ -140,7 +140,7 @@ public class AttributePathImplTest {
 	public void testMap() {
 		EntityType<?> entityType = entityTypeRepository
 				.getEntityType(EntityA.class);
-		AttributePath path = builderFactory.createAttributePath("map.k1.integer",
+		AttributePath path = builderFactory.create("map.k1.integer",
 				entityType);
 		EntityA a = new EntityA();
 		EntityB b = new EntityB2();

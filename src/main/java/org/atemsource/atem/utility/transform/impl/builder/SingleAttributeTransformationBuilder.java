@@ -30,7 +30,7 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder)
 	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
+		AttributePath sourcePath = sourcePathFactory.create(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		Converter<?, ?> converter = getConverter(sourcePath.getAttribute().getTargetType());
 		Type[] validTypes;
@@ -54,8 +54,8 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 	@Override
 	public AttributeTransformation<A, B> create(EntityType<B> targetType)
 	{
-		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
-		AttributePath targetPath = attributePathBuilderFactory.createAttributePath(getTargetAttribute(), targetType);
+		AttributePath sourcePath = sourcePathFactory.create(getSourceAttribute(), sourceType);
+		AttributePath targetPath = targetPathFactory.create(getTargetAttribute(), targetType);
 		SingleAttributeTransformation<A, B> primitiveAttributeTransformation =
 			beanLocator.getInstance(SingleAttributeTransformation.class);
 		primitiveAttributeTransformation.setAttributeA(sourcePath);

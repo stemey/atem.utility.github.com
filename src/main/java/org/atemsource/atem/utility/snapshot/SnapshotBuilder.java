@@ -91,7 +91,7 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder> {
 
 	public SnapshotAttributeBuilder include(String path) {
 		AttributePath attributePath = attributePathBuilderFactory
-				.createAttributePath(path, entityType);
+				.create(path, entityType);
 		String targetAttributePath = path.replace('.', '_');
 		OneToOneAttributeTransformationBuilder<?, ?, ?> attributeTransformationBuilder = transformationBuilder
 				.transform(attributePath.getAttribute().getClass()).from(path)

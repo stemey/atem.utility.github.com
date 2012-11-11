@@ -32,8 +32,8 @@ public Embed from(String from) {
 }
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder) {
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(from, sourceType);
+		AttributePath sourcePath = sourcePathFactory
+				.create(from, sourceType);
 		
 		if (transformation!=null) {
 			entityTypeBuilder.mixin(transformation.getEntityTypeB());
@@ -49,8 +49,8 @@ public Embed from(String from) {
 		
 		EmbedAttributeTransformation embedAttributeTransformation = beanLocator
 				.getInstance(EmbedAttributeTransformation.class);
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(from, sourceType);
+		AttributePath sourcePath = sourcePathFactory
+				.create(from, sourceType);
 		embedAttributeTransformation.setAttributeA(sourcePath);
 		Set<AttributePath> targetPaths= new HashSet<AttributePath>();
 		// TODO add the target attributes
@@ -62,10 +62,6 @@ public Embed from(String from) {
 		return embedAttributeTransformation;
 	}
 
-	@Override
-	public Object fromMethod() {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
 
 
 

@@ -69,12 +69,6 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		return (T) this;
 	}
 
-	@Override
-	public A fromMethod()
-	{
-		Enhancer enhancer = new Enhancer();
-		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(this));
-	}
 
 	protected Converter<?, ?> getConverter(Type<?> type)
 	{

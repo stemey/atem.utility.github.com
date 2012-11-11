@@ -18,6 +18,7 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.MapAttribute;
+import org.atemsource.atem.api.path.AttributePathFactory;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.api.type.PrimitiveType;
@@ -49,8 +50,25 @@ public class TypeTransformationBuilder<A, B>
 
 	private final Logger logger = Logger.getLogger(getClass());
 
-	@Inject
-	private AttributePathBuilderFactory pathFactory;
+	private AttributePathFactory sourcePathFactory;
+
+	private AttributePathFactory targetPathFactory;
+
+	public AttributePathFactory getSourcePathFactory() {
+		return sourcePathFactory;
+	}
+
+	public void setSourcePathFactory(AttributePathFactory sourcePathFactory) {
+		this.sourcePathFactory = sourcePathFactory;
+	}
+
+	public AttributePathFactory getTargetPathFactory() {
+		return targetPathFactory;
+	}
+
+	public void setTargetPathFactory(AttributePathFactory targetPathFactory) {
+		this.targetPathFactory = targetPathFactory;
+	}
 
 	private EntityTypeTransformation<A, B> selfReference;
 
@@ -193,6 +211,8 @@ public class TypeTransformationBuilder<A, B>
 			beanLocator.getInstance(SingleAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
+		builder.setSourcePathFactory(sourcePathFactory);
+		builder.setTargetPathFactory(targetPathFactory);
 		transformations.add(builder);
 		return builder;
 	}
@@ -219,6 +239,8 @@ public class TypeTransformationBuilder<A, B>
 			beanLocator.getInstance(CollectionAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
+		builder.setSourcePathFactory(sourcePathFactory);
+		builder.setTargetPathFactory(targetPathFactory);
 		transformations.add(builder);
 		return builder;
 	}
@@ -229,6 +251,8 @@ public class TypeTransformationBuilder<A, B>
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
 		builder.setTargetTypeBuilder(targetTypeBuilder);
+		builder.setSourcePathFactory(sourcePathFactory);
+		builder.setTargetPathFactory(targetPathFactory);
 		transformations.add(builder);
 		return builder;
 	}
@@ -238,6 +262,8 @@ public class TypeTransformationBuilder<A, B>
 		MapAttributeTransformationBuilder builder = beanLocator.getInstance(MapAttributeTransformationBuilder.class);
 		builder.setSourceType(sourceType);
 		builder.setConverterFactory(converterFactory);
+		builder.setSourcePathFactory(sourcePathFactory);
+		builder.setTargetPathFactory(targetPathFactory);
 		transformations.add(builder);
 		return builder;
 	}

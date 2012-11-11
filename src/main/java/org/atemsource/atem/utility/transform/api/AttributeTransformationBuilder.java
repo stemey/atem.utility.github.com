@@ -14,8 +14,6 @@ public interface AttributeTransformationBuilder<A, B, T extends AttributeTransfo
 
 	T from(String attributePath);
 
-	A fromMethod();
-
 	T metaValue(String name, Object metaData);
 
 	void build(EntityTypeBuilder targetTypeBuilder);

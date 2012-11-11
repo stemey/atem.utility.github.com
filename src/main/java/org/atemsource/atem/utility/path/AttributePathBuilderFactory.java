@@ -18,15 +18,21 @@ package org.atemsource.atem.utility.path;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.path.AttributePath;
+import org.atemsource.atem.api.path.AttributePathFactory;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.dynamic.DynamicEntity;
 
-public class AttributePathBuilderFactory {
+public class AttributePathBuilderFactory implements AttributePathFactory {
 
 	@Inject
 	private BeanLocator beanLocator;
 
-	public AttributePath createAttributePath(String path, EntityType<?> baseType) {
+	@Inject
+	private EntityTypeRepository  entityTypeRepository;
+
+	public AttributePath create(String path, EntityType<?> baseType) {
 		AttributePathBuilder builder = beanLocator
 				.getInstance(AttributePathBuilder.class);
 
@@ -53,5 +59,11 @@ public class AttributePathBuilderFactory {
 		}
 		return builder;
 	}
+
+	public AttributePath create(String path, Class<?> clazz) {
+		return create(path,entityTypeRepository.getEntityType(clazz));
+	}
+
+
 
 }

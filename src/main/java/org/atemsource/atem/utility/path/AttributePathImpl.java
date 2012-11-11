@@ -54,6 +54,7 @@ public class AttributePathImpl implements AttributePath {
 					.getEntityType());
 			pathAttribute.setTargetType(attribute.getTargetType());
 			pathAttribute.setAccessor(new PathAccessor(path));
+			pathAttribute.setWriteable(attribute.isWriteable());
 			return pathAttribute;
 		} else if (attributePathElement instanceof MapKeyPathElement) {
 			AttributePathElement secondLastAttributePathElement = path.get(path
@@ -64,6 +65,7 @@ public class AttributePathImpl implements AttributePath {
 					.getEntityType());
 			pathAttribute.setTargetType(attribute.getTargetType());
 			pathAttribute.setAccessor(new PathAccessor(path));
+			pathAttribute.setWriteable(attribute.isWriteable());
 			return pathAttribute;
 		} else {
 			Attribute attribute = attributePathElement.getAttribute();
@@ -71,6 +73,7 @@ public class AttributePathImpl implements AttributePath {
 			pathAttribute.setEntityType((EntityType) firstElement.getSourceType().getType());
 			pathAttribute.setTargetType(attribute.getTargetType());
 			pathAttribute.setAccessor(new PathAccessor(path));
+			pathAttribute.setWriteable(attribute.isWriteable());
 			return pathAttribute;
 		}
 	}
@@ -162,6 +165,7 @@ public class AttributePathImpl implements AttributePath {
 					.getEntityType());
 			pathAttribute.setTargetType(attribute.getTargetType(entity));
 			pathAttribute.setAccessor(new PathAccessor(path));
+			pathAttribute.setWriteable(attribute.isWriteable());
 			return pathAttribute;
 		}
 	}

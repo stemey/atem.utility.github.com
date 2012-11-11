@@ -10,6 +10,7 @@ package org.atemsource.atem.utility.transform.api;
 import javax.inject.Inject;
 
 import org.atemsource.atem.api.BeanLocator;
+import org.atemsource.atem.api.path.AttributePathFactory;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 
@@ -28,6 +29,25 @@ public class TransformationBuilderFactory
 		transformationBuilder.setConverterFactory(converterFactory);
 	return transformationBuilder;
 	}
+	private AttributePathFactory sourcePathFactory;
+
+	private AttributePathFactory targetPathFactory;
+
+	public AttributePathFactory getSourcePathFactory() {
+		return sourcePathFactory;
+	}
+
+	public void setSourcePathFactory(AttributePathFactory sourcePathFactory) {
+		this.sourcePathFactory = sourcePathFactory;
+	}
+
+	public AttributePathFactory getTargetPathFactory() {
+		return targetPathFactory;
+	}
+
+	public void setTargetPathFactory(AttributePathFactory targetPathFactory) {
+		this.targetPathFactory = targetPathFactory;
+	}
 
 	public <A, B> TypeTransformationBuilder<A, ?> create(Class<A> sourceType, EntityTypeBuilder targetTypeBuilder)
 	{
@@ -35,6 +55,8 @@ public class TransformationBuilderFactory
 		transformationBuilder.setSourceType(sourceType);
 		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
 		transformationBuilder.setConverterFactory(converterFactory);
+		transformationBuilder.setSourcePathFactory(sourcePathFactory);
+		transformationBuilder.setTargetPathFactory(targetPathFactory);
 		return transformationBuilder;
 	}
 
@@ -44,6 +66,8 @@ public class TransformationBuilderFactory
 		transformationBuilder.setSourceType(sourceType);
 		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
 		transformationBuilder.setConverterFactory(converterFactory);
+		transformationBuilder.setSourcePathFactory(sourcePathFactory);
+		transformationBuilder.setTargetPathFactory(targetPathFactory);
 		return transformationBuilder;
 	}
 

@@ -47,13 +47,13 @@ public class GenericTransformationBuilder<A, B> extends
 		Set<AttributePath> attributeAs = new HashSet<AttributePath>();
 		for (String attribute : sourceAttributes)
 		{
-			attributeAs.add(attributePathBuilderFactory.createAttributePath(attribute, getSourceType()));
+			attributeAs.add(sourcePathFactory.create(attribute, getSourceType()));
 		}
 		instance.setAttributeAs(attributeAs);
 		Set<AttributePath> attributeBs = new HashSet<AttributePath>();
 		for (Attribute<?, ?> attribute : targetAttributes)
 		{
-			attributeAs.add(attributePathBuilderFactory.createAttributePath(attribute.getCode(), targetType));
+			attributeAs.add(targetPathFactory.create(attribute.getCode(), targetType));
 		}
 		instance.setAttributeBs(attributeBs);
 		return instance;
@@ -66,12 +66,6 @@ public class GenericTransformationBuilder<A, B> extends
 		return this;
 	}
 
-	@Override
-	public A fromMethod()
-	{
-		Enhancer enhancer = new Enhancer();
-		return (A) enhancer.create(sourceType.getJavaType(), new PathRecorder(this));
-	}
 
 	@Override
 	public EntityTypeBuilder getTargetTypeBuilder()

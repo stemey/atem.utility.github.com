@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.path.AttributePathFactory;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 import org.atemsource.atem.impl.meta.DerivedObject;
@@ -33,10 +34,24 @@ import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistr
 public abstract class AbstractAttributeTransformationBuilder<A, B, T extends AbstractAttributeTransformationBuilder<A, B, T>>
 		implements CustomAttributeTransformationBuilder<A, B, T> {
 
-	private AttributePathBuilder attributePathBuilder;
+	protected AttributePathFactory sourcePathFactory;
+	protected AttributePathFactory targetPathFactory;
 
-	@Inject
-	protected AttributePathBuilderFactory attributePathBuilderFactory;
+	public AttributePathFactory getSourcePathFactory() {
+		return sourcePathFactory;
+	}
+
+	public void setSourcePathFactory(AttributePathFactory sourcePathFactory) {
+		this.sourcePathFactory = sourcePathFactory;
+	}
+
+	public AttributePathFactory getTargetPathFactory() {
+		return targetPathFactory;
+	}
+
+	public void setTargetPathFactory(AttributePathFactory targetPathFactory) {
+		this.targetPathFactory = targetPathFactory;
+	}
 
 	@Inject
 	protected BeanLocator beanLocator;
@@ -65,7 +80,7 @@ public abstract class AbstractAttributeTransformationBuilder<A, B, T extends Abs
 		derivedAttribute.setTransformation(transformation);
 		Attribute metaAttribute = entityTypeRepository.getEntityType(
 				Attribute.class).getMetaAttribute(
-						DerivedObject.META_ATTRIBUTE_CODE);
+				DerivedObject.META_ATTRIBUTE_CODE);
 		if (metaAttribute != null) {
 			metaAttribute.setValue(newAttribute, derivedAttribute);
 		}
@@ -73,14 +88,6 @@ public abstract class AbstractAttributeTransformationBuilder<A, B, T extends Abs
 
 	public ConverterFactory getConverterFactory() {
 		return converterFactory;
-	}
-
-	public AttributePathBuilder getSourcePathBuilder() {
-		if (attributePathBuilder == null) {
-			attributePathBuilder = attributePathBuilderFactory.createBuilder();
-			attributePathBuilder.start(null, sourceType);
-		}
-		return attributePathBuilder;
 	}
 
 	@Override

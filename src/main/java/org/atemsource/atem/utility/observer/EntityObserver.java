@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.impl.MetaLogs;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.Difference;
 import org.atemsource.atem.utility.path.AttributePath;
@@ -56,8 +57,9 @@ public class EntityObserver
 
 	private UniTransformation<Object, Object> snapshotting;
 
-	public void check()
+	public boolean check()
 	{
+		boolean events = false;
 		Object entity = handle.getEntity();
 		Object snapshot = snapshotting.convert(entity, new SimpleTransformationContext(entityTypeRepository));
 		if (previousSnapshot != null)
@@ -65,27 +67,46 @@ public class EntityObserver
 			EntityObserverContext ctx = beanLocator.getInstance(EntityObserverContext.class);
 			ctx.setEntityType(entityType);
 			Set<Difference> differences = comparison.getDifferences(ctx, previousSnapshot, snapshot);
-			for (AttributeListener attributeListener : attributeListeners)
+			events = differences.size() > 0;
+			if (events)
 			{
-				attributeListener.onEvent(differences);
-			}
-			for (Difference difference : differences)
-			{
-				AttributePath path = difference.getPath();
-				Set<SingleAttributeListener> attributeListeners = new HashSet<SingleAttributeListener>();
-				if (listeners.get(path.getAsString()) != null)
-					attributeListeners.addAll(listeners.get(path.getAsString()));
-				// TODO we need to dispatch to partial paths too
-				if (!attributeListeners.isEmpty())
+				MetaLogs.LOG.debug("found " + differences.size() + " differences.");
+				for (AttributeListener attributeListener : attributeListeners)
 				{
-					for (SingleAttributeListener attributeListener : attributeListeners)
+					attributeListener.onEvent(differences);
+				}
+				for (Difference difference : differences)
+				{
+					AttributePath path = difference.getPath();
+					Set<SingleAttributeListener> attributeListeners = new HashSet<SingleAttributeListener>();
+					if (listeners.get(path.getAsString()) != null)
+						attributeListeners.addAll(listeners.get(path.getAsString()));
+					// TODO we need to dispatch to partial paths too
+					if (!attributeListeners.isEmpty())
 					{
-						attributeListener.onEvent(difference);
+						for (SingleAttributeListener attributeListener : attributeListeners)
+						{
+							attributeListener.onEvent(difference);
+						}
 					}
 				}
 			}
 		}
 		previousSnapshot = snapshot;
+		return events;
+	}
+
+	public int checkUntilNoDifferences(int maxIterations)
+	{
+		boolean differences = false;
+		int iteration = 0;
+		do
+		{
+			differences = check();
+			iteration++;
+		}
+		while (differences && iteration < maxIterations);
+		return iteration;
 	}
 
 	protected EntityHandle getHandle()

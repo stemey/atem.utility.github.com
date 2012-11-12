@@ -110,6 +110,10 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 	public A include(String attributeCode)
 	{
 		Attribute attribute = entityType.getAttribute(attributeCode);
+		if (attribute == null)
+		{
+			throw new IllegalArgumentException("no attribute " + attributeCode + " found on type " + entityType.getCode());
+		}
 		return include(attribute);
 	}
 

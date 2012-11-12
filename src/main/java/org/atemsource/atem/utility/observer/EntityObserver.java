@@ -7,8 +7,10 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.observer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
@@ -30,6 +32,8 @@ import org.springframework.stereotype.Component;
 public class EntityObserver
 {
 
+	private final List<AttributeListener> attributeListeners = new ArrayList<AttributeListener>();
+
 	@Inject
 	private AttributePathBuilderFactory attributePathBuilderFactory;
 
@@ -45,10 +49,9 @@ public class EntityObserver
 
 	private EntityHandle handle;
 
-	private final Map<String, Set<AttributeListener>> listeners = new HashMap<String, Set<AttributeListener>>();
+	private final Map<String, Set<SingleAttributeListener>> listeners =
+		new HashMap<String, Set<SingleAttributeListener>>();
 
-	private final String DEFAULT_LISTENER = "DEFAULT";
-	
 	private Object previousSnapshot;
 
 	private UniTransformation<Object, Object> snapshotting;
@@ -62,17 +65,20 @@ public class EntityObserver
 			EntityObserverContext ctx = beanLocator.getInstance(EntityObserverContext.class);
 			ctx.setEntityType(entityType);
 			Set<Difference> differences = comparison.getDifferences(ctx, previousSnapshot, snapshot);
+			for (AttributeListener attributeListener : attributeListeners)
+			{
+				attributeListener.onEvent(differences);
+			}
 			for (Difference difference : differences)
 			{
 				AttributePath path = difference.getPath();
-				Set<AttributeListener> attributeListeners = new HashSet<AttributeListener>();
+				Set<SingleAttributeListener> attributeListeners = new HashSet<SingleAttributeListener>();
 				if (listeners.get(path.getAsString()) != null)
 					attributeListeners.addAll(listeners.get(path.getAsString()));
-				if (listeners.get(DEFAULT_LISTENER) != null)
-					attributeListeners.addAll(listeners.get(DEFAULT_LISTENER));
+				// TODO we need to dispatch to partial paths too
 				if (!attributeListeners.isEmpty())
 				{
-					for (AttributeListener attributeListener : attributeListeners)
+					for (SingleAttributeListener attributeListener : attributeListeners)
 					{
 						attributeListener.onEvent(difference);
 					}
@@ -120,38 +126,39 @@ public class EntityObserver
 		this.snapshotting = snapshotting;
 	}
 
-	public void unwatch(AttributePath path, AttributeListener listener)
+	public void unwatch(AttributePath path, Object listener)
 	{
 
-		Set<AttributeListener> attributeListeners = listeners.get(path);
-		if (attributeListeners != null)
+		if (listener instanceof SingleAttributeListener)
+		{
+			Set<SingleAttributeListener> attributeListeners = listeners.get(path);
+			if (attributeListeners != null)
+			{
+				attributeListeners.remove(listener);
+			}
+		}
+		else
 		{
 			attributeListeners.remove(listener);
 		}
 	}
 
-	public WatchHandle watch(String path, AttributeListener listener)
+	public WatchHandle watch(AttributeListener listener)
+	{
+		attributeListeners.add(listener);
+		return new WatchHandle(this, null, listener);
+	}
+
+	public WatchHandle watch(String path, SingleAttributeListener listener)
 	{
 		AttributePath attributePath = attributePathBuilderFactory.createAttributePath(path, entityType);
-		Set<AttributeListener> attributeListeners = listeners.get(attributePath.getAsString());
+		Set<SingleAttributeListener> attributeListeners = listeners.get(attributePath.getAsString());
 		if (attributeListeners == null)
 		{
-			attributeListeners = new HashSet<AttributeListener>();
+			attributeListeners = new HashSet<SingleAttributeListener>();
 			listeners.put(attributePath.getAsString(), attributeListeners);
 		}
 		attributeListeners.add(listener);
 		return new WatchHandle(this, attributePath, listener);
-	}
-
-	public WatchHandle watch(AttributeListener listener)
-	{
-		Set<AttributeListener> attributeListeners = listeners.get(DEFAULT_LISTENER);
-		if (attributeListeners == null)
-		{
-			attributeListeners = new HashSet<AttributeListener>();
-			listeners.put(DEFAULT_LISTENER, attributeListeners);
-		}
-		attributeListeners.add(listener);
-		return new WatchHandle(this, null, listener);
 	}
 }

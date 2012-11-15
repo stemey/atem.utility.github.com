@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.compare.AttributeComparison;
@@ -49,7 +50,7 @@ public class CollectionAttributeComparison extends AttributeComparison
 				if (getEntityOperation(compareType) != null && targetType.equals(compareType))
 				{
 					Set<Difference> localDifferences =
-						getEntityOperation(compareType).getDifferences(context, valueA, valueB);
+						getEntityOperation(compareType).getDifferences(childContext, valueA, valueB);
 					if (localDifferences.size() == 0)
 					{
 						additions.remove(valueB);

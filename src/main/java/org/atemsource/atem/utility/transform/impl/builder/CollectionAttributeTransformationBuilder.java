@@ -28,11 +28,21 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 	OneToOneAttributeTransformationBuilder<A, B, CollectionAttributeTransformationBuilder<A, B>>
 
 {
+	private Class<?> associationType;
+
 	private CollectionSortType collectionSortType;
 
 	private boolean convertEmptyToNull;
 
 	private boolean convertNullToEmpty;
+
+	private Filter<Object> filter;
+
+	public CollectionAttributeTransformationBuilder<A, B> associationType(Class<?> associationType)
+	{
+		this.associationType = associationType;
+		return this;
+	}
 
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder)
@@ -40,14 +50,11 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(getSourceAttribute(), sourceType);
 		Type<?> attributeTargetType;
 		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
-		attributeTargetType=getTargetType(sourcePath, converter);
-		Type[] validTypes=getValidTargetTypes(sourcePath, converter);
-		if (collectionSortType == null)
-		{
-			collectionSortType = ((CollectionAttribute) sourcePath.getAttribute()).getCollectionSortType();
-		}
+		attributeTargetType = getTargetType(sourcePath, converter);
+		Type[] validTypes = getValidTargetTypes(sourcePath, converter);
 		CollectionAttribute<?, Object> attribute =
-			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, validTypes,collectionSortType);
+			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, validTypes,
+				CollectionSortType.NONE);
 		if (converter != null && converter instanceof Constraining)
 		{
 			Constraining constraining = ((Constraining) converter);
@@ -89,8 +96,16 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		transformation.setConvertEmptyToNull(convertEmptyToNull);
 		transformation.setTypeB(targetType);
 		transformation.setMeta(meta);
+		transformation.setAssociationType(associationType);
+		transformation.setFilter(filter);
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
+	}
+
+	public CollectionAttributeTransformationBuilder<A, B> filter(Filter<Object> filter)
+	{
+		this.filter = filter;
+		return this;
 	}
 
 	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)

@@ -8,10 +8,13 @@
 package org.atemsource.atem.utility.transform.impl.transformation;
 
 import java.util.Collection;
+
 import org.atemsource.atem.api.attribute.CollectionAttribute;
+import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
 import org.atemsource.atem.utility.path.AttributePath;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
+import org.atemsource.atem.utility.transform.impl.builder.Filter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +23,13 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class CollectionAssociationAttributeTransformation<A, B> extends OneToOneAttributeTransformation<A, B>
 {
+	private Class<?> associationType;
 
 	private boolean convertEmptyToNull;
 
 	private boolean convertNullToEmpty;
+
+	private Filter<Object> filter;
 
 	public boolean isConvertEmptyToNull()
 	{
@@ -35,6 +41,11 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 		return convertNullToEmpty;
 	}
 
+	public void setAssociationType(Class<?> associationType)
+	{
+		this.associationType = associationType;
+	}
+
 	public void setConvertEmptyToNull(boolean convertEmptyToNull)
 	{
 		this.convertEmptyToNull = convertEmptyToNull;
@@ -43,6 +54,11 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 	public void setConvertNullToEmpty(boolean convertNullToEmpty)
 	{
 		this.convertNullToEmpty = convertNullToEmpty;
+	}
+
+	public void setFilter(Filter<Object> filter)
+	{
+		this.filter = filter;
 	}
 
 	@Override
@@ -71,22 +87,46 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 		{
 			return;
 		}
-		Object emptyCollection = attributeB.getEmptyCollection(b);
+
+		Object emptyCollection;
+		if (associationType != null)
+		{
+			try
+			{
+				emptyCollection = associationType.newInstance();
+			}
+			catch (InstantiationException e)
+			{
+				throw new TechnicalException("cannot instantiate collection", e);
+			}
+			catch (IllegalAccessException e)
+			{
+				throw new TechnicalException("cannot instantiate collection", e);
+			}
+
+		}
+		else
+		{
+			emptyCollection = attributeB.getEmptyCollection(b);
+		}
 		if (associatedEntities != null)
 		{
 			attributeB.setValue(b, emptyCollection);
 			for (Object valueA : associatedEntities)
 			{
-				Object valueB;
-				if (converter != null)
+				if (filter == null || filter.isInluded(valueA))
 				{
-					valueB = converter.convert(valueA, ctx);
+					Object valueB;
+					if (converter != null)
+					{
+						valueB = converter.convert(valueA, ctx);
+					}
+					else
+					{
+						valueB = valueA;
+					}
+					attributeB.addElement(b, valueB);
 				}
-				else
-				{
-					valueB = valueA;
-				}
-				attributeB.addElement(b, valueB);
 			}
 		}
 		else

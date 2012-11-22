@@ -17,7 +17,16 @@ public class SingleAttributeCloning extends AttributeCloning
 		Object existingValue = getAttribute().getValue(clone);
 		if (existingValue != null && value.getClass() == existingValue.getClass())
 		{
-			getEntityOperation(getAttribute().getTargetType(existingValue)).clone(value, ctx, existingValue);
+			Cloning entityOperation = getEntityOperation(getAttribute().getTargetType(existingValue));
+			if (entityOperation != null)
+			{
+				entityOperation.clone(value, ctx, existingValue);
+			}
+			else
+			{
+				Object clonedValue = clone(value, ctx);
+				getAttribute().setValue(clone, clonedValue);
+			}
 		}
 		else
 		{

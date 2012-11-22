@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -53,6 +54,8 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 		{
 			self.setOperation(operation);
 		}
+		operation.setSuperOperation(getSuperOperation());
+		operation.setSubOperations(getSubOperations());
 		return operation;
 	}
 
@@ -119,8 +122,7 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	public V include(View view)
 	{
-		view.visit(new ViewVisitor<EntityTypeOperationBuilder>()
-		{
+		view.visit(new ViewVisitor<EntityTypeOperationBuilder>() {
 
 			@Override
 			public void visit(EntityTypeOperationBuilder context, Attribute attribute)

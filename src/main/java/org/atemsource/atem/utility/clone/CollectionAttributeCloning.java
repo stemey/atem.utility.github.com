@@ -7,8 +7,6 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.clone;
 
-import java.util.Collection;
-
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 
 
@@ -25,22 +23,14 @@ public class CollectionAttributeCloning extends AttributeCloning
 		else
 		{
 			CollectionAttribute collectionAttribute = (CollectionAttribute) getAttribute();
-			Object emptyCollection = collectionAttribute.getEmptyCollection(clone);
-			if (emptyCollection instanceof Collection)
+			if (collectionAttribute.getValue(clone) == null)
 			{
-				for (Object element : collectionAttribute.getElements(original))
-				{
-					((Collection) emptyCollection).add(clone(element, ctx));
-				}
+				Object emptyCollection = collectionAttribute.getEmptyCollection(clone);
 				collectionAttribute.setValue(clone, emptyCollection);
 			}
-			else
+			for (Object element : collectionAttribute.getElements(original))
 			{
-				collectionAttribute.setValue(clone, emptyCollection);
-				for (Object element : collectionAttribute.getElements(original))
-				{
-					collectionAttribute.addElement(clone, clone(element, ctx));
-				}
+				collectionAttribute.addElement(clone, clone(element, ctx));
 			}
 		}
 	}

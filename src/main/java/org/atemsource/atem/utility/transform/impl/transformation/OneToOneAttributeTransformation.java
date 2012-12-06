@@ -40,7 +40,9 @@ public abstract class OneToOneAttributeTransformation<A, B> extends AbstractAttr
 		}
 		catch (Exception e)
 		{
-			throw new TechnicalException("cannot transform " + getAttributeA().getAsString() + " with value " + a, e);
+			Object value = getAttributeA().getValue(a);
+			throw new TechnicalException("cannot transform " + getAttributeA().getAsString() + " on entity " + a
+				+ " with value " + value, e);
 		}
 	}
 
@@ -54,6 +56,7 @@ public abstract class OneToOneAttributeTransformation<A, B> extends AbstractAttr
 		}
 		catch (Exception e)
 		{
+			Object value = getAttributeB().getValue(b);
 			throw new TechnicalException("cannot transform " + getAttributeB().getAsString() + " with value " + b, e);
 		}
 	}

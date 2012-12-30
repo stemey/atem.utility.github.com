@@ -25,18 +25,6 @@
 		<url>https://github.com/stemey/atem.utility.github.com.git</url>
 	</scm>
 
-<!-- 	<distributionManagement> -->
-<!-- 		<repository> -->
-<!-- 			<id>sonatype-nexus-staging</id> -->
-<!-- 			<name>sonatype-nexus-staging</name> -->
-<!-- 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url> -->
-<!-- 		</repository> -->
-<!-- 		<snapshotRepository> -->
-<!-- 			<id>sonatype-nexus-snapshots</id> -->
-<!-- 			<name>Sonatype Nexus Snapshots</name> -->
-<!-- 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url> -->
-<!-- 		</snapshotRepository> -->
-<!-- 	</distributionManagement> -->
 	<distributionManagement>
 		<repository>
 			<id>sonatype-nexus-staging</id>
@@ -108,22 +96,22 @@
 		</extensions>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-gpg-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<useAgent>true</useAgent> -->
-<!-- 				</configuration> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>sign-artifacts</id> -->
-<!-- 						<phase>verify</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>sign</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<configuration>
+					<useAgent>true</useAgent>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -236,7 +224,7 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.2.0</version>
+			<version>0.1.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>

@@ -2,6 +2,7 @@ package org.atemsource.atem.utility.transform.api.meta;
 
 public class Binding
 {
+	public static final String META_ATTRIBUTE_CODE = "binding";
 	private String externalTypeCode;
 
 	private String version;

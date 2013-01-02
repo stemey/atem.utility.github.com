@@ -18,6 +18,7 @@ import org.atemsource.atem.spi.EntityTypeCreationContext;
 public class BindingMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
 
+	@Deprecated
 	public static final String BINDING = "binding";
 
 	private MetaAttributeService metaAttributeService;

@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import net.sf.cglib.proxy.Enhancer;
 import org.atemsource.atem.api.attribute.Attribute;
@@ -39,7 +40,11 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 		this.converter = ConverterUtils.create(javaConverter);
 		return (T) this;
 	}
-
+	protected void addMetaData(Attribute<?,?> attribute) {
+		for (Map.Entry<String,Object> metaEntry:meta.entrySet()) {
+			attribute.setMetaValue(metaEntry.getKey(),metaEntry.getValue());
+		}
+	}
 	public T convert(JavaUniConverter<?, ?> javaConverter)
 	{
 		this.converter = ConverterUtils.create(javaConverter);

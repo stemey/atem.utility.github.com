@@ -8,6 +8,8 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
 
+import java.util.Map;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -38,6 +40,8 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 		attributeTargetType = getTargetType(sourcePath, converter);
 		validTypes = getValidTargetTypes(sourcePath, converter);
 		SingleAttribute<?> attribute = entityTypeBuilder.addSingleAttribute(getTargetAttribute(), attributeTargetType,validTypes);
+		addMetaData(attribute);
+		
 		if (converter != null && converter instanceof Constraining)
 		{
 			Constraining constraining = ((Constraining) converter);
@@ -51,6 +55,8 @@ public class SingleAttributeTransformationBuilder<A, B> extends
 			}
 		}
 	}
+
+
 
 	@Override
 	public AttributeTransformation<A, B> create(EntityType<B> targetType)

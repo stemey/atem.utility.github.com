@@ -7,7 +7,9 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.impl.EntityUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+/**
+* This is a component of TypeCreator.
+*/
 @Component
 @Scope("prototype")
 public class UniTypeCreator<A, B> implements UniTransformation<A, B> {

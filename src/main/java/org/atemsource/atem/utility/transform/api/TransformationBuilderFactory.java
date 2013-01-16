@@ -13,7 +13,10 @@ import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 
-
+/**
+* This class creates a builder for transformations. 
+*
+*/
 public class TransformationBuilderFactory
 {
 	@Inject
@@ -29,6 +32,9 @@ public class TransformationBuilderFactory
 	return transformationBuilder;
 	}
 
+/**
+* create a TypeTransformationBuilder for a trnasformation from a sourceType to a target type that is defined by the transformation.
+*/
 	public <A, B> TypeTransformationBuilder<A, ?> create(Class<A> sourceType, EntityTypeBuilder targetTypeBuilder)
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
@@ -38,6 +44,9 @@ public class TransformationBuilderFactory
 		return transformationBuilder;
 	}
 
+/**
+* create a TypeTransformationBuilder for a trnasformation from a sourceType to a target type that is defined by the transformation.
+*/
 	public <A, B> TypeTransformationBuilder<A, ?> create(EntityType<A> sourceType, EntityTypeBuilder targetTypeBuilder)
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);

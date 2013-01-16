@@ -11,7 +11,9 @@ import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 
-
+/**
+* this class defines the metadata to attach to a derived attribute. The attributeTransformation and the original attribute.
+*/
 public class DerivedAttribute implements DerivedObject
 {
 

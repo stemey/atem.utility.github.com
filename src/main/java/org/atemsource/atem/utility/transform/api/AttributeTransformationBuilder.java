@@ -10,16 +10,37 @@ package org.atemsource.atem.utility.transform.api;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
 
+/**
+* basic builder to create a transformation between n source attributes and m target attributes.
+*  
+*
+*/
 public interface AttributeTransformationBuilder<A, B, T extends AttributeTransformationBuilder<A,B,T>> {
 
+  /**
+* specify a source attribute
+*/
 	T from(String attributePath);
 
+/**
+* if the source attribute is a java method then use this to dynamically create the attribute code.
+*/
 	A fromMethod();
-
+/**
+* TODO this only makes sense for single target attributes.
+* add meta data to the target attribute.
+* @param the meta attribute name
+* @param the meta data 
+*/
 	T metaValue(String name, Object metaData);
 
+/**
+* this is not part of te api but is called by the TypeTransformationBuilder.
+*/
 	void build(EntityTypeBuilder targetTypeBuilder);
-
+/**
+* this is not part of the public api but is called by the TypeTransformationBuilder.
+*/
 	AttributeTransformation<A,B> create(EntityType<B> targetType);
 
 }

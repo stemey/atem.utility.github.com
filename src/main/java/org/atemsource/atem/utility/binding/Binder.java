@@ -8,7 +8,9 @@ import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
-
+/**
+* This Binder binds each source type to exactly one target type.
+*/
 public class Binder extends AbstractBinder implements BindingListener
 {
 
@@ -22,6 +24,7 @@ public class Binder extends AbstractBinder implements BindingListener
 	@Override
 	public void finished(EntityTypeTransformation<?, ?> transformation)
 	{
+     // we get the actual transformations from the types meta data.
 	}
 
 	public <A, B> EntityTypeTransformation<A, B> getTransformation(Class<A> sourceClass)
@@ -52,7 +55,9 @@ public class Binder extends AbstractBinder implements BindingListener
 		bindingSession.process(getTypeFilter().getEntityTypes());
 
 	}
-
+/**
+* Define the target type name creation strategy.
+*/
 	public void setTypeNameConverter(TypeNameConverter typeNameConverter)
 	{
 		this.typeNameConverter = typeNameConverter;

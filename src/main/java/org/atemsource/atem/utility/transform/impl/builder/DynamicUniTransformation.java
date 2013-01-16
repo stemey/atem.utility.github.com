@@ -11,7 +11,9 @@ import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
 
-
+/**
+* this is the unidirectional variant of DynamicTransformation. It resolves the target type at runtime by using the given typeCodeConverter.
+*/
 public class DynamicUniTransformation<A, B> implements UniTransformation<A, B>
 {
 

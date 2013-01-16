@@ -15,6 +15,9 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
+/**
+* Transformation extends Converter by the extra functionality to merge instances of the soure type onto the target type instance.
+*/
 public interface Transformation<A, B> extends Converter
 {
 

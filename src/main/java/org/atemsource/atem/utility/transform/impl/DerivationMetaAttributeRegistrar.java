@@ -18,7 +18,9 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.spi.EntityTypeCreationContext;
 
-
+/**
+* This registrar registers the meta attribute for derived types and attributes.
+*/
 public class DerivationMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
 

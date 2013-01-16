@@ -15,6 +15,9 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.spi.EntityTypeCreationContext;
 
 
+/**
+* This registrar registers the meta attribute for extra binding information.
+*/
 public class BindingMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
 

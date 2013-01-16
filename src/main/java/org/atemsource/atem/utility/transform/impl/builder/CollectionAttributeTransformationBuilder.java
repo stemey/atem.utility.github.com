@@ -21,7 +21,10 @@ import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssoc
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* Use this builder for a transformation from on collection attribute to another.
+*
+*/
 @Component
 @Scope("prototype")
 public class CollectionAttributeTransformationBuilder<A, B> extends
@@ -61,13 +64,18 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 			}
 		}
 	}
-
+/** 
+* the if the source collection is empty then the target collection should be null. 
+*/
 	public CollectionAttributeTransformationBuilder convertEmptyToNull()
 	{
 		convertEmptyToNull = true;
 		return this;
 	}
 
+/** 
+* the if the source collection is null then the target collection should be empty. 
+*/
 	public CollectionAttributeTransformationBuilder convertNullToEmpty()
 	{
 		convertNullToEmpty = true;
@@ -92,7 +100,9 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
-
+/**
+* define the CollectionSortType of the target collection if it differs from the source collection.s
+*/
 	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)
 	{
 		this.collectionSortType = collectionSortType;

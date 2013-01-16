@@ -22,7 +22,9 @@ import org.atemsource.atem.utility.transform.impl.builder.TransformationFinder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* The EntityTypeTransformation is a transformation from a source EntityType to a target EntityType. It contains AttributeTransformation that may transform a single source attribute to a single target attribute. it may aso contain anonymuous JavaTransformations. The AB direction is supported but the reverse BA transformation ma not. There is currently no method to find that out. The transformation also has sub and super transformations to transform sub and super types of the source and target type. The deaul is that each source type is associated with a target type by an EntityTypeTransformation. If this is not the case you need to use a TransformationFinder. Then you can choose the source type based on source valuesme at transformation ti.   
+*/
 @Component
 @Scope("prototype")
 public class EntityTypeTransformation<A, B> implements Transformation<A, B>
@@ -43,17 +45,25 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 	private EntityTypeTransformation<A, B> superTransformation;
 
 	private Transformation<A, B> typeConverter;
-
+/**
+* add a transfromation for a subtype of this type A and type B.
+*/
 	public void addSubTransformation(EntityTypeTransformation<A, B> subTransformation)
 	{
 		this.subTransformations.add(subTransformation);
 	}
 
+/**
+* add an attribute transfromation that transforms n attributes of typ A to m attributes of type B.
+*/
 	public void addTransformation(AttributeTransformation<A, B> transformation)
 	{
 		this.embeddedTransformations.add(transformation);
 	}
 
+/**
+* add a custom transformation from type A to type B.
+*/
 	public void addTransformation(JavaTransformation<A, B> javaTransformation)
 	{
 		javaTransformations.add(javaTransformation);
@@ -413,6 +423,10 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B>
 
 	}
 
+/**
+* The Type Converter creates instances of the target type from the source type. The type's attribute will usually be transformed by the contained transformations. 
+* @param typeConverter
+*/
 	public void setTypeConverter(Transformation<A, B> typeConverter)
 	{
 		this.typeConverter = typeConverter;

@@ -15,7 +15,9 @@ import org.atemsource.atem.spi.EntityTypeCreationContext;
 import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
-
+/**
+* This registrar registers the meta attribute for dateformat and possible values.
+*/
 public class ConstraintMetaAttributeRegistrar implements EntityTypeRepositoryPostProcessor
 {
 

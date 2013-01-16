@@ -20,7 +20,9 @@ import org.atemsource.atem.utility.transform.impl.transformation.MapAssociationA
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* this builder creates a transformation from one map attribute to a target map attribute.
+*/
 @Component
 @Scope("prototype")
 public class MapAttributeTransformationBuilder<A, B> extends
@@ -56,13 +58,17 @@ public class MapAttributeTransformationBuilder<A, B> extends
 		entityTypeBuilder.addMapAssociationAttribute(getTargetAttribute(), keyType, attributeTargetType, sorted,
 			validTypes);
 	}
-
+/**
+* defined the key converter
+*/
 	public MapAttributeTransformationBuilder convertKey(Converter<?, ?> keyConverter)
 	{
 		this.keyConverter = keyConverter;
 		return this;
 	}
-
+/*
+* convert a null source value to an empty target map.
+*/
 	public MapAttributeTransformationBuilder convertNullToEmpty()
 	{
 		convertNullToEmpty = true;
@@ -87,7 +93,9 @@ public class MapAttributeTransformationBuilder<A, B> extends
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
-
+/**
+* the target map should be sorted.
+*/
 	public void sorted()
 	{
 		sorted = true;

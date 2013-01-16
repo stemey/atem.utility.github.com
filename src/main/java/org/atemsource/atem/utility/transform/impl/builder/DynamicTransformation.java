@@ -9,7 +9,9 @@ import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
 
-
+/**
+* this class resolves the target type at transformation tie by using the given typeCodeConverter
+*/
 public class DynamicTransformation<A, B> implements Converter<A, B>
 {
 

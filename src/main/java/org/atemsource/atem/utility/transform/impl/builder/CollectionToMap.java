@@ -10,7 +10,9 @@ import org.atemsource.atem.utility.transform.impl.transformation.CollectionToMap
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* This builder creates a transformation from a source collection attribute to a target map attribute.
+*/
 @Component
 @Scope("prototype")
 public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Object, Object, CollectionToMap>
@@ -56,7 +58,9 @@ public class CollectionToMap extends OneToOneAttributeTransformationBuilder<Obje
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
-
+/**
+* define the converter to extract the key from a source collection element. 
+*/
 	public CollectionToMap keyConvert(Converter<?, ?> keyConverter)
 	{
 		this.keyConverter = keyConverter;

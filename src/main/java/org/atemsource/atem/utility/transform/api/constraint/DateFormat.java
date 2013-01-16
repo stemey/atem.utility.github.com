@@ -1,7 +1,9 @@
 package org.atemsource.atem.utility.transform.api.constraint;
 
 import java.text.ParseException;
-
+/**
+* This class defines the meta attribute to be attached to string attributes that are derived from date attribues.
+*/
 public class DateFormat implements Constraint {
 	public static final String META_ATTRIBUTE_CODE = DateFormat.class.getName()
 			.replace('.', '_');

@@ -24,14 +24,26 @@ import org.atemsource.atem.api.BeanLocator;
 
 public class EntityUtils {
 
+/**
+* Copy the attributes of clazz from to to. 
+* @param from the object to copy from
+* @param to the object to copy attribute values to
+* @param commonSuperClass the common super class of from and to
+*/
 	public static <T, S extends T, U extends T> void merge(S from, U to,
-			Class<T> clazz) {
+			Class<T> commonSuperClass) {
 		EntityType<T> entityType = BeanLocator.getInstance()
-				.getInstance(EntityTypeRepository.class).getEntityType(clazz);
+				.getInstance(EntityTypeRepository.class).getEntityType(commonnSuperClass);
 		merge(from, to, entityType);
 
 	}
 
+/**
+* Copy the common attributes of from to to.
+* @param from the object to copy from
+* @param to the object to copy attribute values to
+* @param entityType the common super type of from and to
+*/
 	public static <T, S extends T, U extends T> void merge(S from, U to,
 			EntityType<T> entityType) {
 		List<Attribute> attributes = entityType.getAttributes();
@@ -46,6 +58,12 @@ public class EntityUtils {
 
 	}
 
+/**
+* Copy the common attributes of from to to and do this recursively.
+* @param from the object to copy from
+* @param to the object to copy attribute values to
+* @param commonSuperClass the common super class of from and to
+*/
 	public static <T, S extends T, U extends T> void mergeRecursive(S from,
 			U to, EntityType<T> entityType) {
 		do {
@@ -55,6 +73,9 @@ public class EntityUtils {
 
 	}
 
+/**
+* find the common super type of two Types.
+*/
 	public static<T> EntityType<T> getCommonAncestor(EntityType<?> a,
 			EntityType<?> b) {
 		while (a != null && b != null && !a.equals(b)) {

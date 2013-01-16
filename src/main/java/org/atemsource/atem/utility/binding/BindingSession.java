@@ -21,7 +21,10 @@ import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+/**
+* Used internally by the binder.
+*
+*/
 @Component
 @Scope("prototype")
 public class BindingSession {

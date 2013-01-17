@@ -16,14 +16,17 @@
 package org.atemsource.atem.utility.transform.api;
 
 
-
+/**
+* This class extends UniConverter. The UniTransformation does not transform immutables (like most primitives). 
+*
+*/
 public interface UniTransformation<A, B> extends UniConverter<A, B>
 {
 
 	/**
+
 	 * @param a the value to transform
 	 * @param b the value to be transformed. If the type needs to be adjusted than a different instance is returned
-	 * @param newParam TODO
 	 * @return the transfomed value, if no type change is necessary this will be the same instance as parameter b
 	 */
 	public B merge(A a, B b, TransformationContext newParam);

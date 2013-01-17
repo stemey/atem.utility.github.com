@@ -33,7 +33,9 @@ import org.atemsource.atem.utility.transform.impl.builder.TransformationFinder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* This builder offers methods to build an EntityTypeTransformation from type A to type B.  
+*/
 @Component
 @Scope("prototype")
 public class TypeTransformationBuilder<A, B>
@@ -82,12 +84,17 @@ public class TypeTransformationBuilder<A, B>
 		}
 		logger.info("finished init of " + newType.getCode());
 	}
-
+/**
+* add another transformation.
+*/
 	public void addTransformation(JavaTransformation<A, B> javaTransformation)
 	{
 		selfReference.addTransformation(javaTransformation);
 	}
 
+/**
+* build the transformation. It will not be modifiable afterwards.
+*/
 	public EntityTypeTransformation<A, B> buildTypeTransformation()
 	{
 		for (AttributeTransformationBuilder transformation : transformations)
@@ -127,7 +134,10 @@ public class TypeTransformationBuilder<A, B>
 		instance.initialize(sourceType, targetType);
 		return instance;
 	}
+/**
+* If the types in the type  hierachy of source and target don't have a one to one relationship provide a custome mapping here.
 
+*/
 	public TypeTransformationBuilder<A, B> finder(TransformationFinder<A, B> finder)
 	{
 		selfReference.setFinder(finder);
@@ -139,16 +149,26 @@ public class TypeTransformationBuilder<A, B>
 		return converterFactory;
 	}
 
+/**
+* get a reference to the transformation. The transformation is not guaranteed to be complete at this point. 
+*
+*/
 	public EntityTypeTransformation<?, ?> getReference()
 	{
 		return selfReference;
 	}
 
+/**
+* The source type of the transformation.
+*/
 	public EntityType<A> getSourceType()
 	{
 		return sourceType;
 	}
 
+/**
+* if there i aone to one relationship between the types in source and target then a supr Transformation can be set here. The super transformation will be eecuted before this transformation.
+*/
 	public void includeSuper(EntityTypeTransformation<?, ?> transformation)
 	{
 		targetTypeBuilder.superType((EntityType<?>) transformation.getTypeB());
@@ -162,6 +182,10 @@ public class TypeTransformationBuilder<A, B>
 
 	}
 
+/**
+* set the converter factory. It provides standard conversion for primitive types. 
+*
+*/
 	public void setConverterFactory(ConverterFactory converterFactory)
 	{
 		this.converterFactory = converterFactory;
@@ -190,6 +214,10 @@ public class TypeTransformationBuilder<A, B>
 		this.transformation = transformation;
 	}
 
+/**
+* To transform a single attribute in the source to a single attribute in the target use this method.
+*
+*/
 	public OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> transform()
 	{
 		OneToOneAttributeTransformationBuilder<A, B, SingleAttributeTransformationBuilder<A, B>> builder =
@@ -200,6 +228,10 @@ public class TypeTransformationBuilder<A, B>
 		return builder;
 	}
 
+/**
+* To transform an attribute in the source to a single attribute in the target use this method.
+*
+*/
 	public OneToOneAttributeTransformationBuilder<A, B, ?> transform(Class<? extends Attribute> attributeClass)
 	{
 		if (CollectionAttribute.class.isAssignableFrom(attributeClass))
@@ -216,6 +248,10 @@ public class TypeTransformationBuilder<A, B>
 		}
 	}
 
+/**
+* To transform a collection attribute in the source to a collection attribute in the target use this method.
+*
+*/
 	public CollectionAttributeTransformationBuilder<A, B> transformCollection()
 	{
 		CollectionAttributeTransformationBuilder<A, B> builder =
@@ -226,6 +262,10 @@ public class TypeTransformationBuilder<A, B>
 		return builder;
 	}
 
+/**
+* This method is an extension point to add new custom transformation builders.
+*
+*/
 	public <A extends CustomAttributeTransformationBuilder> A transformCustom(Class<A> builderClass)
 	{
 		A builder = beanLocator.getInstance(builderClass);
@@ -235,6 +275,10 @@ public class TypeTransformationBuilder<A, B>
 		transformations.add(builder);
 		return builder;
 	}
+/**
+* To transform a map attribute in the source to a map attribute in the target use this method.
+*
+*/
 
 	public MapAttributeTransformationBuilder<A, B> transformMap()
 	{
@@ -244,7 +288,10 @@ public class TypeTransformationBuilder<A, B>
 		transformations.add(builder);
 		return builder;
 	}
-
+/**
+* Transform all primitives attributes except the given ones in a one-to-one manner.
+*
+*/
 	public void transformPrimitives(String... excludedAttributes)
 	{
 		for (Attribute<?, ?> attribute : getSourceType().getAttributes())

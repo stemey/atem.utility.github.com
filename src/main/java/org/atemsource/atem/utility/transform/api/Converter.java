@@ -17,16 +17,30 @@ package org.atemsource.atem.utility.transform.api;
 
 import org.atemsource.atem.api.type.Type;
 
-
+/**
+* The Converter interface gives access to uni converters for the two directions of conversion.
+*
+*/
 public interface Converter<A, B>
 {
-
+/**
+* @return the AB uni converter
+*/
 	public UniConverter<A, B> getAB();
 
+/**
+* @return the BA uni converter
+*/
 	public UniConverter<B, A> getBA();
 
+/**
+*@return the type A
+*/
 	public Type<?> getTypeA();
 
+/**
+*@return the type B
+*/
 	public Type<?> getTypeB();
 
 }

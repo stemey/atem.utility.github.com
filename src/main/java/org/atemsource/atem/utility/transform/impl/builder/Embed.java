@@ -15,7 +15,9 @@ import org.atemsource.atem.utility.transform.impl.transformation.CollectionToMap
 import org.atemsource.atem.utility.transform.impl.transformation.EmbedAttributeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+/**
+* Embed the result of a transformed source attribute type into the target type. This is equivalent to mixing the arget type of the given EntityTypeTransformation into the target type. The source of the transformation is a given attribute.
+*/
 @Component
 @Scope("prototype")
 public class Embed 
@@ -24,7 +26,9 @@ extends AbstractAttributeTransformationBuilder<Object, Object, Embed> {
 private EntityTypeTransformation<?,?> transformation;
 private String from;
 
-
+/**
+* defines the transfomation. The target type of the transformation is mixed into the targetType of the parent transformation.
+*/
 public Embed transform(EntityTypeTransformation<?,?> transformation) {
 	this.transformation=transformation;
 	return this;

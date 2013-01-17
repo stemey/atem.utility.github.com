@@ -8,8 +8,6 @@
 package org.atemsource.atem.utility.transform.impl.builder;
 
 
-import java.util.Map;
-
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -24,6 +22,10 @@ import org.atemsource.atem.utility.transform.impl.transformation.SingleAttribute
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+* this builder creates a transformation from a single soure attribute to a single target attribute.
+*
+*/
 
 @Component
 @Scope("prototype")

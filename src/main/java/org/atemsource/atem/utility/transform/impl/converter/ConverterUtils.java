@@ -10,10 +10,14 @@ import org.atemsource.atem.utility.transform.api.JavaUniConverter;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.codehaus.jackson.JsonNode;
 
-
+/**
+* This class helps to create converters from simple java classes.
+*/
 public class ConverterUtils
 {
-
+/**
+* Create bid converter from a java converter. 
+*/
 	public static <A, B> Converter<A, B> create(JavaConverter<A, B> javaConverter)
 	{
 		EntityTypeRepository entityTypeRepository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);
@@ -36,6 +40,9 @@ public class ConverterUtils
 		return localConverter;
 	}
 
+/**
+* create a bidi converter from a simple unidirectional javaconverter.
+*/
 	public static <A, B> Converter<A, B> create(JavaUniConverter<A, B> javaConverter)
 	{
 		EntityTypeRepository entityTypeRepository = BeanLocator.getInstance().getInstance(EntityTypeRepository.class);

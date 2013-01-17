@@ -8,11 +8,16 @@ import org.atemsource.atem.api.infrastructure.exception.ConversionException;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
-
+/**
+* This converter converts a date value into a string value. This converter will attach the dateformat as meta attribute to the target attribute.
+*/
 public class DateConverter implements JavaConverter<Date, String>,Constraining {
 	private DateFormat dateFormat;
 	private SimpleDateFormat simpleDateFormat;
 
+/**
+* define the pattern according to java.text.Dateformat.
+*/
 	public void setPattern(String pattern) {
 		simpleDateFormat = new SimpleDateFormat(pattern);
 		this.dateFormat = new DateFormat(pattern, simpleDateFormat);

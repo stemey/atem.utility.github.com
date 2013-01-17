@@ -19,7 +19,9 @@ import org.atemsource.atem.utility.transform.impl.BindingMetaAttributeRegistrar;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.version.VersionResolver;
 
-
+/**
+* The version binder creates a target type for each source type and version.
+*/
 public class VersionedBinder extends AbstractBinder
 {
 
@@ -93,16 +95,25 @@ public class VersionedBinder extends AbstractBinder
 
 	}
 
+/**
+*
+* define the prefix for that target type codes.
+*/
 	public void setPrefix(String prefix)
 	{
 		this.prefix = prefix;
 	}
-
+/**
+* The versionResolver resolves the version of attributes and types.
+*/
 	public void setVersionResolver(VersionResolver versionResolver)
 	{
 		this.versionResolver = versionResolver;
 	}
 
+/**
+* The list of versions to be used.
+*/
 	public void setVersions(List<String> versions)
 	{
 		this.versions = versions;

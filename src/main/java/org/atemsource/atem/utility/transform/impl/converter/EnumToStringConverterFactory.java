@@ -4,7 +4,9 @@ import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.InternalConverterFactory;
 
-
+/**
+* This factory will be create a converter for each enum type.
+*/
 public class EnumToStringConverterFactory implements InternalConverterFactory
 {
 

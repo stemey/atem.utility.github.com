@@ -17,12 +17,16 @@ package org.atemsource.atem.utility.transform.api;
 
 import org.atemsource.atem.api.type.Type;
 
-
+/**
+* The general interface for unidirectional conversions.
+*
+*/
 public interface UniConverter<A, B>
 {
 	/**
+	* 
 	 * @param a the value to transform
-	 * @param ctx TODO
+	 * @param ctx context
 	 * @return the transformed instance
 	 */
 	B convert(A a, TransformationContext ctx);
@@ -32,6 +36,11 @@ public interface UniConverter<A, B>
 
 	Type<B> getTargetType();
 	
+/**
+* If the actual type of the object to be transformed is a subtype of the ype returned by getSourceType, then the target type might differ from the type returned by getTargetType.
+* @param the actual sourceType
+* @return the actual targetType based on the actual source type
+*/
 	Type<? extends B> getTargetType(Type<? extends A> sourceType);
 
 }

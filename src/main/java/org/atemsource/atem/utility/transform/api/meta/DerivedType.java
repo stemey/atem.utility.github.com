@@ -11,7 +11,9 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 
-
+/**
+* This class defines the eta data to attach to a derived type. The original type and the transformation.
+*/
 public class DerivedType implements DerivedObject
 {
 

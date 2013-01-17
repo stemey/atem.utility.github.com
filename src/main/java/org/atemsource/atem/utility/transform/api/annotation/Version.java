@@ -8,7 +8,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-
+/**
+* Use this annotation to define which versions of the binding the annotated attribute will be included in.
+*/
 @Target({TYPE, METHOD, FIELD})
 @Retention(RUNTIME)
 public @interface Version

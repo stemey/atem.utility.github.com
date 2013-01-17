@@ -11,7 +11,9 @@ import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
 
-
+/**
+* Converts an enum into a string. It will attach all possible string values as a meta attribute to the target attribute. 
+*/
 public class EnumToStringConverter implements JavaConverter<Enum<?>, String>, Constraining
 {
 

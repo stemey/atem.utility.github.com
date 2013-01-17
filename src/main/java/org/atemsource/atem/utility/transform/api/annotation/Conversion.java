@@ -10,7 +10,9 @@ import java.lang.annotation.Target;
 
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 
-
+/**
+* Use this annotation to attach a special converter for binding to an attribute. 
+*/
 @Target({TYPE, METHOD, FIELD})
 @Retention(RUNTIME)
 public @interface Conversion

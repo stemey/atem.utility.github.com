@@ -7,7 +7,9 @@ import org.atemsource.atem.api.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
+/**
+* Simple transformation to use as typeConverter for EntityTypeTransformations. In the case of merging it will compare the target type of this transformation to the type of the given instance. If they differs an instance of the desired target will be created and the attributes from the given instance will be copied to the new instance. 
+*/
 @Component
 @Scope("prototype")
 public class TypeCreator<A, B> implements Transformation<A, B>

@@ -3,8 +3,10 @@ package org.atemsource.atem.utility.transform.impl.converter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
@@ -48,6 +50,10 @@ public class ConverterFactoryImpl implements ConverterFactory
 	@Override
 	public Converter<?, ?> get(Type<?> type)
 	{
+		if (type == null)
+		{
+			return null;
+		}
 		Converter converter = entityTypeToConverters.get(type.getCode());
 		if (converter == null && factories != null)
 		{

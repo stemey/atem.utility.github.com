@@ -110,7 +110,7 @@ public class EntityObserver
 		this.entityType = entityType;
 	}
 
-	protected void setHandle(EntityHandle handle)
+	public void setHandle(EntityHandle handle)
 	{
 		this.handle = handle;
 	}

@@ -9,6 +9,7 @@ package org.atemsource.atem.utility.snapshot;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -109,13 +110,17 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder> {
 	public void include(View view) {
 		view.visit(this, this);
 	}
+	
+	private static AtomicInteger typeId = new AtomicInteger();
 
 	public void initialize() {
 		transformationBuilder = (TypeTransformationBuilder<Object, Object>) transformationBuilderFactory
 				.create();
 		transformationBuilder.setSourceType(entityType);
+		
+		
 		transformationBuilder.setTargetTypeBuilder(dynamicEntityTypeRepository
-				.createBuilder("snapshot::" + entityType.getCode()));
+				.createBuilder("snapshot::" + entityType.getCode()+"::"+typeId.getAndIncrement()));
 	}
 
 	public void setAttributePathBuilderFactory(

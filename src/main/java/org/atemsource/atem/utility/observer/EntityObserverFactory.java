@@ -31,6 +31,12 @@ public class EntityObserverFactory
 
 	public EntityObserver create(Comparison comparison)
 	{
+		return createDefinition(comparison).create();
+
+	}
+
+	public EntityObserverDefinition createDefinition(Comparison comparison)
+	{
 		SnapshotBuilder snapshotBuilder = snapshotBuilderFactory.create(comparison.getEntityType());
 		snapshotBuilder.include(comparison);
 		Transformation<Object, Object> transformation = (Transformation<Object, Object>) snapshotBuilder.create();
@@ -39,11 +45,10 @@ public class EntityObserverFactory
 		comparisonBuilder.include(comparison);
 		Comparison snapshotComparison = comparisonBuilder.create();
 
-		EntityObserver entityObserver = beanLocator.getInstance(EntityObserver.class);
-		entityObserver.setComparison(snapshotComparison);
-		entityObserver.setEntityType((EntityType<?>) transformation.getTypeA());
-		entityObserver.setSnapshotting(transformation.getAB());
-		return entityObserver;
+		EntityObserverDefinition entityObserverDefinition = beanLocator.getInstance(EntityObserverDefinition.class);
+		entityObserverDefinition.setComparison(snapshotComparison);
+		entityObserverDefinition.setSnapshotting(transformation);
+		return entityObserverDefinition;
 
 	}
 

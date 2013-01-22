@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
@@ -121,8 +123,7 @@ public class EntityObserver
 
 	public void setEntity(final Object entity)
 	{
-		this.handle = new EntityHandle()
-		{
+		this.handle = new EntityHandle() {
 
 			@Override
 			public Object getEntity()

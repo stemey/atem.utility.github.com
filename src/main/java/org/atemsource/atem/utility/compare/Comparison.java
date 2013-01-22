@@ -9,7 +9,9 @@ package org.atemsource.atem.utility.compare;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.utility.common.EntityOperation;
 import org.springframework.context.annotation.Scope;
@@ -44,4 +46,5 @@ public class Comparison extends EntityOperation<AttributeComparison, Comparison>
 		}
 		return differences;
 	}
+
 }

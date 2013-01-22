@@ -9,6 +9,7 @@ package org.atemsource.atem.utility.common;
 
 import java.util.List;
 import java.util.Set;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.view.AttributeVisitor;
@@ -34,6 +35,16 @@ public class EntityOperation<A extends AttributeOperation, O extends EntityOpera
 	public EntityType getEntityType()
 	{
 		return entityType;
+	}
+
+	protected List<O> getSubOperations()
+	{
+		return subOperations;
+	}
+
+	protected O getSuperOperation()
+	{
+		return superOperation;
 	}
 
 	public void setAttributeOperations(Set<A> attributeOperations)

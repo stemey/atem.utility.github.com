@@ -1,20 +1,11 @@
 /*******************************************************************************
- * Stefan Meyer, 2012
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Stefan Meyer, 2012 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package org.atemsource.atem.utility.compare.builder;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,20 +35,22 @@ public class CollectionAttributeComparison extends AttributeComparison
 		Collection collectionB = associationAttribute.getElements(b);
 
 		Iterator ia = associationAttribute.getIterator(a);
-		Iterator ib = associationAttribute.getIterator(b);
 		removals.addAll(collectionA);
 		additions.addAll(collectionB);
+		// TODO performance bad because of O(2) behavior.
 		for (; ia.hasNext();)
 		{
-			Object valueA = ia.next();
+			final Object valueA = ia.next();
+			Iterator ib = associationAttribute.getIterator(b);
 			for (; ib.hasNext();)
 			{
-				Object valueB = ib.next();
+				final Object valueB = ib.next();
 				Type targetType = getTargetType(associationAttribute, valueA);
 				Type compareType = getTargetType(associationAttribute, valueB);
-				if (targetType.equals(compareType) && getEntityOperation(compareType) != null)
+				if (getEntityOperation(compareType) != null && targetType.equals(compareType))
 				{
-					Set<Difference> localDifferences = getEntityOperation(compareType).getDifferences(context, valueA, valueB);
+					Set<Difference> localDifferences =
+						getEntityOperation(compareType).getDifferences(childContext, valueA, valueB);
 					if (localDifferences.size() == 0)
 					{
 						additions.remove(valueB);
@@ -84,9 +77,11 @@ public class CollectionAttributeComparison extends AttributeComparison
 		}
 		return differences;
 	}
-	
-	private Type getTargetType(CollectionAttribute associationAttribute, Object value) {
-		Type targetType = value != null ? associationAttribute.getTargetType(value) : associationAttribute.getTargetType();
+
+	private Type getTargetType(CollectionAttribute associationAttribute, Object value)
+	{
+		Type targetType =
+			value != null ? associationAttribute.getTargetType(value) : associationAttribute.getTargetType();
 		if (targetType == null)
 			targetType = associationAttribute.getTargetType();
 		return targetType;

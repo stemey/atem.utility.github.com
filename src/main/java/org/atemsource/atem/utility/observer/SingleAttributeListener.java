@@ -7,28 +7,10 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.observer;
 
-import org.atemsource.atem.utility.path.AttributePath;
+import org.atemsource.atem.utility.compare.Difference;
 
 
-public class WatchHandle
+public interface SingleAttributeListener
 {
-
-	private final EntityObserver entityObserver;
-
-	private final Object listener;
-
-	private final AttributePath path;
-
-	public WatchHandle(EntityObserver entityObserver, AttributePath path, Object listener)
-	{
-		this.entityObserver = entityObserver;
-		this.listener = listener;
-		this.path = path;
-	}
-
-	public void unwatch()
-	{
-		entityObserver.unwatch(path, listener);
-	}
-
+	public boolean onEvent(Difference difference);
 }

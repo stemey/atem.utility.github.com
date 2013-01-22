@@ -109,6 +109,11 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		addDerivation(transformation, targetPath.getAttribute(), sourcePath.getAttribute());
 		return transformation;
 	}
+<<<<<<< HEAD
+/**
+* define the CollectionSortType of the target collection if it differs from the source collection.s
+*/
+=======
 
 	public CollectionAttributeTransformationBuilder<A, B> filter(Filter<Object> filter)
 	{
@@ -116,9 +121,7 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		return this;
 	}
 
-/**
-* define the CollectionSortType of the target collection if it differs from the source collection.s
-*/
+>>>>>>> feature/cart
 	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)
 	{
 		this.collectionSortType = collectionSortType;

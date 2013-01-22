@@ -19,11 +19,22 @@ public class Cloning extends EntityOperation<AttributeCloning, Cloning>
 
 	public <O> O clone(O entity, CloningContext ctx)
 	{
+		// TODO instantiate the actual type.
 		O clone = (O) getEntityType().createEntity();
+		clone(entity, ctx, clone);
+		return clone;
+	}
+
+	protected <O> void clone(O entity, CloningContext ctx, O clone)
+	{
 		for (AttributeCloning attributeCloning : getAttributeOperations())
 		{
 			attributeCloning.clone(entity, clone, ctx);
 		}
-		return clone;
+		Cloning superOperation = getSuperOperation();
+		if (superOperation != null)
+		{
+			superOperation.clone(entity, ctx, clone);
+		}
 	}
 }

@@ -23,15 +23,38 @@ public class MapAttributeCloning extends AttributeCloning
 		else
 		{
 			MapAttribute mapAttribute = (MapAttribute) getAttribute();
-			Object emptyMap = mapAttribute.getEmptyMap();
-			mapAttribute.setValue(clone, emptyMap);
+			if (mapAttribute.getValue(clone) != null)
+			{
+				// mapAttribute.clear(clone);
+			}
+			else
+			{
+				Object emptyMap = mapAttribute.getEmptyMap();
+				mapAttribute.setValue(clone, emptyMap);
+			}
 			for (Object key : mapAttribute.getKeySet(original))
 			{
-				Object clonedKey = clone(key, ctx);
-				Object clonedValue = clone(mapAttribute.getElement(original, key), ctx);
-				mapAttribute.putElement(clone, clonedKey, clonedValue);
+				Object clonedKey = key;
+				Object existingValue = mapAttribute.getElement(clone, clonedKey);
+				if (existingValue != null)
+				{
+					Cloning cloning = getEntityOperation(getAttribute().getTargetType(existingValue));
+					if (cloning != null)
+					{
+						cloning.clone(mapAttribute.getElement(original, key), ctx, existingValue);
+					}
+					else
+					{
+						Object clonedValue = clone(mapAttribute.getElement(original, key), ctx);
+						mapAttribute.putElement(clone, clonedKey, clonedValue);
+					}
+				}
+				else
+				{
+					Object clonedValue = clone(mapAttribute.getElement(original, key), ctx);
+					mapAttribute.putElement(clone, clonedKey, clonedValue);
+				}
 			}
 		}
 	}
-
 }

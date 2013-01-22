@@ -8,7 +8,6 @@
 package org.atemsource.atem.utility.observer;
 
 import javax.inject.Inject;
-
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.pojo.EntityA;
@@ -33,20 +32,20 @@ public class EntityObserverTest
 {
 
 	@Inject
-	private EntityObserverFactory entityObserverFactory;
-
-	@Inject
 	private ComparisonBuilderFactory comparisonBuilderFactory;
 
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
-
-	private Mockery context = new JUnit4Mockery()
+	private final Mockery context = new JUnit4Mockery()
 	{
 		{
 			setImposteriser(ClassImposteriser.INSTANCE);
 		}
 	};
+
+	@Inject
+	private EntityObserverFactory entityObserverFactory;
+
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
 
 	@Test
 	public void test()
@@ -66,7 +65,7 @@ public class EntityObserverTest
 		entityObserver.check();
 
 		entityA.setBooleanP(true);
-		final AttributeListener listener1 = context.mock(AttributeListener.class, "listener1");
+		final SingleAttributeListener listener1 = context.mock(SingleAttributeListener.class, "listener1");
 		context.checking(new Expectations()
 		{
 			{
@@ -78,7 +77,7 @@ public class EntityObserverTest
 		watch1.unwatch();
 
 		entityA.setEntityB(new EntityB());
-		final AttributeListener listener2 = context.mock(AttributeListener.class, "listener2");
+		final SingleAttributeListener listener2 = context.mock(SingleAttributeListener.class, "listener2");
 		context.checking(new Expectations()
 		{
 			{
@@ -90,7 +89,7 @@ public class EntityObserverTest
 		watch2.unwatch();
 
 		entityA.getEntityB().setInteger(12);
-		final AttributeListener listener3 = context.mock(AttributeListener.class, "listener3");
+		final SingleAttributeListener listener3 = context.mock(SingleAttributeListener.class, "listener3");
 		context.checking(new Expectations()
 		{
 			{

@@ -8,7 +8,6 @@
 package org.atemsource.atem.utility.observer;
 
 import javax.inject.Inject;
-
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.compare.Comparison;
@@ -49,6 +48,20 @@ public class EntityObserverFactory
 		entityObserverDefinition.setComparison(snapshotComparison);
 		entityObserverDefinition.setSnapshotting(transformation);
 		return entityObserverDefinition;
+
+	}
+
+	public ObserverFactory createFactory(Comparison comparison)
+	{
+		SnapshotBuilder snapshotBuilder = snapshotBuilderFactory.create(comparison.getEntityType());
+		snapshotBuilder.include(comparison);
+		Transformation<Object, Object> transformation = (Transformation<Object, Object>) snapshotBuilder.create();
+
+		ComparisonBuilder comparisonBuilder = comparisonBuilderFactory.create((EntityType<?>) transformation.getTypeB());
+		comparisonBuilder.include(comparison);
+		Comparison snapshotComparison = comparisonBuilder.create();
+		ObserverFactory factory = new ObserverFactory(transformation, snapshotComparison);
+		return factory;
 
 	}
 

@@ -7,6 +7,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl.builder;
 
+import java.util.SortedSet;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.CollectionSortType;
@@ -21,10 +23,10 @@ import org.atemsource.atem.utility.transform.impl.transformation.CollectionAssoc
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+
 /**
-* Use this builder for a transformation from on collection attribute to another.
-*
-*/
+ * Use this builder for a transformation from on collection attribute to another.
+ */
 @Component
 @Scope("prototype")
 public class CollectionAttributeTransformationBuilder<A, B> extends
@@ -55,9 +57,13 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		Converter<?, ?> converter = getConverter(sourcePath.getTargetType().getType());
 		attributeTargetType = getTargetType(sourcePath, converter);
 		Type[] validTypes = getValidTargetTypes(sourcePath, converter);
+
+		CollectionSortType actualCollectionSortType = getActualCollectionSortType(sourcePath, collectionSortType);
+
+		// TODO we need to add the assoiation type to the target attribute
 		CollectionAttribute<?, Object> attribute =
 			entityTypeBuilder.addMultiAssociationAttribute(getTargetAttribute(), attributeTargetType, validTypes,
-				CollectionSortType.NONE);
+				actualCollectionSortType);
 		if (converter != null && converter instanceof Constraining)
 		{
 			Constraining constraining = ((Constraining) converter);
@@ -71,18 +77,19 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 			}
 		}
 	}
-/** 
-* the if the source collection is empty then the target collection should be null. 
-*/
+
+	/**
+	 * the if the source collection is empty then the target collection should be null.
+	 */
 	public CollectionAttributeTransformationBuilder convertEmptyToNull()
 	{
 		convertEmptyToNull = true;
 		return this;
 	}
 
-/** 
-* the if the source collection is null then the target collection should be empty. 
-*/
+	/**
+	 * the if the source collection is null then the target collection should be empty.
+	 */
 	public CollectionAttributeTransformationBuilder convertNullToEmpty()
 	{
 		convertNullToEmpty = true;
@@ -116,9 +123,31 @@ public class CollectionAttributeTransformationBuilder<A, B> extends
 		return this;
 	}
 
-/**
-* define the CollectionSortType of the target collection if it differs from the source collection.s
-*/
+	public CollectionSortType getActualCollectionSortType(AttributePath sourcePath,
+		CollectionSortType actualCollectionSortType)
+	{
+		if (actualCollectionSortType == null)
+		{
+			Class associationType = sourcePath.getAttribute().getAssociationType();
+			if (java.util.List.class.isAssignableFrom(associationType))
+			{
+				actualCollectionSortType = CollectionSortType.ORDERABLE;
+			}
+			else if (SortedSet.class.isAssignableFrom(associationType))
+			{
+				actualCollectionSortType = CollectionSortType.SORTED;
+			}
+			else
+			{
+				actualCollectionSortType = CollectionSortType.NONE;
+			}
+		}
+		return actualCollectionSortType;
+	}
+
+	/**
+	 * define the CollectionSortType of the target collection if it differs from the source collection.s
+	 */
 	public CollectionAttributeTransformationBuilder sort(CollectionSortType collectionSortType)
 	{
 		this.collectionSortType = collectionSortType;

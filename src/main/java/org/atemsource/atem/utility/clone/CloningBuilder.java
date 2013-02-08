@@ -9,11 +9,15 @@ package org.atemsource.atem.utility.clone;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.attribute.Attribute;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.infrastructure.util.ReflectionUtils;
 import org.atemsource.atem.api.type.EntityType;
+import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.utility.common.EntityTypeOperationBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -54,6 +58,14 @@ public class CloningBuilder extends
 		Set<AttributeCloning> operations = createOperations();
 		Cloning cloning = new Cloning();
 		cloning.setEntityType(getEntityType());
+		for (AttributeCloning attributeCloning : operations)
+		{
+			if (!attributeCloning.getAttribute().isWriteable())
+			{
+				throw new IllegalStateException("the attribute " + attributeCloning.getAttribute().getCode()
+					+ " cannot be cloned it is not writable");
+			}
+		}
 		cloning.setAttributeOperations(operations);
 		return cloning;
 	}
@@ -67,6 +79,38 @@ public class CloningBuilder extends
 	public List<AttributeCloningBuilderFactory<?, ?, Attribute<?, ?>>> getAttributeFactories()
 	{
 		return attributeFactories;
+	}
+
+	@Override
+	public CloningBuilder includeAll()
+	{
+		List<Attribute> attributes = getEntityType().getDeclaredAttributes();
+		for (Attribute attribute : attributes)
+		{
+			if (attribute.isWriteable())
+			{
+				include(attribute);
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public CloningBuilder includePrimitives(boolean includeSuperTypes)
+	{
+		List<Attribute> attributes =
+			includeSuperTypes ? getEntityType().getAttributes() : getEntityType().getDeclaredAttributes();
+		for (Attribute attribute : attributes)
+		{
+			if (attribute.getTargetType() instanceof PrimitiveType<?> && attribute instanceof SingleAttribute<?>)
+			{
+				if (attribute.isWriteable())
+				{
+					include(attribute);
+				}
+			}
+		}
+		return this;
 	}
 
 	public void setAttributeFactories(List<AttributeCloningBuilderFactory<?, ?, Attribute<?, ?>>> attributeFactories)

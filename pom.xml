@@ -224,7 +224,7 @@
 		<dependency>
 			<groupId>org.atemsource</groupId>
 			<artifactId>atem-impl</artifactId>
-			<version>0.2.3</version>
+			<version>0.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atemsource</groupId>

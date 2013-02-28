@@ -81,6 +81,8 @@ public class OrderableCollectionComparatorTest
 		b1.setInteger(1);
 		b2.setInteger(5);
 		a2.getList().add(b2);
+		a2.getList().add(b1);
+		a1.getList().add(b1);
 
 		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
 
@@ -88,6 +90,67 @@ public class OrderableCollectionComparatorTest
 		Addition change = (Addition) differences.iterator().next();
 		Assert.assertEquals(b2, change.getValue());
 		Assert.assertEquals("list.0", change.getPath().toString());
+	}
+
+	@Test
+	public void testAddedAndChanged()
+	{
+		EntityA a1 = createEntityA();
+		EntityB b1 = createEntityB();
+		EntityA a2 = createEntityA();
+		EntityB b2 = createEntityB();
+		EntityB b3 = createEntityB();
+		b1.setInteger(1);
+		b2.setInteger(5);
+		b3.setInteger(7);
+		a2.getList().add(b2);
+		a2.getList().add(b1);
+		a1.getList().add(b3);
+
+		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
+
+		Assert.assertEquals(2, differences.size());
+		for (Difference difference : differences ){
+			if (difference instanceof Addition) {
+				Assert.assertEquals("list.1",((Addition) difference).getPath().toString());
+			}else if (difference instanceof AttributeChange) {
+				Assert.assertEquals("list.0.integer",((AttributeChange) difference).getPath().toString());
+			}else {
+				Assert.fail("we expect a change and an addition");
+			}
+		}
+	}
+	
+	@Test
+	public void testMovalAndChanged()
+	{
+		
+		// we change one entity and move another one. The result is that the changed element is considered to be added and removed.
+		EntityA a1 = createEntityA();
+		EntityB b1 = createEntityB();
+		EntityA a2 = createEntityA();
+		EntityB b2 = createEntityB();
+		EntityB b3 = createEntityB();
+		b1.setInteger(1);
+		b2.setInteger(5);
+		b3.setInteger(7);
+		a2.getList().add(b2);
+		a2.getList().add(b1);
+		a1.getList().add(b3);
+		a1.getList().add(b2);
+
+		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
+
+		Assert.assertEquals(2, differences.size());
+		for (Difference difference : differences ){
+			if (difference instanceof Addition) {
+				Assert.assertEquals("list.1",((Addition) difference).getPath().toString());
+			}else if (difference instanceof Removal) {
+				Assert.assertEquals("list.0",((Removal) difference).getPath().toString());
+			}else {
+				Assert.fail("we expect an addition and a removal");
+			}
+		}
 	}
 
 	@Test
@@ -246,6 +309,8 @@ public class OrderableCollectionComparatorTest
 		b1.setInteger(1);
 		b2.setInteger(5);
 		a1.getList().add(b1);
+		a1.getList().add(b2);
+		a2.getList().add(b2);
 
 		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
 

@@ -24,6 +24,18 @@ import org.atemsource.atem.utility.transform.api.annotation.Conversion;
 public class EntityB implements Serializable {
 	@TestAnnotation
 	private int integer;
+	
+
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	private EntityA singleA;
 

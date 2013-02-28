@@ -23,6 +23,8 @@ import org.atemsource.atem.utility.compare.Difference;
 public class CollectionAttributeComparison extends AttributeComparison
 {
 
+	private IdentityCheck identityCheck;
+
 	@Override
 	public Set<Difference> getDifferences(CompareContext context, Object a, Object b)
 	{
@@ -85,5 +87,13 @@ public class CollectionAttributeComparison extends AttributeComparison
 		if (targetType == null)
 			targetType = associationAttribute.getTargetType();
 		return targetType;
+	}
+
+	public void setIdentityCheck(IdentityCheck identityCheck) {
+		this.identityCheck=identityCheck;
+	}
+
+	public IdentityCheck getIdentityCheck() {
+		return identityCheck;
 	}
 }

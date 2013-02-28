@@ -15,24 +15,23 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare.builder;
 
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
+import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
+import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.common.EntityOperationSelector;
 import org.atemsource.atem.utility.compare.AttributeComparison;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.ComparisonAttributeBuilder;
 
-
-public class CollectionAttributeBuilder extends ComparisonAttributeBuilder
-{
+public class CollectionAttributeBuilder extends ComparisonAttributeBuilder {
 
 	@Override
-	protected AttributeComparison createOperation()
-	{
+	protected AttributeComparison createOperation() {
 		CollectionAttributeComparison comparison = new CollectionAttributeComparison();
 		comparison.setAttribute(getAttribute());
-
+	
 		EntityOperationSelector<Comparison> selector = createEntityOperation();
-		if (selector != null)
-		{
+		if (selector != null) {
 			comparison.setSelector(selector);
 		}
 		return comparison;

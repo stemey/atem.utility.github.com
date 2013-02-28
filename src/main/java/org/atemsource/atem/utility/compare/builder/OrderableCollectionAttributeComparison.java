@@ -23,24 +23,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.math.IEEE754rUtils;
 import org.atemsource.atem.api.attribute.OrderableCollection;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.compare.AttributeComparison;
 import org.atemsource.atem.utility.compare.CompareContext;
+import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.compare.Difference;
 
 /**
- * this comparison works in the following way:
- * 1. find elements in both collection that are equal. These are considered rearrangements. 
- * 2. go through the elements of both collections in one iteration. 
- * 2.1. If both elements are part of rearrangements continue
- * 2.2. If one of the elements is part of a rearrangement then the other one is considered to be removed or added. 
- * 2.3. If none is part of a rearrangement and they have the same type the element is considered changed.
- * 2.4. If none is part of a rearrangement and they don't have the same type the old element is considered to be removed and a new one added.
- * 3. All rearrangements that are caused by additions or removals are removed from the list of changes.
- *
+ * this comparison works in the following way: 1. find elements in both
+ * collection that are equal. These are considered rearrangements. 2. go through
+ * the elements of both collections in one iteration. 2.1. If both elements are
+ * part of rearrangements continue 2.2. If one of the elements is part of a
+ * rearrangement then the other one is considered to be removed or added. 2.3.
+ * If none is part of a rearrangement and they have the same type the element is
+ * considered changed. 2.4. If none is part of a rearrangement and they don't
+ * have the same type the old element is considered to be removed and a new one
+ * added. 3. All rearrangements that are caused by additions or removals are
+ * removed from the list of changes.
+ * 
  */
 public class OrderableCollectionAttributeComparison extends AttributeComparison {
+
+	private IdentityCheck identityCheck;
+
+	public IdentityCheck getIdentityCheck() {
+		return identityCheck;
+	}
+
+	public void setIdentityCheck(IdentityCheck identityCheck) {
+		this.identityCheck = identityCheck;
+	}
 
 	private static class PreliminaryRearrangement {
 		private int indexA;
@@ -69,7 +83,9 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 	}
 
 	/**
-	 * go#es over both collections and finds equal elements. These are considered rearranged.
+	 * go#es over both collections and finds equal elements. These are
+	 * considered rearranged.
+	 * 
 	 * @param a
 	 * @param b
 	 * @param context
@@ -79,7 +95,7 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 	 * @param movalsB
 	 * @param rearrangements
 	 */
-	private void findRearrangements(Object a, Object b, CompareContext context, OrderableCollection attribute,
+	protected void findRearrangements(Object a, Object b, CompareContext context, OrderableCollection attribute,
 			CompareContext childContext, Set<Integer> movalsA, Set<Integer> movalsB,
 			List<PreliminaryRearrangement> rearrangements) {
 		Collection associatedEntityA = attribute.getElements(a);
@@ -94,18 +110,19 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 				}
 				Object valueB = attribute.getElement(b, indexB);
 				Type targetType = attribute.getTargetType(valueA);
+				boolean equal = false;
 				if (!targetType.equals(attribute.getTargetType(valueB))) {
-
+					equal = false;
+				} else if (identityCheck != null) {
+					equal = identityCheck.isIdentical(valueA, valueB);
 				} else if (getEntityOperation(targetType) != null) {
 					Set<Difference> childDifferences = getEntityOperation(targetType).getDifferences(childContext,
 							valueA, valueB);
-					if (childDifferences.size() == 0) {
-						movalsA.add(indexA);
-						movalsB.add(indexB);
-						rearrangements.add(new PreliminaryRearrangement(indexA, indexB, valueA));
-						break;
-					}
+					equal = childDifferences.size() == 0;
 				} else if (targetType.isEqual(valueA, valueB)) {
+					equal = true;
+				}
+				if (equal) {
 					movalsA.add(indexA);
 					movalsB.add(indexB);
 					rearrangements.add(new PreliminaryRearrangement(indexA, indexB, valueA));
@@ -125,7 +142,7 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 		Set<Integer> movedIndicesA = new HashSet<Integer>();
 		Set<Integer> movedIndicesB = new HashSet<Integer>();
 		List<PreliminaryRearrangement> rearrangements = new LinkedList<PreliminaryRearrangement>();
-		
+
 		findRearrangements(a, b, context, attribute, childContext, movedIndicesA, movedIndicesB, rearrangements);
 
 		int sizeA = attribute.getSize(a);
@@ -150,13 +167,15 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 			if (movedIndicesA.contains(index) && movedIndicesB.contains(index)) {
 				// just two rearrangements
 			} else if (movedIndicesA.contains(index)) {
-				// the element on this index was moved away. we considered the element a new element.
+				// the element on this index was moved away. we considered the
+				// element a new element.
 				if (sizeB > index) {
 					differences.add(childItemContext.addAddition(valueB));
 					additionCountB++;
 				}
 			} else if (movedIndicesB.contains(index)) {
-				// the element on this index was moved here. we considered the original element removed.
+				// the element on this index was moved here. we considered the
+				// original element removed.
 				if (sizeA > index) {
 					differences.add(childItemContext.addRemoval(valueA));
 					removalCountA++;
@@ -194,6 +213,17 @@ public class OrderableCollectionAttributeComparison extends AttributeComparison 
 			int renomrmalizedIndexB = arr.getIndexB() - additionCountByIndexB.get(arr.getIndexB());
 			if (renomrmalizedIndexB != renomrmalizedIndexA) {
 				differences.add(childContext.addMotion(arr.getIndexA(), arr.getIndexB(), arr.getValue()));
+			}
+			// in the case of identityCheck the eements might have changed
+			if(identityCheck!=null) {
+				CompareContext indexedChild = childContext.createIndexedChild(arr.getIndexB());
+				Object valueA = attribute.getElement(a,arr.getIndexA());
+				Object valueB = attribute.getElement(b,arr.getIndexB());
+				Type<Object> targetType = attribute.getTargetType(valueA);
+				Comparison entityOperation = getEntityOperation(targetType);
+				if (entityOperation != null) {
+					differences.addAll(entityOperation.getDifferences(indexedChild,valueA, valueB));
+				}
 			}
 		}
 		return differences;

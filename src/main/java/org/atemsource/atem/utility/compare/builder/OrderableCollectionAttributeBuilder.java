@@ -15,6 +15,9 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare.builder;
 
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
+import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
+import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.common.EntityOperationSelector;
 import org.atemsource.atem.utility.compare.AttributeComparison;
 import org.atemsource.atem.utility.compare.Comparison;
@@ -29,6 +32,7 @@ public class OrderableCollectionAttributeBuilder extends ComparisonAttributeBuil
 	{
 		OrderableCollectionAttributeComparison comparison = new OrderableCollectionAttributeComparison();
 		comparison.setAttribute(getAttribute());
+		comparison.setIdentityCheck(identityCheck);
 
 		EntityOperationSelector<Comparison> selector = createEntityOperation();
 		if (selector != null)
@@ -37,5 +41,23 @@ public class OrderableCollectionAttributeBuilder extends ComparisonAttributeBuil
 		}
 		return comparison;
 	}
+	private IdentityCheck identityCheck;
 
+
+	public OrderableCollectionAttributeBuilder useId(IdentityCheck identityCheck) {
+		this.identityCheck = identityCheck;
+		return this;
+	}
+	
+	public OrderableCollectionAttributeBuilder useId(String attribute) {
+		try {
+			SingleAttribute<?> idAttribute = (SingleAttribute<?>) ((EntityType) getAttribute().getTargetType())
+					.getAttribute(attribute);
+			this.identityCheck = new AttributeIdentityCheck(idAttribute);
+			return this;
+		} catch (Exception e) {
+			throw new TechnicalException("cannot find attribute " + attribute + " in type "
+					+ getAttribute().getTargetType().getCode(), e);
+		}
+	}
 }

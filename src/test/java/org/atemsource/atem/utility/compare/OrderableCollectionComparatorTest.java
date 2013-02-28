@@ -40,6 +40,8 @@ public class OrderableCollectionComparatorTest
 
 	private Comparison comparisonAssociative;
 
+	private Comparison comparisonAssociativeId;
+
 	public EntityA createEntityA()
 	{
 		EntityA a = new EntityA();
@@ -68,6 +70,13 @@ public class OrderableCollectionComparatorTest
 		subBuilder.include("integer");
 
 		comparisonAssociative = comparisonBuilderAssociative.create();
+
+		ComparisonBuilder comparisonBuilderAssociativeId = comparisonBuilderFactory.create(entityType);
+		ComparisonBuilder subBuilderId = comparisonBuilderAssociativeId.includeOrderableCollection("list").useId("id").cascade();
+		
+		subBuilderId.include("integer");
+
+		comparisonAssociativeId = comparisonBuilderAssociativeId.create();
 
 	}
 
@@ -122,6 +131,38 @@ public class OrderableCollectionComparatorTest
 	}
 	
 	@Test
+	public void testAddedAndChangedUsingId()
+	{
+		EntityA a1 = createEntityA();
+		EntityB b1 = createEntityB();
+		EntityA a2 = createEntityA();
+		EntityB b2 = createEntityB();
+		EntityB b3 = createEntityB();
+		b1.setInteger(1);
+		b1.setId("1");
+		b2.setInteger(5);
+		b2.setId("2");
+		b3.setInteger(2);
+		b3.setId("1");
+		a2.getList().add(b1);
+		a2.getList().add(b2);
+		a1.getList().add(b3);
+
+		Set<Difference> differences = comparisonAssociativeId.getDifferences(a1, a2);
+
+		Assert.assertEquals(2, differences.size());
+		for (Difference difference : differences ){
+			if (difference instanceof Addition) {
+				Assert.assertEquals("list.1",((Addition) difference).getPath().toString());
+			}else if (difference instanceof AttributeChange) {
+				Assert.assertEquals("list.0.integer",((AttributeChange) difference).getPath().toString());
+			}else {
+				Assert.fail("we expect a change and an addition");
+			}
+		}
+	}
+	
+	@Test
 	public void testMovalAndChanged()
 	{
 		
@@ -149,6 +190,43 @@ public class OrderableCollectionComparatorTest
 				Assert.assertEquals("list.0",((Removal) difference).getPath().toString());
 			}else {
 				Assert.fail("we expect an addition and a removal");
+			}
+		}
+	}
+
+	@Test
+	public void testMovalAndChangedWithId()
+	{
+		
+		// we change one entity and move another one. The result is that the changed element is considered to be added and removed.
+		EntityA a1 = createEntityA();
+		EntityB b1 = createEntityB();
+		EntityA a2 = createEntityA();
+		EntityB b2 = createEntityB();
+		EntityB b3 = createEntityB();
+		EntityB b4 = createEntityB();
+		b1.setInteger(1);
+		b1.setId("1");
+		b2.setInteger(5);
+		b2.setId("2");
+		b3.setInteger(2);
+		b3.setId("1");
+		b4.setInteger(5);
+		b4.setId("2");
+		a2.getList().add(b2);
+		a2.getList().add(b1);
+		a1.getList().add(b3);
+		a1.getList().add(b4);
+
+		Set<Difference> differences = comparisonAssociativeId.getDifferences(a1, a2);
+
+		Assert.assertEquals(3, differences.size());
+		for (Difference difference : differences ){
+			if (difference instanceof AttributeChange) {
+				Assert.assertEquals("list.1.integer",((AttributeChange) difference).getPath().toString());
+			}else if (difference instanceof Rearrangement) {
+			}else {
+				Assert.fail("we expect a change and two rearrangements");
 			}
 		}
 	}

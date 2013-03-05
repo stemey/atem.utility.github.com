@@ -12,11 +12,11 @@ import org.atemsource.atem.utility.path.AttributePath;
 
 public class AttributeChange extends Difference
 {
-	private Object newValue;
+	private final Object newValue;
 
-	private Object oldValue;
+	private final Object oldValue;
 
-	AttributeChange(AttributePath path, Object oldValue, Object newValue)
+	public AttributeChange(AttributePath path, Object oldValue, Object newValue)
 	{
 		super();
 		this.setPath(path);

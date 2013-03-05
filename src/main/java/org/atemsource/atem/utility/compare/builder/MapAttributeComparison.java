@@ -47,9 +47,13 @@ public class MapAttributeComparison extends AttributeComparison
 			{
 				differences.add(childItemContext.addRemoval(valueA));
 			}
-			else if (valueA == null)
+			else if (valueA == null && !mapAttribute.containsKey(a, key))
 			{
 				differences.add(childItemContext.addAddition(valueB));
+			}
+			else if (valueA == null && mapAttribute.containsKey(a, key))
+			{
+				differences.add(childItemContext.addAttributeChange(valueA, valueB));
 			}
 			else
 			{

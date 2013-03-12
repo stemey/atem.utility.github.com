@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.compare.builder;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,6 +29,19 @@ public class MapAttributeComparison extends AttributeComparison
 		CompareContext childContext = context.createChild(mapAttribute);
 		Object mapA = mapAttribute.getValue(a);
 		Object mapB = mapAttribute.getValue(b);
+
+		if (mapA == null && mapB == null)
+		{
+			return Collections.emptySet();
+		}
+		else if (mapA == null)
+		{
+			mapA = Collections.emptyMap();
+		}
+		else if (mapB == null)
+		{
+			mapB = Collections.emptyMap();
+		}
 
 		Set<Object> keysA = mapAttribute.getKeySet(a);
 		Set<Object> keysB = mapAttribute.getKeySet(b);

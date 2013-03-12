@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class Comparison extends EntityOperation<AttributeComparison, Comparison>
 {
-
 	@Inject
 	private BeanLocator beanLocator;
 
@@ -33,18 +32,19 @@ public class Comparison extends EntityOperation<AttributeComparison, Comparison>
 		{
 			differences.addAll(attributeComparison.getDifferences(context, oldValue, newValue));
 		}
+		for (Comparison comparison : getSubOperations())
+		{
+			if (comparison.getEntityType().isInstance(oldValue))
+			{
+				differences.addAll(comparison.getDifferences(context, oldValue, newValue));
+			}
+		}
 		return differences;
 	}
 
 	public Set<Difference> getDifferences(Object oldValue, Object newValue)
 	{
-		CompareContext context = beanLocator.getInstance(CompareContext.class);
-		Set<Difference> differences = new HashSet<Difference>();
-		for (AttributeComparison attributeComparison : getAttributeOperations())
-		{
-			differences.addAll(attributeComparison.getDifferences(context, oldValue, newValue));
-		}
-		return differences;
+		return getDifferences(beanLocator.getInstance(CompareContext.class), oldValue, newValue);
 	}
 
 }

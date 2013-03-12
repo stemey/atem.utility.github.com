@@ -9,6 +9,7 @@ package org.atemsource.atem.utility.compare.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -35,6 +36,19 @@ public class CollectionAttributeComparison extends AttributeComparison
 		CollectionAttribute associationAttribute = ((CollectionAttribute) getAttribute());
 		Collection collectionA = associationAttribute.getElements(a);
 		Collection collectionB = associationAttribute.getElements(b);
+
+		if (collectionA == null && collectionB == null)
+		{
+			return Collections.emptySet();
+		}
+		else if (collectionA == null)
+		{
+			collectionA = Collections.emptyList();
+		}
+		else if (collectionB == null)
+		{
+			collectionB = Collections.emptyList();
+		}
 
 		Iterator ia = associationAttribute.getIterator(a);
 		removals.addAll(collectionA);
@@ -80,6 +94,11 @@ public class CollectionAttributeComparison extends AttributeComparison
 		return differences;
 	}
 
+	public IdentityCheck getIdentityCheck()
+	{
+		return identityCheck;
+	}
+
 	private Type getTargetType(CollectionAttribute associationAttribute, Object value)
 	{
 		Type targetType =
@@ -89,11 +108,8 @@ public class CollectionAttributeComparison extends AttributeComparison
 		return targetType;
 	}
 
-	public void setIdentityCheck(IdentityCheck identityCheck) {
-		this.identityCheck=identityCheck;
-	}
-
-	public IdentityCheck getIdentityCheck() {
-		return identityCheck;
+	public void setIdentityCheck(IdentityCheck identityCheck)
+	{
+		this.identityCheck = identityCheck;
 	}
 }

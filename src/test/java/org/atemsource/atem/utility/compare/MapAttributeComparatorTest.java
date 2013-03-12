@@ -26,20 +26,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
-@ContextConfiguration(locations = {"classpath:/test/meta/pojo/entitytype.xml", "classpath:/meta/utility/compare-example.xml"})
+@ContextConfiguration(locations = {"classpath:/test/meta/pojo/entitytype.xml",
+	"classpath:/meta/utility/compare-example.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MapAttributeComparatorTest
 {
 
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
+	private Comparison comparison;
+
+	private Comparison comparisonAssociative;
 
 	@Inject
 	private ComparisonBuilderFactory comparisonBuilderFactory;
 
-	private Comparison comparison;
-
-	private Comparison comparisonAssociative;
+	@Inject
+	private EntityTypeRepository entityTypeRepository;
 
 	public EntityA createEntityA()
 	{
@@ -105,6 +106,19 @@ public class MapAttributeComparatorTest
 		a1.getMap().put("x", b1);
 		b2.setInteger(1);
 		a2.getMap().put("x", b2);
+
+		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
+
+		Assert.assertEquals(0, differences.size());
+	}
+
+	@Test
+	public void testAssociatvieNull()
+	{
+		EntityA a1 = createEntityA();
+		EntityA a2 = createEntityA();
+		a1.setMap(null);
+		a2.setMap(null);
 
 		Set<Difference> differences = comparisonAssociative.getDifferences(a1, a2);
 

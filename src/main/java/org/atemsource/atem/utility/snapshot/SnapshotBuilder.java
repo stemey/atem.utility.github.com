@@ -27,6 +27,7 @@ import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -117,7 +118,7 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 
 	public void include(View view)
 	{
-		view.visit(this, this);
+		HierachyVisitor.visit(view,this, this);
 	}
 
 	public void initialize()
@@ -174,14 +175,12 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 	}
 
 	@Override
-	public boolean visitSubView(SnapshotBuilder context, View view)
-	{
-		return true;
+	public void visitSubView(SnapshotBuilder context, View view, Visitor<SnapshotBuilder> subViewVisitor) {
 	}
 
 	@Override
-	public boolean visitSuperView(SnapshotBuilder context, View view)
-	{
-		return true;
+	public void visitSuperView(SnapshotBuilder context, View view, Visitor<SnapshotBuilder> superViewVisitor) {
 	}
+
+
 }

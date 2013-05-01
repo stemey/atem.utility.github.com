@@ -19,6 +19,7 @@ import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 /**
@@ -53,7 +54,7 @@ public class BindingSession {
 			TransformationVisitor visitor = new TransformationVisitor(
 					typeNameConverter, attributeFilters, attributeNameConverter);
 			context.addTransformationBuilder(transformationBuilder);
-			entityType.visit(visitor, context);
+			HierachyVisitor.visit(entityType,visitor, context);
 			EntityTypeTransformation<?, ?> transformation = transformationBuilder
 					.buildTypeTransformation();
 

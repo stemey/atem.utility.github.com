@@ -32,6 +32,9 @@ public class Binder extends AbstractBinder implements BindingListener
 
 		String targetTypeCode = typeNameConverter.convert(entityTypeRepository.getEntityType(sourceClass));
 		EntityType<Object> entityType = entityTypeRepository.getEntityType(targetTypeCode);
+		if (entityType==null) {
+			throw new IllegalArgumentException("class "+sourceClass+" was not transformed by this binder ");
+		}
 		SingleAttribute<DerivedType> metaAttribute =
 			(SingleAttribute<DerivedType>) entityTypeRepository.getEntityType(EntityType.class).getMetaAttribute(
 				DerivedObject.META_ATTRIBUTE_CODE);

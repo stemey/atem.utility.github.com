@@ -12,6 +12,7 @@ import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.constraint.Constraint;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 
 
 public class AtemTypeAndConstraintValidationService implements ValidationService
@@ -52,6 +53,6 @@ public class AtemTypeAndConstraintValidationService implements ValidationService
 		}
 		visitor.setEntity(entity);
 		visitor.setConstraints(constraintAttributes);
-		entityType.visit(visitor, context);
+		HierachyVisitor.visit(entityType,visitor, context);
 	}
 }

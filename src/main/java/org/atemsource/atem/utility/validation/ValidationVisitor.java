@@ -237,24 +237,22 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext>
 		}
 	}
 
+
+
 	@Override
-	public boolean visitSubView(ValidationContext context, View view)
-	{
+	public void visitSubView(ValidationContext context, View view, Visitor<ValidationContext> subViewVisitor) {
 		if (((EntityType<?>) view).isInstance(entityStack.peek().getEntity()))
 		{
-			return true;
+			subViewVisitor.visit(context);
 		}
-		else
-		{
-			return false;
-		}
+		
 	}
 
 	@Override
-	public boolean visitSuperView(ValidationContext context, View view)
-	{
-		return true;
+	public void visitSuperView(ValidationContext context, View view, Visitor<ValidationContext> superViewVisitor) {
 	}
+
+
 
 	private static class GraphNode
 	{

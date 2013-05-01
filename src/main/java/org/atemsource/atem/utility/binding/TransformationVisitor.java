@@ -1,6 +1,7 @@
 package org.atemsource.atem.utility.binding;
 
 import java.util.List;
+
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.attribute.JavaMetaData;
@@ -8,7 +9,6 @@ import org.atemsource.atem.api.attribute.MapAttribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 import org.atemsource.atem.api.view.Visitor;
@@ -192,22 +192,20 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 	}
 
 	@Override
-	public boolean visitSubView(TransformationContext context, View view)
+	public void visitSubView(TransformationContext context, View view, Visitor<TransformationContext> subViewVisitor)
 	{
 		
 		EntityType<?> subType = (EntityType<?>) view;
 		context.visitSubview(subType);
 		// we handle the visiting ourselves
-		return false;
 	}
 
 	@Override
-	public boolean visitSuperView(TransformationContext context, View view)
+	public void visitSuperView(TransformationContext context, View view, Visitor<TransformationContext> superViewVisitor)
 	{
 		EntityType<?> superType = (EntityType<?>) view;
 		context.visitSuperType(superType, this);
 		// we handle the visiting ourselves
-		return false;
 
 	}
 }

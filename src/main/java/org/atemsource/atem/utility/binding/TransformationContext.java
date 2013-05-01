@@ -3,10 +3,10 @@ package org.atemsource.atem.utility.binding;
 import java.util.Stack;
 
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 
 public class TransformationContext {
 	private BindingSession bindingSession;
@@ -87,7 +87,7 @@ public class TransformationContext {
 			TypeTransformationBuilder<?, ?> transformationBuilder = bindingSession
 					.createTransformationBuilder(superType);
 			transformationBuilders.push(transformationBuilder);
-			superType.visit(visitor, this);
+			HierachyVisitor.visit(superType,visitor, this);
 			TypeTransformationBuilder<?, ?> typeTransformationBuilder = transformationBuilders
 					.pop();
 			EntityTypeTransformation<?, ?> transformation = typeTransformationBuilder

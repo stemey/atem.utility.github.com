@@ -7,6 +7,7 @@ import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.utility.common.TargetTypeExistenceAsserter;
 import org.atemsource.atem.utility.compare.Comparison;
 import org.atemsource.atem.utility.transform.api.Transformation;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class EntityObserverDefinition
 
 	public void assertTargetTypesExist()
 	{
-		snapshotComparison.visit(new TargetTypeExistenceAsserter(), null);
+		HierachyVisitor.visit(snapshotComparison,new TargetTypeExistenceAsserter(), null);
 	}
 
 	public EntityObserver create()

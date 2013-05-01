@@ -21,6 +21,7 @@ import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 import org.atemsource.atem.api.view.Visitor;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 
 
 public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBuilder<P, O, A, ?>, V extends EntityTypeOperationBuilder, O extends EntityOperation, P extends AttributeOperation>
@@ -122,7 +123,7 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 
 	public V include(View view)
 	{
-		view.visit(new ViewVisitor<EntityTypeOperationBuilder>() {
+		HierachyVisitor.visit(view,new ViewVisitor<EntityTypeOperationBuilder>() {
 
 			@Override
 			public void visit(EntityTypeOperationBuilder context, Attribute attribute)
@@ -139,15 +140,13 @@ public abstract class EntityTypeOperationBuilder<A extends AttributeOperationBui
 			}
 
 			@Override
-			public boolean visitSubView(EntityTypeOperationBuilder context, View view)
+			public void visitSubView(EntityTypeOperationBuilder context, View view, Visitor<EntityTypeOperationBuilder> visitor)
 			{
-				return false;
 			}
 
 			@Override
-			public boolean visitSuperView(EntityTypeOperationBuilder context, View view)
+			public void visitSuperView(EntityTypeOperationBuilder context, View view, Visitor<EntityTypeOperationBuilder> visitor)
 			{
-				return false;
 			}
 		}, this);
 		return (V) this;

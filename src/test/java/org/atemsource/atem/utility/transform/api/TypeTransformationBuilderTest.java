@@ -265,7 +265,7 @@ public class TypeTransformationBuilderTest
 
 		EntityType<Attribute> attributeType = entityTypeRepository.getEntityType(Attribute.class);
 		Attribute attr = ((EntityType<?>) entityTypeTransformation.getTypeA()).getAttribute("integer");
-		Attribute metaAttribute = attributeType.getMetaAttribute(TestAnnotation.class.getName());
+		Attribute metaAttribute = attributeType.getMetaAttribute(TestAnnotation.class.getName().replace('.','_'));
 		Object value = metaAttribute.getValue(attr);
 		Assert.assertNotNull(value);
 

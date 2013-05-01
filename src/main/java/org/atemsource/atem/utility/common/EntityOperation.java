@@ -7,14 +7,14 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.common;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
-import org.atemsource.atem.api.view.AttributeVisitor;
+import org.atemsource.atem.api.view.AttributeView;
 import org.atemsource.atem.api.view.View;
-import org.atemsource.atem.api.view.ViewVisitor;
 
 
 public class EntityOperation<A extends AttributeOperation, O extends EntityOperation<A, O>> implements View
@@ -91,33 +91,22 @@ public class EntityOperation<A extends AttributeOperation, O extends EntityOpera
 	}
 
 	@Override
-	public <C> void visit(ViewVisitor<C> visitor, C context)
-	{
-		if (superOperation != null)
-		{
-			superOperation.visit(visitor, context);
+	public Iterator<AttributeView> attributes() {
+		List<AttributeView> attribues = new ArrayList<AttributeView>(attributeOperations.size());
+		for (A a:attributeOperations) {
+			attribues.add(new AttributeView(a.getAttribute(),a.getEntityOperation(a.getAttribute().getTargetType())));
 		}
-		for (A attributeViewing : attributeOperations)
-		{
-			Attribute attribute = attributeViewing.getAttribute();
-			if (attributeViewing.getEntityOperation(attribute.getTargetType()) != null)
-			{
-				visitor.visit(context, attribute,
-					new AttributeVisitor<C>(visitor, attributeViewing.getEntityOperation(attribute.getTargetType())));
-			}
-			else
-			{
-				visitor.visit(context, attribute);
+		return attribues.iterator();
+	}
 
-			}
-		}
-		if (subOperations != null)
-		{
-			for (O subOperation : subOperations)
-			{
-				subOperation.visit(visitor, context);
-			}
-		}
+	@Override
+	public View getSuperView() {
+		return getSuperOperation();
+	}
+
+	@Override
+	public Iterator<? extends View> subviews() {
+		return subOperations.iterator();
 	}
 
 }

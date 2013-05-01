@@ -33,14 +33,12 @@ public class TargetTypeExistenceAsserter implements ViewVisitor<Object>
 	}
 
 	@Override
-	public boolean visitSubView(Object context, View view)
+	public void visitSubView(Object context, View view, Visitor<Object> visitor)
 	{
-		return true;
 	}
 
 	@Override
-	public boolean visitSuperView(Object context, View view)
+	public void visitSuperView(Object context, View view, Visitor<Object> visitor)
 	{
-		return true;
 	}
 }

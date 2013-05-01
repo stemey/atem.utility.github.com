@@ -78,6 +78,10 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 	{
 		return filters;
 	}
+	
+	public EntityType<?> getEntityType(Object entity) {
+		return subRepository.getEntityType(entity);
+	}
 
 	
 

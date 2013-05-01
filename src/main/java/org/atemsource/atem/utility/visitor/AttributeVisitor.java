@@ -5,20 +5,35 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.atemsource.atem.utility.compare;
+package org.atemsource.atem.utility.visitor;
 
-import org.atemsource.atem.api.attribute.Attribute;
-import org.atemsource.atem.utility.visitor.AttributeVisitor;
+import org.atemsource.atem.api.view.View;
+import org.atemsource.atem.api.view.ViewVisitor;
+import org.atemsource.atem.api.view.Visitor;
 
-
-public abstract class AttributeComparator<A extends Attribute>
+public class AttributeVisitor<C> implements Visitor<C>
 {
 
-	public AttributeComparator()
+	private View view;
+
+	ViewVisitor<C> visitor;
+
+	public AttributeVisitor(ViewVisitor<C> visitor, View view)
 	{
 		super();
+		this.view = view;
+		this.visitor = visitor;
 	}
 
-	public abstract void compare(CompareContext context, A attribute, AttributeVisitor<A> attributeVisitor);
+	public View getView()
+	{
+		return view;
+	}
 
+	public void visit(C context)
+	{
+		HierachyVisitor.visit(view,visitor, context);
+	}
+	
+	
 }

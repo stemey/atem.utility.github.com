@@ -18,11 +18,12 @@ import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.PrimitiveType;
-import org.atemsource.atem.api.view.AttributeVisitor;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 import org.atemsource.atem.api.view.Visitor;
 import org.atemsource.atem.pojo.EntityA;
+import org.atemsource.atem.utility.visitor.AttributeVisitor;
+import org.atemsource.atem.utility.visitor.HierachyVisitor;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -73,7 +74,7 @@ public class ViewBuilderTest
 					with(any(AttributeVisitor.class)));
 			}
 		});
-		view.visit(mockViewVisitor, null);
+		HierachyVisitor.visit(view,mockViewVisitor, null);
 	}
 
 
@@ -114,18 +115,16 @@ public class ViewBuilderTest
 			}
 
 			@Override
-			public boolean visitSubView(Object context, View view)
-			{
-				return false;
+			public void visitSubView(Object context, View view, Visitor<Object> subViewVisitor) {
 			}
 
 			@Override
-			public boolean visitSuperView(Object context, View view)
-			{
-				return false;
+			public void visitSuperView(Object context, View view, Visitor<Object> superViewVisitor) {
 			}
+
+			
 		};
-		view.visit(mockViewVisitor, null);
+		HierachyVisitor.visit(view,mockViewVisitor, null);
 		Assert.assertTrue(count.intValue() > 2);
 	}
 }

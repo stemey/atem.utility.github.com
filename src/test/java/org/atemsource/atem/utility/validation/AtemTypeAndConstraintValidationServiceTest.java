@@ -1,16 +1,27 @@
 package org.atemsource.atem.utility.validation;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
+import org.atemsource.atem.impl.common.attribute.SingleAttributeImpl;
+import org.atemsource.atem.impl.json.JsonEntityTypeImpl;
 import org.atemsource.atem.impl.json.JsonEntityTypeRepository;
+import org.atemsource.atem.impl.pojo.attribute.AtemAnnotationTargetClassResolver;
+import org.atemsource.atem.utility.transform.api.constraint.Constraint;
+import org.atemsource.atem.utility.transform.api.constraint.DateFormat;
 import org.codehaus.jackson.JsonParser.Feature;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -154,6 +165,42 @@ public class AtemTypeAndConstraintValidationServiceTest
 		SimpleValidationContext context = new SimpleValidationContext(entityTypeRepository);
 		validationService.validate(type, context, node);
 		Assert.assertEquals(1, context.getErrors().size());
+
+	}
+
+	private SimpleValidationContext testTypeFormat(String dateString) throws JsonProcessingException, IOException
+	{
+
+		EntityTypeBuilder builder = repository.createBuilder("testTypeFormat"+dateString);
+		builder.addSingleAttribute("textProperty", String.class);
+		EntityType<ObjectNode> type = (EntityType<ObjectNode>) builder.createEntityType();
+
+		ObjectNode node = (ObjectNode) mapper.readTree("{ext_type:'testTypeFormat"+dateString+"',textProperty:'"+dateString+"'}");
+		AtemTypeAndConstraintValidationService validationService = (AtemTypeAndConstraintValidationService) type.getService(ValidationService.class);
+		SimpleValidationContext context = new SimpleValidationContext(entityTypeRepository);
+		SingleAttributeImpl<DateFormat> ca= new SingleAttributeImpl<DateFormat>(){
+			@Override
+			public DateFormat getValue(Object entity) {
+				return new DateFormat("dd.MM.yyyy", new SimpleDateFormat("dd.MM.yyyy"));
+			}};
+		ca.setCode(DateFormat.META_ATTRIBUTE_CODE);
+		List<SingleAttribute<? extends Constraint>>constraintAttributes= new LinkedList<SingleAttribute<? extends Constraint>>();
+		constraintAttributes.add(ca);
+		validationService.validate(type, context, node,constraintAttributes);
+		return context;
+	}
+	
+	@Test
+	public void testTypeFormatIncorrect() throws JsonProcessingException, IOException {
+		SimpleValidationContext context = testTypeFormat("66");
+		Assert.assertEquals(1, context.getErrors().size());
+
+	}
+
+	@Test
+	public void testTypeFormatCorrect() throws JsonProcessingException, IOException {
+		SimpleValidationContext context = testTypeFormat("01.01.2001");
+		Assert.assertEquals(0, context.getErrors().size());
 
 	}
 

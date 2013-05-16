@@ -29,21 +29,31 @@ public class AtemTypeAndConstraintValidationService implements ValidationService
 		this.attributePathBuilderFactory = attributePathBuilderFactory;
 	}
 	
-	@Inject
-	private EntityTypeRepository entityTypeRepository;
 
 	@Override
 	public <J> void validate(EntityType<J> entityType, ValidationContext context, J entity)
 	{
+		List<SingleAttribute<? extends Constraint>> constraintAttributes =findConstraints();
+		validate(entityType, context, entity, constraintAttributes);
+	}
+
+	protected <J> void validate(EntityType<J> entityType, ValidationContext context, J entity,
+			List<SingleAttribute<? extends Constraint>> constraintAttributes) {
 		if (entityType.isAbstractType()) {
 			context.addTypeMismatchError(null, entityType, entity.toString());
 		}
 		ValidationVisitor visitor = new ValidationVisitor();
 		visitor.setAttributePathBuilderFactory(attributePathBuilderFactory);
+		visitor.setEntity(entity);
+		visitor.setConstraints(constraintAttributes);
+		HierachyVisitor.visit(entityType,visitor, context);
+	}
+
+	protected List<SingleAttribute<? extends Constraint>> findConstraints() {
 		EntityType<Attribute> attributeType =
-			BeanLocator.getInstance().getInstance(EntityTypeRepository.class).getEntityType(Attribute.class);
+				BeanLocator.getInstance().getInstance(EntityTypeRepository.class).getEntityType(Attribute.class);
 		List<SingleAttribute<? extends Constraint>> constraintAttributes =
-			new ArrayList<SingleAttribute<? extends Constraint>>();
+				new ArrayList<SingleAttribute<? extends Constraint>>();
 		for (Attribute attribute : attributeType.getMetaAttributes())
 		{
 			if (attribute.getTargetType().getJavaType().isAssignableFrom(Constraint.class))
@@ -51,8 +61,6 @@ public class AtemTypeAndConstraintValidationService implements ValidationService
 				constraintAttributes.add((SingleAttribute<? extends Constraint>) attribute);
 			}
 		}
-		visitor.setEntity(entity);
-		visitor.setConstraints(constraintAttributes);
-		HierachyVisitor.visit(entityType,visitor, context);
+		return constraintAttributes;
 	}
 }

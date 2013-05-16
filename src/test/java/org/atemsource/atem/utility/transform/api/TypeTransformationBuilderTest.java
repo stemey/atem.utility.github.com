@@ -19,6 +19,7 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
+import org.atemsource.atem.impl.json.TypeCodeConverter;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
@@ -254,6 +255,37 @@ public class TypeTransformationBuilderTest
 		DynamicEntity b =
 			entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext(entityTypeRepository));
 		Assert.assertEquals(5, b.get("i"));
+
+	}
+
+	@Test
+	public void testDynamicConversin()
+	{
+		TypeTransformationBuilder<?, ?> builder = transformationBuilderFactory.create();
+		builder.setSourceType(EntityB.class);
+		builder.setTargetTypeBuilder(dynamicEntityTypeSubrepository.createBuilder("dynamicProperty"));
+		builder.transform().from("integer").to("i");
+		builder.transform().from("object").to("o").convertDynamically(new TypeNameConverter() {
+			
+		
+
+			@Override
+			public String convert(EntityType<?> entityType) {
+				return "dynamicProperty";
+
+			}
+		});
+		EntityTypeTransformation<EntityB, DynamicEntity> entityTypeTransformation =
+			(EntityTypeTransformation<EntityB, DynamicEntity>) builder.buildTypeTransformation();
+		EntityType<?> typeB = entityTypeTransformation.getEntityTypeB();
+		
+		EntityB a = new EntityB();
+		EntityB object = new EntityB();
+		object.setInteger(5);
+		a.setObject(object);
+		DynamicEntity b =
+			entityTypeTransformation.getAB().convert(a, new SimpleTransformationContext(entityTypeRepository));
+		Assert.assertEquals(5, ((DynamicEntity)b.get("o")).get("i"));
 
 	}
 

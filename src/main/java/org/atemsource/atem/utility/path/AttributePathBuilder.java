@@ -79,10 +79,12 @@ public class AttributePathBuilder {
 					if (metaAttribute != null) {
 						addAttribute(metaAttribute);
 					} else {
-						throw new IllegalStateException("meta attribute "
+						throw new IllegalArgumentException("meta attribute "
 								+ pathElement + "  not found on "
 								+ baseType.getCode());
 					}
+				}else{
+					throw new IllegalArgumentException("cannot find attribute "+pathElement+ " on type "+ baseType.getCode());
 				}
 			} else {
 				addAttribute(attribute);

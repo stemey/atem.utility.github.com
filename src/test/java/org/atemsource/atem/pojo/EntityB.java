@@ -24,7 +24,6 @@ import org.atemsource.atem.utility.transform.api.annotation.Conversion;
 public class EntityB implements Serializable {
 	@TestAnnotation
 	private int integer;
-	
 
 	private String id;
 
@@ -32,6 +31,15 @@ public class EntityB implements Serializable {
 		return id;
 	}
 
+	private Object object;
+
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
+	}
 
 	public void setId(String id) {
 		this.id = id;
@@ -43,7 +51,6 @@ public class EntityB implements Serializable {
 		return integer;
 	}
 
-	
 	public EntityA getSingleA() {
 		return singleA;
 	}

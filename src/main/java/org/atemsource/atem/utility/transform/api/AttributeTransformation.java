@@ -24,4 +24,5 @@ public interface AttributeTransformation<A, B> {
 
 	EntityType getTypeB();
 
+
 }

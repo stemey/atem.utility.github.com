@@ -15,6 +15,9 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
+import org.atemsource.atem.utility.transform.impl.transformation.OneToOneAttributeTransformation;
+
+
 
 /**
 * This class extends UniConverter. The UniTransformation does not transform immutables (like most primitives). 
@@ -30,5 +33,8 @@ public interface UniTransformation<A, B> extends UniConverter<A, B>
 	 * @return the transfomed value, if no type change is necessary this will be the same instance as parameter b
 	 */
 	public B merge(A a, B b, TransformationContext newParam);
+
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationByTarget(String attributeCode);
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationBySource(String attributeCode);
 
 }

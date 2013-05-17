@@ -18,45 +18,40 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class Mixin 
-extends AbstractAttributeTransformationBuilder<Object, Object, Mixin> {
+public class Mixin extends AbstractAttributeTransformationBuilder<Object, Object, Mixin> {
 
-private EntityTypeTransformation<?,?> transformation;
-private String from;
+	private EntityTypeTransformation<?, ?> transformation;
+	private String from;
 
+	public Mixin transform(EntityTypeTransformation<?, ?> transformation) {
+		this.transformation = transformation;
+		return this;
+	}
 
-public Mixin transform(EntityTypeTransformation<?,?> transformation) {
-	this.transformation=transformation;
-	return this;
-}
+	public Mixin from(String from) {
+		this.from = from;
+		return this;
+	}
 
-public Mixin from(String from) {
-	this.from=from;
-	return this;
-}
 	@Override
 	public void build(EntityTypeBuilder entityTypeBuilder) {
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(from, sourceType);
-		
-		if (transformation!=null) {
+		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(from, sourceType);
+
+		if (transformation != null) {
 			entityTypeBuilder.mixin(transformation.getEntityTypeB());
-		}else{
-			throw new IllegalArgumentException("you need to provide a transformation")		;
+		} else {
+			throw new IllegalArgumentException("you need to provide a transformation");
 		}
 	}
 
 	@Override
-	public AttributeTransformation<Object, Object> create(
-			EntityType<Object> targetType) {
-		
-		
+	public AttributeTransformation<Object, Object> create(EntityType<Object> targetType) {
+
 		EmbedAttributeTransformation embedAttributeTransformation = beanLocator
 				.getInstance(EmbedAttributeTransformation.class);
-		AttributePath sourcePath = attributePathBuilderFactory
-				.createAttributePath(from, sourceType);
+		AttributePath sourcePath = attributePathBuilderFactory.createAttributePath(from, sourceType);
 		embedAttributeTransformation.setAttributeA(sourcePath);
-		Set<AttributePath> targetPaths= new HashSet<AttributePath>();
+		Set<AttributePath> targetPaths = new HashSet<AttributePath>();
 		// TODO add the target attributes
 		embedAttributeTransformation.setAttributeBs(targetPaths);
 		embedAttributeTransformation.setTransformation(transformation);
@@ -70,7 +65,5 @@ public Mixin from(String from) {
 	public Object fromMethod() {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
-
-
 
 }

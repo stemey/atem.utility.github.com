@@ -13,35 +13,28 @@ import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class SingleAttributeTransformation<A, B> extends OneToOneAttributeTransformation<A, B>
-{
+public class SingleAttributeTransformation<A, B> extends AbstractOneToOneAttributeTransformation<A, B> {
 
 	@Override
 	protected void transformInternally(Object a, Object b, AttributePath attributeA, AttributePath attributeB,
-		TransformationContext ctx, UniTransformation<Object, Object> converter)
-	{
-		if (attributeB.isWriteable())
-		{
+			TransformationContext ctx, UniTransformation<Object, Object> converter) {
+		if (attributeB.isWriteable()) {
 			Object valueA = attributeA.getValue(a);
-			if (valueA == null)
-			{
-				return;
+
+			if (converter != null && valueA != null) {
+				Object valueB = TransformUtils.findTargetEntity(converter, (A)valueA,(B) attributeB.getValue(b), ctx);
+				if (valueB==null) {
+					valueA = converter.convert(valueA,  ctx);
+				}else{
+					valueA = converter.merge(valueA, valueB, ctx);
+				}
 			}
 
-			if (converter != null)
-			{
-				valueA = converter.convert(valueA, ctx);
-			}
-			if (attributeB.getAttribute().isRequired() && valueA == null)
-			{
-
+			if (attributeB.getAttribute().isRequired() && valueA == null) {
 				// TODO
-			}
-			else
-			{
+			} else {
 				attributeB.setValue(b, valueA);
 
 			}

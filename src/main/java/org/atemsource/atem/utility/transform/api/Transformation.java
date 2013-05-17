@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api;
 
+import org.atemsource.atem.utility.transform.impl.transformation.AbstractOneToOneAttributeTransformation;
+
 /**
 * Transformation extends Converter by the extra functionality to merge instances of the soure type onto the target type instance.
 */
@@ -24,4 +26,7 @@ public interface Transformation<A, B> extends Converter
 	UniTransformation<A, B> getAB();
 
 	UniTransformation<B, A> getBA();
+
+	AttributeTransformation<A, B> getAttributeTransformationByA(String attributeCode);
+	AttributeTransformation<A, B> getAttributeTransformationByB(String attributeCode);
 }

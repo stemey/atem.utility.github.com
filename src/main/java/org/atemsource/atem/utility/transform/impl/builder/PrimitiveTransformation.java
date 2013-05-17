@@ -5,28 +5,39 @@ import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.UniConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
+import org.atemsource.atem.utility.transform.impl.transformation.AbstractOneToOneAttributeTransformation;
 
-public class PrimitiveTransformation<A,B> implements Transformation<A,B> {
-private Converter<A,B> converter;
+public class PrimitiveTransformation<A, B> implements Transformation<A, B> {
+	private Converter<A, B> converter;
 
-public UniTransformation<A, B> getAB() {
-	return new PrimitiveUniTransformation(converter.getAB());
-}
+	public UniTransformation<A, B> getAB() {
+		return new PrimitiveUniTransformation(converter.getAB());
+	}
 
-public UniTransformation<B, A> getBA() {
-	return new PrimitiveUniTransformation(converter.getBA());
-}
+	public UniTransformation<B, A> getBA() {
+		return new PrimitiveUniTransformation(converter.getBA());
+	}
 
-public PrimitiveTransformation(Converter<A, B> converter) {
-	super();
-	this.converter = converter;
-}
+	public PrimitiveTransformation(Converter<A, B> converter) {
+		super();
+		this.converter = converter;
+	}
 
-public Type<?> getTypeA() {
-	return converter.getTypeA();
-}
+	public Type<?> getTypeA() {
+		return converter.getTypeA();
+	}
 
-public Type<?> getTypeB() {
-	return converter.getTypeB();
-}
+	public Type<?> getTypeB() {
+		return converter.getTypeB();
+	}
+
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByA(String attributeCode) {
+		return null;
+	}
+
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByB(String attributeCode) {
+		return null;
+	}
 }

@@ -5,6 +5,8 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.impl.EntityUtils;
+import org.atemsource.atem.utility.transform.impl.transformation.OneToOneAttributeTransformation;
+import org.atemsource.atem.utility.transform.impl.transformation.TransformUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 /**
@@ -71,5 +73,15 @@ public class UniTypeCreator<A, B> implements UniTransformation<A, B> {
 				return newB;
 			}
 		}
+	}
+
+	@Override
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationByTarget(String attributeCode) {
+		throw new UnsupportedOperationException("unsupported operation");
+	}
+
+	@Override
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationBySource(String attributeCode) {
+		throw new UnsupportedOperationException("unsupported operation");
 	}
 }

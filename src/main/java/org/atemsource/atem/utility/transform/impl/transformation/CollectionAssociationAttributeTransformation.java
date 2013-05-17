@@ -18,11 +18,9 @@ import org.atemsource.atem.utility.transform.impl.builder.Filter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope("prototype")
-public class CollectionAssociationAttributeTransformation<A, B> extends OneToOneAttributeTransformation<A, B>
-{
+public class CollectionAssociationAttributeTransformation<A, B> extends AbstractOneToOneAttributeTransformation<A, B> {
 	private Class<?> associationType;
 
 	private boolean convertEmptyToNull;
@@ -31,115 +29,87 @@ public class CollectionAssociationAttributeTransformation<A, B> extends OneToOne
 
 	private Filter<Object> filter;
 
-	public boolean isConvertEmptyToNull()
-	{
+	public boolean isConvertEmptyToNull() {
 		return convertEmptyToNull;
 	}
 
-	public boolean isConvertNullToEmpty()
-	{
+	public boolean isConvertNullToEmpty() {
 		return convertNullToEmpty;
 	}
 
-	public void setAssociationType(Class<?> associationType)
-	{
+	public void setAssociationType(Class<?> associationType) {
 		this.associationType = associationType;
 	}
 
-	public void setConvertEmptyToNull(boolean convertEmptyToNull)
-	{
+	public void setConvertEmptyToNull(boolean convertEmptyToNull) {
 		this.convertEmptyToNull = convertEmptyToNull;
 	}
 
-	public void setConvertNullToEmpty(boolean convertNullToEmpty)
-	{
+	public void setConvertNullToEmpty(boolean convertNullToEmpty) {
 		this.convertNullToEmpty = convertNullToEmpty;
 	}
 
-	public void setFilter(Filter<Object> filter)
-	{
+	public void setFilter(Filter<Object> filter) {
 		this.filter = filter;
 	}
 
 	@Override
 	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB,
-		TransformationContext ctx, UniTransformation<Object, Object> converter)
-	{
-		CollectionAttribute<Object, Object> attributeA =
-			(CollectionAttribute<Object, Object>) attributePathA.getAttribute(a);
-		if (attributeA == null)
-		{
+			TransformationContext ctx, UniTransformation<Object, Object> converter) {
+		CollectionAttribute<Object, Object> attributeA = (CollectionAttribute<Object, Object>) attributePathA
+				.getAttribute(a);
+		if (attributeA == null) {
 			// TODO above seems to be null sometimes
 			attributeA = (CollectionAttribute<Object, Object>) attributePathA.getAttribute();
 		}
-		CollectionAttribute<Object, Object> attributeB =
-			(CollectionAttribute<Object, Object>) attributePathB.getAttribute();
+		CollectionAttribute<Object, Object> attributeB = (CollectionAttribute<Object, Object>) attributePathB
+				.getAttribute();
 		Object baseValueA = attributePathA.getBaseValue(a);
 
-		if (baseValueA == null)
-		{
+		if (baseValueA == null) {
 			return;
 		}
 
 		Collection<Object> associatedEntities = attributeA.getElements(baseValueA);
 
-		if (convertEmptyToNull && associatedEntities.size() == 0)
-		{
+		if (convertEmptyToNull && associatedEntities.size() == 0) {
+			attributeB.setValue(b, null);
 			return;
 		}
 
 		Object emptyCollection;
-		if (associationType != null)
-		{
-			try
-			{
-				emptyCollection = associationType.newInstance();
-			}
-			catch (InstantiationException e)
-			{
-				throw new TechnicalException("cannot instantiate collection", e);
-			}
-			catch (IllegalAccessException e)
-			{
-				throw new TechnicalException("cannot instantiate collection", e);
-			}
+		if (attributeB.getValue(b) != null) {
+			attributeB.clear(b);
+		} else {
+			if (associationType != null) {
+				try {
+					emptyCollection = associationType.newInstance();
+				} catch (InstantiationException e) {
+					throw new TechnicalException("cannot instantiate collection", e);
+				} catch (IllegalAccessException e) {
+					throw new TechnicalException("cannot instantiate collection", e);
+				}
 
+			} else {
+				emptyCollection = attributeB.getEmptyCollection(b);
+			}
+			if (associatedEntities!=null || convertNullToEmpty) {
+				attributeB.setValue(b, emptyCollection);
+
+			}
 		}
-		else
-		{
-			emptyCollection = attributeB.getEmptyCollection(b);
-		}
-		if (associatedEntities != null)
-		{
-			attributeB.setValue(b, emptyCollection);
-			for (Object valueA : associatedEntities)
-			{
-				if (filter == null || filter.isInluded(valueA))
-				{
+		if (associatedEntities != null) {
+			for (Object valueA : associatedEntities) {
+				if (filter == null || filter.isInluded(valueA)) {
 					Object valueB;
-					if (converter != null)
-					{
+					if (converter != null) {
 						valueB = converter.convert(valueA, ctx);
-					}
-					else
-					{
+					} else {
 						valueB = valueA;
 					}
 					attributeB.addElement(b, valueB);
 				}
 			}
-		}
-		else
-		{
-			if (convertNullToEmpty)
-			{
-				attributeB.setValue(b, null);
-			}
-			else
-			{
-				attributeB.setValue(b, emptyCollection);
-			}
-
 		}
 	}
 }

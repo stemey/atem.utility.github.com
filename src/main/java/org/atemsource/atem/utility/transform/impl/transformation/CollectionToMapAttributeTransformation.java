@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class CollectionToMapAttributeTransformation<A, B> extends
-OneToOneAttributeTransformation<A, B> {
+AbstractOneToOneAttributeTransformation<A, B> {
 
 	@Override
 	public void mergeBA(B b, A a, TransformationContext ctx) {

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class MapAssociationAttributeTransformation<A, B> extends
-OneToOneAttributeTransformation<A, B> {
+AbstractOneToOneAttributeTransformation<A, B> {
 
 	@Override
 	public void mergeBA(B b, A a, TransformationContext ctx) {
@@ -83,7 +83,7 @@ OneToOneAttributeTransformation<A, B> {
 	protected void transformInternally(Object a, Object b,
 			AttributePath attributeA, AttributePath attributeB,
 			TransformationContext ctx, UniTransformation<Object, Object> ab) {
-
+		throw new UnsupportedOperationException("remove this code");
 	}
 
 	protected void transformInternally(Object a, Object b,
@@ -101,6 +101,8 @@ OneToOneAttributeTransformation<A, B> {
 			Object emptyCollection = attributeB.getEmptyMap();
 
 			attributeB.setValue(b, emptyCollection);
+		}else{
+			attributeB.clear(b);
 		}
 		if (attributeA.getValue(a) != null && attributeA.getSize(a) > 0) {
 

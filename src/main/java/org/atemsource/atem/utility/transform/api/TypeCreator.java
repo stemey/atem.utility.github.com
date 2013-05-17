@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import org.atemsource.atem.api.BeanLocator;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.utility.transform.impl.transformation.AbstractOneToOneAttributeTransformation;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +59,18 @@ public class TypeCreator<A, B> implements Transformation<A, B>
 		ab.initialize(sourceType, targetType);
 		ba = beanLocator.getInstance(UniTypeCreator.class);
 		ba.initialize(targetType, sourceType);
+	}
+
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByA(String attributeCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByB(String attributeCode) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

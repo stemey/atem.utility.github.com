@@ -101,4 +101,14 @@ public class CustomCollectionAssociationAttributeTransformation<A, B, C, D> impl
 		this.groupTransformation = groupTransformation;
 	}
 
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByA(String attributeCode) {
+		return null;
+	}
+
+	@Override
+	public AbstractOneToOneAttributeTransformation<A, B> getAttributeTransformationByB(String attributeCode) {
+		return null;
+	}
+
 }

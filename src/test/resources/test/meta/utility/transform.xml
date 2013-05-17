@@ -24,6 +24,11 @@
 
 	<bean id="test-repository" parent="abstract-atem-scanned-pojo-repository">
 		<property name="includedPackage" value="org.atemsource.atem.pojo" />
+		<property name="services">
+				<set>
+					<ref bean="testFindByIdService"/>
+				</set>				
+		</property>
 	</bean>
 
 
@@ -31,6 +36,11 @@
 		class="org.atemsource.atem.impl.dynamic.DynamicEntityTypeRepository">
 		<property name="serializingPrimitiveValues" value="false" />
 	</bean>
+	
+		<bean id="testFindByIdService" class="org.atemsource.atem.utility.transform.api.TestFindByIdService">
+			<property name="attributeCode" value="id"/>
+		</bean>
+
 
 	<bean id="test-annotation-repository" parent="atem-annotation-repository">
 		<property name="includedPackage" value="org.atemsource.atem.annotation" />

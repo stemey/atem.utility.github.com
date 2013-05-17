@@ -4,12 +4,14 @@ import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
+import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.ConverterFactory;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.TypeNameConverter;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+import org.atemsource.atem.utility.transform.impl.transformation.OneToOneAttributeTransformation;
 
 /**
 * this is the unidirectional variant of DynamicTransformation. It resolves the target type at runtime by using the given typeCodeConverter.
@@ -135,6 +137,16 @@ public class DynamicUniTransformation<A, B> implements UniTransformation<A, B>
 			UniTransformation transformation = derivedType.getTransformation().getAB();
 			return (B) transformation.merge(a, b, ctx);
 		}
+	}
+
+	@Override
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationByTarget(String attributeCode) {
+		throw new UnsupportedOperationException("unsupported operation");
+	}
+
+	@Override
+	public OneToOneAttributeTransformation<A, B> getAttributeTransformationBySource(String attributeCode) {
+		throw new UnsupportedOperationException("unsupported operation");
 	}
 
 }

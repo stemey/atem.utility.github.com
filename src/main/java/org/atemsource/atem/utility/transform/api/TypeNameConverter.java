@@ -7,7 +7,7 @@ import org.atemsource.atem.api.type.EntityType;
 */
 public interface TypeNameConverter {
 
-	/**
+/**
 * return the type code for the target type based on the source type.
 */
 	String convert(EntityType<?> entityType);

@@ -72,8 +72,8 @@ public abstract class OneToOneAttributeTransformationBuilder<A, B, T extends One
 	/**
 	 * if the source type is not known at build time (e.g. it is null which means the java type is Object), then use the
 	 * TypeNameConverter to find the target type code for the actual source type at transformtion time. The
-	 * transformation is defined on the meta attribute "derived_object" of the resolved target type. TODO the
-	 * TypeNameConverter should be the same that is used to create the target types. It should be possile to add the
+	 * transformation is defined on the meta attribute "derived_object" of the resolved target type.//
+	 * TODO the TypeNameConverter should be the same that is used to create the target types. It should be possile to add the
 	 * TypeNameConverter to the TransformationBuilderFactory und thus this method does not need to be called in the usual
 	 * situation.
 	 */

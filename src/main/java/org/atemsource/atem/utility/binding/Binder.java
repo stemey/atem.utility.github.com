@@ -52,6 +52,7 @@ public class Binder extends AbstractBinder implements BindingListener
 		BindingSession bindingSession = (BindingSession) beanLocator.getInstance(getBindingSessionClass());
 		bindingSession.setTypeNameConverter(typeNameConverter);
 		bindingSession.setAttributeNameConverter(attributeNameConverter);
+		bindingSession.setAttributeConverters(attributeConverters);
 		bindingSession.setSubRepository(subRepository);
 		bindingSession.setTransformationBuilderFactory(transformationBuilderFactory);
 		bindingSession.addListener(this);

@@ -15,6 +15,11 @@ public class JacksonTransformationContext extends SimpleTransformationContext {
 
 	private EntityType<ObjectNode> genericType;
 
+	@Override
+	public boolean isTransformed(Object a) {
+		return false;
+	}
+
 	public JacksonTransformationContext(EntityTypeRepository entityTypeRepository) {
 		super(entityTypeRepository);
 		genericType = entityTypeRepository.getEntityType(ObjectNode.class);

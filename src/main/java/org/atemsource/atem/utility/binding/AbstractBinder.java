@@ -14,15 +14,20 @@ import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.impl.DerivationMetaAttributeRegistrar;
 
 /**
-* The AbstractBinder defines the basic configuration properties for binding.
-*/
-public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilter<J>
-{
+ * The AbstractBinder defines the basic configuration properties for binding.
+ */
+public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilter<J> {
 
 	protected AttributeNameConverter attributeNameConverter;
 
 	@Inject
 	protected BeanLocator beanLocator;
+
+	protected List<AttributeConverter> attributeConverters;
+
+	public void setAttributeConverters(List<AttributeConverter> attributeConverters) {
+		this.attributeConverters = attributeConverters;
+	}
 
 	private Class<BindingSession> bindingSessionClass = BindingSession.class;
 
@@ -46,95 +51,80 @@ public class AbstractBinder<J> implements org.atemsource.atem.api.type.TypeFilte
 		return typeFilter;
 	}
 
-/**
-* The TypeFilter defines the types to be bound.
-*/
+	/**
+	 * The TypeFilter defines the types to be bound.
+	 */
 	public void setTypeFilter(org.atemsource.atem.api.type.TypeFilter<?> typeFilter) {
 		this.typeFilter = typeFilter;
 	}
 
-	public AbstractBinder()
-	{
+	public AbstractBinder() {
 		super();
 	}
 
-	public AttributeNameConverter getAttributeNameConverter()
-	{
+	public AttributeNameConverter getAttributeNameConverter() {
 		return attributeNameConverter;
 	}
 
-	public Class<? extends BindingSession> getBindingSessionClass()
-	{
+	public Class<? extends BindingSession> getBindingSessionClass() {
 		return bindingSessionClass;
 	}
 
 	@Override
-	public Collection<? extends EntityType<J>> getEntityTypes()
-	{
+	public Collection<? extends EntityType<J>> getEntityTypes() {
 		return (Collection<? extends EntityType<J>>) subRepository.getEntityTypes();
 	}
 
-	public List<AttributeFilter> getFilters()
-	{
+	public List<AttributeFilter> getFilters() {
 		return filters;
 	}
-	
+
 	public EntityType<?> getEntityType(Object entity) {
 		return subRepository.getEntityType(entity);
 	}
 
-	
-
-	public DynamicEntityTypeSubrepository<?> getSubRepository()
-	{
+	public DynamicEntityTypeSubrepository<?> getSubRepository() {
 		return subRepository;
 	}
 
-	public TransformationBuilderFactory getTransformationBuilderFactory()
-	{
+	public TransformationBuilderFactory getTransformationBuilderFactory() {
 		return transformationBuilderFactory;
 	}
 
-	
-/**
-* define a startegy to create target attribute names. Optional.
-*/
-	public void setAttributeNameConverter(AttributeNameConverter attributeNameConverter)
-	{
+	/**
+	 * define a startegy to create target attribute names. Optional.
+	 */
+	public void setAttributeNameConverter(AttributeNameConverter attributeNameConverter) {
 		this.attributeNameConverter = attributeNameConverter;
 	}
 
-/**
+	/**
 * 
 */
-	public void setBindingSessionClass(Class<BindingSession> bindingSessionClass)
-	{
+	public void setBindingSessionClass(Class<BindingSession> bindingSessionClass) {
 		this.bindingSessionClass = bindingSessionClass;
 	}
 
-/**
-* set a list of attribute filters. 
-*/
-	public void setFilters(List<AttributeFilter> filters)
-	{
+	/**
+	 * set a list of attribute filters.
+	 */
+	public void setFilters(List<AttributeFilter> filters) {
 		this.filters = filters;
 	}
 
-/**
-* define the subrepositories to create the target types in.
-*/
-	public void setSubRepository(DynamicEntityTypeSubrepository<?> subRepository)
-	{
+	/**
+	 * define the subrepositories to create the target types in.
+	 */
+	public void setSubRepository(DynamicEntityTypeSubrepository<?> subRepository) {
 		this.subRepository = subRepository;
 	}
 
-/**
-* define the transformationBUilderFactory. TODO subRepository in tansformationBUilderFactory should be the same as in AbstractBinder.
-*/
-	public void setTransformationBuilderFactory(TransformationBuilderFactory transformationBuilderFactory)
-	{
+	/**
+	 * define the transformationBUilderFactory. TODO subRepository in
+	 * tansformationBUilderFactory should be the same as in AbstractBinder.
+	 */
+	public void setTransformationBuilderFactory(TransformationBuilderFactory transformationBuilderFactory) {
 		this.transformationBuilderFactory = transformationBuilderFactory;
 	}
-
 
 }

@@ -82,6 +82,7 @@ public class VersionedBinder extends AbstractBinder
 				BindingSession bindingSession = (BindingSession) beanLocator.getInstance(getBindingSessionClass());
 				bindingSession.setTypeNameConverter(createTypeCode(version));
 				bindingSession.setAttributeNameConverter(getAttributeNameConverter());
+				bindingSession.setAttributeConverters(attributeConverters);
 				bindingSession.setSubRepository(getSubRepository());
 				bindingSession.setTransformationBuilderFactory(getTransformationBuilderFactory());
 				bindingSession.addListener(new VersionBindingListener(version));

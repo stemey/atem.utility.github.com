@@ -35,6 +35,10 @@ public class BindingSession {
 
 	private Logger logger = Logger.getLogger(getClass());
 
+	private AttributeNameConverter attributeNameConverters;
+
+	private List<AttributeConverter> attributeConverters;
+
 	public void createEntityType(EntityType<?> entityType) {
 		String jsonTypeName = typeNameConverter.convert(entityType);
 		if (transformations.get(entityType.getCode()) != null) {
@@ -52,7 +56,7 @@ public class BindingSession {
 					this,
 					transformationBuilder);
 			TransformationVisitor visitor = new TransformationVisitor(
-					typeNameConverter, attributeFilters, attributeNameConverter);
+					typeNameConverter, attributeFilters, attributeNameConverter, attributeConverters);
 			context.addTransformationBuilder(transformationBuilder);
 			HierachyVisitor.visit(entityType,visitor, context);
 			EntityTypeTransformation<?, ?> transformation = transformationBuilder
@@ -65,6 +69,12 @@ public class BindingSession {
 	}
 
 	
+
+	public void setAttributeConverters(List<AttributeConverter> attributeConverters) {
+		this.attributeConverters = attributeConverters;
+	}
+
+
 
 	public DynamicEntityTypeSubrepository<?> getSubRepository() {
 		return subRepository;

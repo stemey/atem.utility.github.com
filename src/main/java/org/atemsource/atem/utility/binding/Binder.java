@@ -1,6 +1,9 @@
 package org.atemsource.atem.utility.binding;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
+
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
@@ -19,6 +22,8 @@ public class Binder extends AbstractBinder implements BindingListener
 	public Binder()
 	{
 		super();
+		attributeConverters=new ArrayList<AttributeConverter>();
+		attributeConverters.add(new AnnotationAttributeConverter());
 	}
 
 	@Override

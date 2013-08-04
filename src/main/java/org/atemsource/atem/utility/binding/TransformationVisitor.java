@@ -110,19 +110,20 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 				}
 			}
 		}
-		Conversion conversion = ((JavaMetaData) attribute).getAnnotation(Conversion.class);
-		if (conversion != null) {
-			JavaConverter<?, ?> javaConverter;
-			try {
-				javaConverter = conversion.value().newInstance();
-			} catch (InstantiationException e) {
-				throw new TechnicalException("cannot instantiate converter", e);
-			} catch (IllegalAccessException e) {
-				throw new TechnicalException("cannot instantiate converter", e);
+		boolean converted = false;
+		if ( attributeConverters != null) {
+			Converter converter = null;
+			Iterator<AttributeConverter> attributeConverterIterator = attributeConverters.iterator();
+			while (converter == null && attributeConverterIterator.hasNext()) {
+				converter = attributeConverterIterator.next().createConverter(context, attribute);
 			}
-			Converter<?, ?> converter = ConverterUtils.create(javaConverter);
-			convert(context, attribute, converter);
-		} else {
+			if (converter != null) {
+				converted = true;
+				convert(context, attribute, converter);
+			}
+
+		}
+		if (!converted) {
 			Converter<?, ?> converter = context.getCurrent().getConverterFactory().get(attribute.getTargetType());
 			if (converter != null) {
 				convert(context, attribute, converter);

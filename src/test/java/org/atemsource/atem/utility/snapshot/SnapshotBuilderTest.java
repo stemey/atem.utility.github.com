@@ -9,13 +9,17 @@ package org.atemsource.atem.utility.snapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import junit.framework.Assert;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
+import org.atemsource.atem.pojo.EntityB2;
 import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.junit.Test;
@@ -72,4 +76,23 @@ public class SnapshotBuilderTest
 
 	}
 
+	@Test
+	public void testSup()
+	{
+		EntityType<EntityB2> entityTypeB2 = entityTypeRepository.getEntityType(EntityB2.class);
+		EntityType<EntityB> entityTypeB = entityTypeRepository.getEntityType(EntityB.class);
+
+		SnapshotBuilder snapshotBuilder = snapshotBuilderFactory.create(entityTypeB);
+		snapshotBuilder.include(entityTypeB2);
+		Transformation<EntityB2, Object> snapshotting = (Transformation<EntityB2, Object>) snapshotBuilder.create();
+
+		EntityB2 entity = new EntityB2();
+		entity.setId("hh");
+		entity.setInteger(55);
+
+		Object snapshot = snapshotting.getAB().convert(entity, new SimpleTransformationContext(entityTypeRepository));
+		EntityB2 restored = snapshotting.getBA().convert(snapshot, new SimpleTransformationContext(entityTypeRepository));
+		Assert.assertEquals(55, restored.getInteger());
+
+	}
 }

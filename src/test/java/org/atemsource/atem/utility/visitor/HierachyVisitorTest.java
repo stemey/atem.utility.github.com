@@ -9,7 +9,6 @@ import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.view.View;
 import org.atemsource.atem.api.view.ViewVisitor;
 import org.atemsource.atem.api.view.Visitor;
-import org.atemsource.atem.impl.pojo.EntityB;
 import org.atemsource.atem.utility.domain.DomainA;
 import org.junit.Assert;
 import org.junit.Test;

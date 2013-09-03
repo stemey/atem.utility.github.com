@@ -7,7 +7,9 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.snapshot;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,6 +28,7 @@ import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
+import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.OneToOneAttributeTransformationBuilder;
 import org.atemsource.atem.utility.visitor.HierachyVisitor;
 import org.springframework.context.annotation.Scope;
@@ -55,6 +58,8 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 
 	private final Set<SnapshotAttributeBuilder> subBuilders = new HashSet<SnapshotAttributeBuilder>();
 
+	private final Map<String, SnapshotBuilder> subTypeBuilders = new HashMap<String, SnapshotBuilder>();
+
 	private TypeTransformationBuilder<Object, Object> transformationBuilder;
 
 	private TransformationBuilderFactory transformationBuilderFactory;
@@ -65,7 +70,14 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 		{
 			subBuilder.preCreate();
 		}
-		return transformationBuilder.buildTypeTransformation();
+		EntityTypeTransformation<Object, Object> buildTypeTransformation =
+			transformationBuilder.buildTypeTransformation();
+		for (SnapshotBuilder subBuilder : subTypeBuilders.values())
+		{
+			Transformation<?, ?> subTransformation = subBuilder.create();
+			buildTypeTransformation.addSubTransformation((EntityTypeTransformation<Object, Object>) subTransformation);
+		}
+		return buildTypeTransformation;
 	}
 
 	public AttributePathBuilderFactory getAttributePathBuilderFactory()
@@ -161,7 +173,21 @@ public class SnapshotBuilder implements ViewVisitor<SnapshotBuilder>
 	@Override
 	public void visit(SnapshotBuilder context, Attribute attribute)
 	{
-		context.include(context.getEntityType().getAttribute(attribute.getCode()));
+		if (context.getEntityType() != attribute.getEntityType())
+		{
+			// probably in sub type
+			SnapshotBuilder childBuilder = subTypeBuilders.get(attribute.getEntityType().getCode());
+			if (childBuilder == null)
+			{
+				childBuilder = this.factory.create(attribute.getEntityType());
+			}
+			subTypeBuilders.put(attribute.getEntityType().getCode(), childBuilder);
+			childBuilder.include(attribute);
+		}
+		else
+		{
+			context.include(context.getEntityType().getAttribute(attribute.getCode()));
+		}
 	}
 
 	@Override

@@ -128,7 +128,17 @@ public class VersionedBinder extends AbstractBinder
 			{
 				Binding binding = new Binding();
 				binding.setVersion(version);
-				binding.setExternalTypeCode(((JsonEntityTypeImpl) targetType).getExternalTypeCode());
+				if (targetType instanceof JsonEntityTypeImpl)
+				{
+
+					binding.setExternalTypeCode(((JsonEntityTypeImpl) targetType).getExternalTypeCode());
+				}
+				else if (targetType instanceof org.atemsource.atem.impl.fasterjson.JsonEntityTypeImpl)
+				{
+
+					binding.setExternalTypeCode(((org.atemsource.atem.impl.fasterjson.JsonEntityTypeImpl) targetType)
+						.getExternalTypeCode());
+				}
 				bindingAttribute.setValue(targetType, binding);
 			}
 			logger.info("added version to type " + targetType.getCode());

@@ -72,16 +72,13 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 			return;
 		}
 		builder.from(attribute.getCode()).to(targetAttributeName);
-		if (attribute.getTargetType() == null)
+		if (converter != null)
+		{
+			builder.convert(converter);
+		}
+		else if (attribute.getTargetType() == null)
 		{
 			builder.convertDynamically(typeNameConverter);
-		}
-		else
-		{
-			if (converter != null)
-			{
-				builder.convert(converter);
-			}
 		}
 	}
 

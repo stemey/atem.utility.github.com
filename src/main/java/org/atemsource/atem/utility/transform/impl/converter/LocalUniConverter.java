@@ -7,11 +7,11 @@ import org.atemsource.atem.utility.transform.api.UniConverter;
 
 public class LocalUniConverter implements UniConverter<Object, Object>
 {
-	private final LocalConverter<Object, Object> converter;
+	private final AbstractLocalConverter<Object, Object> converter;
 
 	private final boolean direction;
 
-	public LocalUniConverter(LocalConverter converter, boolean direction)
+	public LocalUniConverter(AbstractLocalConverter converter, boolean direction)
 	{
 		super();
 		this.direction = direction;

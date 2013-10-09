@@ -92,7 +92,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 		if (attributeConverters != null) {
 			Iterator<AttributeConverter> attributeConverterIterator = attributeConverters.iterator();
 			while (converter == null && attributeConverterIterator.hasNext()) {
-				converter = attributeConverterIterator.next().createConverter(context, attribute);
+				converter = attributeConverterIterator.next().createConverter(context, attribute,null);
 			}
 		}
 
@@ -115,7 +115,7 @@ public class TransformationVisitor implements ViewVisitor<TransformationContext>
 			Converter converter = null;
 			Iterator<AttributeConverter> attributeConverterIterator = attributeConverters.iterator();
 			while (converter == null && attributeConverterIterator.hasNext()) {
-				converter = attributeConverterIterator.next().createConverter(context, attribute);
+				converter = attributeConverterIterator.next().createConverter(context, attribute,attributeVisitor);
 			}
 			if (converter != null) {
 				converted = true;

@@ -19,6 +19,22 @@ public abstract  class AbstractOneToOneAttributeTransformation<A, B>  extends Ab
 		transformInternally(b, a,
 				getAttributeB(), getAttributeA(), ctx, baConverter);
 	}
+	
+	public A convertBA(B b, TransformationContext ctx) {
+		if (transformation!=null) {
+			return (A) transformation.getBA().convert(b, ctx);
+		}else{
+			return (A) b;
+		}
+	}
+	
+	public B convertAB(A a , TransformationContext ctx) {
+		if (transformation!=null) {
+			return (B) transformation.getAB().convert(a, ctx);
+		}else{
+			return (B) a;
+		}
+	}
 
 	public AttributePath getAttributeA() {
 		return getAttributeAs().iterator().next();

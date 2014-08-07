@@ -10,6 +10,7 @@ import org.atemsource.atem.pojo.EntityB;
 import org.atemsource.atem.pojo.EntityC;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
 import org.atemsource.atem.utility.domain.Vehicle;
+import org.atemsource.atem.utility.transform.api.AbstractTypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.TransformationBuilderFactory;
 import org.atemsource.atem.utility.transform.api.TypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.constraint.PossibleValues;
@@ -35,7 +36,7 @@ public class EnumConversionTest {
 	private EntityTypeRepository entityTypeRepository;
 
 	private EntityTypeTransformation<?, ?> createEntityBTransformation() {
-		TypeTransformationBuilder<?, ?> bBuilder = transformationBuilderFactory
+		TypeTransformationBuilder<?,?> bBuilder = transformationBuilderFactory
 				.create(EntityC.class,
 						dynamicEntityTypeSubrepository.createBuilder("EntityC"));
 		bBuilder.transform().from("vehicle").to("vehicle")

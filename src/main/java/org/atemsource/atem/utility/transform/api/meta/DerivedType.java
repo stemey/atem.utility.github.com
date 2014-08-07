@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.api.meta;
 
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
@@ -14,31 +15,39 @@ import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 /**
 * This class defines the eta data to attach to a derived type. The original type and the transformation.
 */
-public class DerivedType implements DerivedObject
+public class DerivedType<O,T> implements DerivedObject
 {
 
-	private EntityType<?> originalType;
+	private EntityType<O> originalType;
 
-	private EntityTypeTransformation<?, ?> transformation;
+	private EntityTypeTransformation<O, T> transformation;
 
-	public EntityType<?> getOriginalType()
+	public EntityType<O> getOriginalType()
 	{
 		return originalType;
 	}
 
-	public EntityTypeTransformation<?, ?> getTransformation()
+	public EntityTypeTransformation<O, T> getTransformation()
 	{
 		return transformation;
 	}
 
-	public void setOriginalType(EntityType<?> originalType)
+	public void setOriginalType(EntityType<O> originalType)
 	{
 		this.originalType = originalType;
 	}
 
-	public void setTransformation(EntityTypeTransformation<?, ?> transformation)
+	public void setTransformation(EntityTypeTransformation<O, T> transformation)
 	{
 		this.transformation = transformation;
+	}
+	
+	public Attribute findDerived(Attribute originalAttribute) {
+		return transformation.getDerivedAttribute(originalAttribute);
+	}
+
+	public Attribute findOriginal(Attribute derivedAttribute) {
+		return transformation.getOriginalAttribute(derivedAttribute);
 	}
 
 	@Override

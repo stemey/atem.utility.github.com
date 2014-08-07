@@ -14,60 +14,94 @@ import org.atemsource.atem.utility.transform.api.AttributeTransformation;
 import org.atemsource.atem.utility.transform.api.Transformation;
 import org.atemsource.atem.utility.transform.api.TransformationContext;
 import org.atemsource.atem.utility.transform.api.UniTransformation;
+import org.atemsource.atem.utility.transform.service.CreationService;
 
+/**
+ * 
+ * @author stefan
+ * 
+ */
 public class TransformUtils {
-	public static <A, B> B findTargetEntity(UniTransformation<A, B> transformation, A source, B target,
+	public static <A, B> B findTargetEntity(
+			UniTransformation<A, B> transformation, A source, B target,
 			TransformationContext context) {
 
 		EntityType<A> entityTypeByA = context.getEntityTypeByA(source);
+		if (entityTypeByA == null) {
+			Type<A> sourceType = transformation.getSourceType();
+			if (sourceType instanceof EntityType) {
+				entityTypeByA = (EntityType<A>) sourceType;
+			}
+		}
 		Type<? extends B> typeB;
 		if (entityTypeByA == null) {
 			typeB = transformation.getTargetType();
 		} else {
 			typeB = transformation.getTargetType(entityTypeByA);
 		}
+
 		if (typeB instanceof EntityType) {
 			EntityType<Object> targetType = (EntityType<Object>) typeB;
-			IdentityAttributeService identityService = targetType.getService(IdentityAttributeService.class);
-			Serializable id = target == null ? null : identityService.getId(targetType, (Object) target);
+			IdentityAttributeService identityService = targetType
+					.getService(IdentityAttributeService.class);
+			Serializable id = target == null ? null : identityService.getId(
+					targetType, (Object) target);
 
 			// check if the existing target has the right type
 			if (target != null) {
-				EntityType<B> targetInstanceType = context.getEntityTypeByB(target);
+				EntityType<B> targetInstanceType = context
+						.getEntityTypeByB(target);
 				if (!targetInstanceType.equals(targetType)) {
 					target = null;
 				}
 			}
 
 			// find the persistent entity to merge onto that
-			FindByIdService findByIdService = targetType.getService(FindByIdService.class);
+			FindByIdService findByIdService = targetType
+					.getService(FindByIdService.class);
 			if (identityService != null && findByIdService != null) {
-				SingleAttribute<? extends Serializable> idAttribute = identityService.getIdAttribute(targetType);
+				SingleAttribute<? extends Serializable> idAttribute = identityService
+						.getIdAttribute(targetType);
 				OneToOneAttributeTransformation<A, B> attributeTransformation = transformation
-						.getAttributeTransformationByTarget(idAttribute.getCode());
+						.getAttributeTransformationByTarget(idAttribute
+								.getCode());
 				if (attributeTransformation != null) {
-					Object idA = attributeTransformation.getAttributeA().getValue(source);
+					Object idA = attributeTransformation.getAttributeA()
+							.getValue(source);
 					if (idA != id) {
 
-						Transformation idConverter = attributeTransformation.getTransformation();
+						Transformation idConverter = attributeTransformation
+								.getTransformation();
 						Object idB;
 						if (idConverter != null) {
 							idB = idConverter.getAB().convert(idA, context);
 						} else {
 							idB = idA;
 						}
-						target = (B) findByIdService.findById(targetType, (Serializable) idB);
+						target = (B) findByIdService.findById(targetType,
+								(Serializable) idB);
 					}
 				}
 			}
 		} else {
 			target = null;
 		}
+
+		if (target == null && entityTypeByA != null) {
+			CreationService<B, A> creationService = ((EntityType<B>) typeB)
+					.getService(CreationService.class);
+			if (creationService != null) {
+				target = creationService.create((EntityType<B>) typeB,
+						entityTypeByA, source);
+			}
+		}
+
 		return target;
 
 	}
 
-	public static <A, B> Transformation<B, A> reverse(final Transformation<A, B> original) {
+	public static <A, B> Transformation<B, A> reverse(
+			final Transformation<A, B> original) {
 		if (original == null) {
 			return null;
 		}
@@ -94,13 +128,17 @@ public class TransformUtils {
 			}
 
 			@Override
-			public AttributeTransformation<B, A> getAttributeTransformationByA(String attributeCode) {
-				return reverse((OneToOneAttributeTransformation) original.getAttributeTransformationByB(attributeCode));
+			public AttributeTransformation<B, A> getAttributeTransformationByA(
+					String attributeCode) {
+				return reverse((OneToOneAttributeTransformation) original
+						.getAttributeTransformationByB(attributeCode));
 			}
 
 			@Override
-			public AttributeTransformation<B, A> getAttributeTransformationByB(String attributeCode) {
-				return reverse((OneToOneAttributeTransformation) original.getAttributeTransformationByA(attributeCode));
+			public AttributeTransformation<B, A> getAttributeTransformationByB(
+					String attributeCode) {
+				return reverse((OneToOneAttributeTransformation) original
+						.getAttributeTransformationByA(attributeCode));
 			}
 		};
 	}
@@ -147,7 +185,8 @@ public class TransformUtils {
 
 			@Override
 			public Transformation getTransformation() {
-				return (Transformation) TransformUtils.reverse(original.getTransformation());
+				return (Transformation) TransformUtils.reverse(original
+						.getTransformation());
 			}
 
 			@Override

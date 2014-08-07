@@ -3,14 +3,18 @@ package org.atemsource.atem.utility.transform.api.attribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
+
 import junit.framework.Assert;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.dynamic.DynamicEntity;
 import org.atemsource.atem.pojo.EntityA;
 import org.atemsource.atem.pojo.EntityB;
 import org.atemsource.atem.spi.DynamicEntityTypeSubrepository;
+import org.atemsource.atem.utility.transform.api.AbstractTypeTransformationBuilder;
 import org.atemsource.atem.utility.transform.api.Converter;
 import org.atemsource.atem.utility.transform.api.JavaConverter;
 import org.atemsource.atem.utility.transform.api.SimpleTransformationContext;
@@ -46,7 +50,7 @@ public class CollectionToMapTest
 	{
 		if (entityBTransformation == null)
 		{
-			TypeTransformationBuilder<?, ?> bBuilder =
+			TypeTransformationBuilder<?,?> bBuilder =
 				transformationBuilderFactory.create(EntityB.class, dynamicEntityTypeSubrepository.createBuilder("EntityB"));
 			bBuilder.transform().from("integer").to("i");
 			entityBTransformation = bBuilder.buildTypeTransformation();
@@ -78,7 +82,7 @@ public class CollectionToMapTest
 	@Test
 	public void test()
 	{
-		TypeTransformationBuilder<?, ?> builder =
+		TypeTransformationBuilder<?,?> builder =
 			transformationBuilderFactory.create(EntityA.class,
 				dynamicEntityTypeSubrepository.createBuilder("collectionToMap"));
 		CollectionToMap transformCustom = builder.transformCustom(CollectionToMap.class);

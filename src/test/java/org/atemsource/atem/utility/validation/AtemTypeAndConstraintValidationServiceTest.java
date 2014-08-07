@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+
 import org.atemsource.atem.api.EntityTypeRepository;
+import org.atemsource.atem.api.attribute.CollectionSortType;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.EntityTypeBuilder;
@@ -28,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.Errors;
 
 
 @ContextConfiguration(locations = {"classpath:/test/meta/utility/json-validation.xml"})
@@ -165,6 +168,31 @@ public class AtemTypeAndConstraintValidationServiceTest
 		SimpleValidationContext context = new SimpleValidationContext(entityTypeRepository);
 		validationService.validate(type, context, node);
 		Assert.assertEquals(1, context.getErrors().size());
+
+	}
+
+	@Test
+	public void testCollection() throws JsonProcessingException, IOException
+	{
+
+		EntityTypeBuilder elementBuilder = repository.createBuilder("collectionElement");
+		elementBuilder.addSingleAttribute("text", String.class);
+		EntityType<?> elementType = elementBuilder.createEntityType();
+		
+		EntityTypeBuilder builder = repository.createBuilder("collection1");
+		builder.addMultiAssociationAttribute("list", elementType,CollectionSortType.ORDERABLE);
+		EntityType<ObjectNode> type = (EntityType<ObjectNode>) builder.createEntityType();
+
+		ObjectNode node = (ObjectNode) mapper.readTree("{ext_type:'collection1',list:[{ext_type:'collectionElement','text':'hallo'},{ext_type:'collectionElement','text':'bye bye'}]}");
+		ValidationService validationService = type.getService(ValidationService.class);
+		SimpleValidationContext context = new SimpleValidationContext(entityTypeRepository);
+		validationService.validate(type, context, node);
+		if (context.getErrors().size()>0) {
+			for (org.atemsource.atem.utility.validation.AbstractValidationContext.Error error:context.getErrors()) {
+				System.out.println(error.getMessage());
+			}
+		}
+		Assert.assertEquals(0, context.getErrors().size());
 
 	}
 

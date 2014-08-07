@@ -25,7 +25,7 @@ public class TransformationBuilderFactory
 	private ConverterFactory converterFactory;
 
 	@Deprecated
-	public <A, B> TypeTransformationBuilder<A, ?> create()
+	public <A, B> TypeTransformationBuilder<A, B> create()
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		transformationBuilder.setConverterFactory(converterFactory);
@@ -35,7 +35,7 @@ public class TransformationBuilderFactory
 /**
 * create a TypeTransformationBuilder for a trnasformation from a sourceType to a target type that is defined by the transformation.
 */
-	public <A, B> TypeTransformationBuilder<A, ?> create(Class<A> sourceType, EntityTypeBuilder targetTypeBuilder)
+	public <A, B> TypeTransformationBuilder<A, B> create(Class<A> sourceType, EntityTypeBuilder targetTypeBuilder)
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		transformationBuilder.setSourceType(sourceType);
@@ -47,10 +47,19 @@ public class TransformationBuilderFactory
 /**
 * create a TypeTransformationBuilder for a trnasformation from a sourceType to a target type that is defined by the transformation.
 */
-	public <A, B> TypeTransformationBuilder<A, ?> create(EntityType<A> sourceType, EntityTypeBuilder targetTypeBuilder)
+	public <A, B> TypeTransformationBuilder<A, B> create(EntityType<A> sourceType, EntityTypeBuilder targetTypeBuilder)
 	{
 		TypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(TypeTransformationBuilder.class);
 		transformationBuilder.setSourceType(sourceType);
+		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
+		transformationBuilder.setConverterFactory(converterFactory);
+		return transformationBuilder;
+	}
+	
+	public <A, B> DynamicTypeTransformationBuilder<A, B> create(EntityTypeBuilder sourceTypeBuilder, EntityTypeBuilder targetTypeBuilder)
+	{
+		DynamicTypeTransformationBuilder<A, B> transformationBuilder = beanLocator.getInstance(DynamicTypeTransformationBuilder.class);
+		transformationBuilder.setSourceTypeBuilder(sourceTypeBuilder);
 		transformationBuilder.setTargetTypeBuilder(targetTypeBuilder);
 		transformationBuilder.setConverterFactory(converterFactory);
 		return transformationBuilder;

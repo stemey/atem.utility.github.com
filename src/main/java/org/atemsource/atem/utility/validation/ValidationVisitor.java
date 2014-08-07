@@ -146,6 +146,7 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext>
 			}
 			else
 			{
+				AttributePathBuilder pathBuilder = attributePathBuilderFactory.createBuilder(node.getPath()).addAttribute(attribute);
 				int index = 0;
 				Iterator<?> iterator = attribute.getIterator(node.getEntity());
 				for (; iterator.hasNext();)
@@ -154,7 +155,7 @@ public class ValidationVisitor implements ViewVisitor<ValidationContext>
 					AttributePath elementPath;
 					if (attribute.getCollectionSortType() != CollectionSortType.NONE)
 					{
-						elementPath = attributePathBuilderFactory.createBuilder(node.getPath()).addIndex(index).createPath();
+						elementPath = pathBuilder.addIndex(index).createPath();
 						index++;
 					}
 					else

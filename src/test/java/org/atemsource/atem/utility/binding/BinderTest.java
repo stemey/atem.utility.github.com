@@ -1,7 +1,12 @@
 package org.atemsource.atem.utility.binding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
+
 import junit.framework.Assert;
+
 import org.atemsource.atem.api.EntityTypeRepository;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -59,6 +64,8 @@ public class BinderTest {
 		Assert.assertEquals(true,
 				((BooleanNode) nodeB.get("bField")).getBooleanValue());
 		Assert.assertTrue(node == nodeB.get("reverse"));
+		
+		Assert.assertNotNull(((EntityType<?>)transformation.getEntityTypeB().getAttribute("domainB").getTargetType()).getAttribute("reverse").getTargetType());
 	}
 
 	@Test
@@ -78,6 +85,26 @@ public class BinderTest {
 				((TextNode) node.get("subField")).getValueAsText());
 		Assert.assertEquals("bye",
 				((TextNode) node.get("field11")).getValueAsText());
+	}
+
+	@Test
+	public void testMultiAssoc() {
+
+		EntityTypeTransformation<DomainB, ObjectNode> transformation = binder
+				.getTransformation(DomainB.class);
+
+		DomainB domainB = new DomainB();
+		List<DomainA> domains= new ArrayList<DomainA>();
+		domains.add(new SubdomainA());
+		domainB.setDomains(domains);
+
+		ObjectNode node = transformation.getAB().convert(domainB,
+				new SimpleTransformationContext(entityTypeRepository));
+		Assert.assertEquals(1,node.get("domains").size());
+		Assert.assertEquals("json:"+SubdomainA.class.getName(),node.get("domains").get(0).get("ext_type").getTextValue());
+		
+		DomainB rDomainB = transformation.getBA().convert(node, new SimpleTransformationContext(entityTypeRepository));
+		Assert.assertEquals(SubdomainA.class,rDomainB.getDomains().get(0).getClass());
 	}
 
 	@Test

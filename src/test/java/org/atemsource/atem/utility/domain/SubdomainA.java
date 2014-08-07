@@ -1,7 +1,7 @@
 package org.atemsource.atem.utility.domain;
 
 public class SubdomainA extends DomainA{
-public String getSubField() {
+	public String getSubField() {
 		return subField;
 	}
 
@@ -9,5 +9,5 @@ public String getSubField() {
 		this.subField = subField;
 	}
 
-private String subField;
+	private String subField;
 }

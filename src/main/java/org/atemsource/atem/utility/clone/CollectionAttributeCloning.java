@@ -25,8 +25,7 @@ public class CollectionAttributeCloning extends AttributeCloning
 			CollectionAttribute collectionAttribute = (CollectionAttribute) getAttribute();
 			if (collectionAttribute.getValue(clone) == null)
 			{
-				Object emptyCollection = collectionAttribute.getEmptyCollection(clone);
-				collectionAttribute.setValue(clone, emptyCollection);
+				collectionAttribute.clear(clone);
 			}
 			for (Object element : collectionAttribute.getElements(original))
 			{

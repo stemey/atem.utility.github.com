@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.api.type.Type;
 import org.atemsource.atem.utility.transform.api.AttributeTransformation;
@@ -444,6 +446,24 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 			return superTransformation.getAttributeTransformationByB(attributeCode);
 		}
 		return null;
+	}
+
+	public Attribute getDerivedAttribute(Attribute originalAttribute) {
+		AbstractOneToOneAttributeTransformation<A, B> attributeTransformationByA = getAttributeTransformationByA(originalAttribute.getCode());
+		if (attributeTransformationByA!=null) {
+			return attributeTransformationByA.getAttributeB().getAttribute();
+		}else{
+			return null;
+		}
+	}
+
+	public Attribute getOriginalAttribute(Attribute derivedAttribute) {
+		AbstractOneToOneAttributeTransformation<A,B> attributeTransformationByB = getAttributeTransformationByB(derivedAttribute.getCode());
+		if (attributeTransformationByB!=null) {
+			return attributeTransformationByB.getAttributeA().getAttribute();
+		}else{
+			return null;
+		}
 	}
 
 }

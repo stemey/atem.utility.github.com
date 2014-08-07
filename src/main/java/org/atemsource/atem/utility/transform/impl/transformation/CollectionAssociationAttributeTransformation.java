@@ -8,6 +8,7 @@
 package org.atemsource.atem.utility.transform.impl.transformation;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("prototype")
-public class CollectionAssociationAttributeTransformation<A, B> extends AbstractOneToOneAttributeTransformation<A, B> {
+public class CollectionAssociationAttributeTransformation<A, B> extends
+		AbstractOneToOneAttributeTransformation<A, B> {
 	private Class<?> associationType;
 
 	private boolean convertEmptyToNull;
@@ -54,13 +56,16 @@ public class CollectionAssociationAttributeTransformation<A, B> extends Abstract
 	}
 
 	@Override
-	protected void transformInternally(Object a, Object b, AttributePath attributePathA, AttributePath attributePathB,
-			TransformationContext ctx, UniTransformation<Object, Object> converter) {
+	protected void transformInternally(Object a, Object b,
+			AttributePath attributePathA, AttributePath attributePathB,
+			TransformationContext ctx,
+			UniTransformation<Object, Object> converter) {
 		CollectionAttribute<Object, Object> attributeA = (CollectionAttribute<Object, Object>) attributePathA
 				.getAttribute(a);
 		if (attributeA == null) {
 			// TODO above seems to be null sometimes
-			attributeA = (CollectionAttribute<Object, Object>) attributePathA.getAttribute();
+			attributeA = (CollectionAttribute<Object, Object>) attributePathA
+					.getAttribute();
 		}
 		CollectionAttribute<Object, Object> attributeB = (CollectionAttribute<Object, Object>) attributePathB
 				.getAttribute();
@@ -69,40 +74,41 @@ public class CollectionAssociationAttributeTransformation<A, B> extends Abstract
 		if (baseValueA == null) {
 			return;
 		}
+		
+		if (associationType != null) {
+			try {
+				attributeB.setValue(b, associationType.newInstance());
+			} catch (InstantiationException e) {
+				throw new TechnicalException("cannot instantiate collection", e);
+			} catch (IllegalAccessException e) {
+				throw new TechnicalException("cannot instantiate collection", e);
+			}
 
-		Collection<Object> associatedEntities = attributeA.getElements(baseValueA);
+		}else {
+			attributeB.clear(b);
+		}
 
-		if (convertEmptyToNull && associatedEntities.size() == 0) {
+		Object associatedEntities = attributeA.getValue(baseValueA);
+		int size = attributeA.getSize(baseValueA);
+		if (convertEmptyToNull && size == 0) {
 			attributeB.setValue(b, null);
 			return;
 		}
 
-		Object emptyCollection;
-		if (attributeB.getValue(b) != null) {
-			attributeB.clear(b);
-		} else {
-			if (associationType != null) {
-				try {
-					emptyCollection = associationType.newInstance();
-				} catch (InstantiationException e) {
-					throw new TechnicalException("cannot instantiate collection", e);
-				} catch (IllegalAccessException e) {
-					throw new TechnicalException("cannot instantiate collection", e);
-				}
+		// Object emptyCollection;
+		// TODO associationType needs to be saved in EntityType and used in
+		// attribute.clear() or attribute.add()
+		attributeB.clear(b);
 
-			} else {
-				emptyCollection = attributeB.getEmptyCollection(b);
-			}
-			if (associatedEntities!=null || convertNullToEmpty) {
-				attributeB.setValue(b, emptyCollection);
-
-			}
-		}
 		if (associatedEntities != null) {
-			for (Object valueA : associatedEntities) {
+			Iterator<Object> iterator = attributeA.getIterator(a);
+			for (;iterator.hasNext();) {
+				Object valueA = iterator.next();
 				if (filter == null || filter.isInluded(valueA)) {
 					Object valueB;
 					if (converter != null) {
+						// TODO converter needs to call
+						// attribute.createTarget(type);
 						valueB = converter.convert(valueA, ctx);
 					} else {
 						valueB = valueA;

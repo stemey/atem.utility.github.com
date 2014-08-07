@@ -12,19 +12,27 @@ import org.atemsource.atem.utility.transform.impl.converter.ConverterUtils;
 public class AnnotationAttributeConverter implements AttributeConverter {
 
 	@Override
-	public Converter<?, ?> createConverter(TransformationContext context, Attribute attribute, Visitor<TransformationContext> attributeVisitor) {
-		Conversion conversion = ((JavaMetaData) attribute).getAnnotation(Conversion.class);
-		if (conversion != null) {
-			JavaConverter<?, ?> javaConverter;
-			try {
-				javaConverter = conversion.value().newInstance();
-			} catch (InstantiationException e) {
-				throw new TechnicalException("cannot instantiate converter", e);
-			} catch (IllegalAccessException e) {
-				throw new TechnicalException("cannot instantiate converter", e);
+	public Converter<?, ?> createConverter(TransformationContext context,
+			Attribute attribute, Visitor<TransformationContext> attributeVisitor) {
+		if (attribute instanceof JavaMetaData) {
+			Conversion conversion = ((JavaMetaData) attribute)
+					.getAnnotation(Conversion.class);
+			if (conversion != null) {
+				JavaConverter<?, ?> javaConverter;
+				try {
+					javaConverter = conversion.value().newInstance();
+				} catch (InstantiationException e) {
+					throw new TechnicalException(
+							"cannot instantiate converter", e);
+				} catch (IllegalAccessException e) {
+					throw new TechnicalException(
+							"cannot instantiate converter", e);
+				}
+				return ConverterUtils.create(javaConverter);
+			} else {
+				return null;
 			}
-			return ConverterUtils.create(javaConverter);
-		}else{
+		} else {
 			return null;
 		}
 	}

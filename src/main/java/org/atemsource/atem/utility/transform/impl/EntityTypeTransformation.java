@@ -9,8 +9,10 @@ package org.atemsource.atem.utility.transform.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.type.EntityType;
@@ -44,6 +46,9 @@ import org.springframework.stereotype.Component;
 public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 	private final List<AttributeTransformation<A, B>> embeddedTransformations = new ArrayList<AttributeTransformation<A, B>>();
 
+	
+	
+	
 	private EntityType<A> entityTypeA;
 
 	private EntityType<B> entityTypeB;
@@ -62,7 +67,15 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 	 * add a transfromation for a subtype of this type A and type B.
 	 */
 	public void addSubTransformation(EntityTypeTransformation<A, B> subTransformation) {
-		this.subTransformations.add(subTransformation);
+		Iterator<EntityTypeTransformation<A, B>> iterator = subTransformations.iterator();
+		while (iterator.hasNext()) {
+			EntityTypeTransformation<A, B> existing = iterator.next();
+			if (existing.getEntityTypeA().equals(subTransformation.getEntityTypeA()) && existing.getEntityTypeB().equals(subTransformation.getEntityTypeB())) {
+				iterator.remove();
+				break;
+			}
+		}
+		subTransformations.add(subTransformation);
 	}
 
 	/**
@@ -317,7 +330,7 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 		return superTransformation;
 	}
 
-	protected EntityTypeTransformation<A, B> getTransformationByTypeA(EntityType<?> entityType) {
+	public EntityTypeTransformation<A, B> getTransformationByTypeA(EntityType<?> entityType) {
 
 		if (entityType.equals(getEntityTypeA())) {
 			return this;
@@ -339,7 +352,7 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 		return this;
 	}
 
-	protected EntityTypeTransformation<A, B> getTransformationByTypeB(EntityType<?> entityType) {
+	public EntityTypeTransformation<A, B> getTransformationByTypeB(EntityType<?> entityType) {
 
 		if (entityType.equals(getEntityTypeB())) {
 			return this;
@@ -465,5 +478,7 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 			return null;
 		}
 	}
+
+	
 
 }

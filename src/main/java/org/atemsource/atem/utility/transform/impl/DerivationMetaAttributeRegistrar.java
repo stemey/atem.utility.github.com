@@ -8,9 +8,8 @@
 package org.atemsource.atem.utility.transform.impl;
 
 import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
-
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
-
+import org.atemsource.atem.utility.transform.api.meta.OriginalType;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.extension.EntityTypeRepositoryPostProcessor;
 import org.atemsource.atem.api.extension.MetaAttributeService;
@@ -40,6 +39,9 @@ public class DerivationMetaAttributeRegistrar implements EntityTypeRepositoryPos
 		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE,
 			entityTypeCreationContext.getEntityTypeReference(EntityType.class),
 			entityTypeCreationContext.getEntityTypeReference(DerivedType.class));
+		metaAttributeService.addSingleMetaAttribute(OriginalType.META_ATTRIBUTE_CODE,
+				entityTypeCreationContext.getEntityTypeReference(EntityType.class),
+				entityTypeCreationContext.getEntityTypeReference(DerivedType.class));
 	}
 
 	public void setMetaAttributeService(MetaAttributeService metaAttributeService)

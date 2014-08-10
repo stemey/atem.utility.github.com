@@ -19,6 +19,7 @@ import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
+import org.atemsource.atem.utility.transform.api.meta.OriginalType;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
@@ -62,6 +63,15 @@ public abstract class AbstractTypeTransformationBuilder<A, B> {
 		if (metaAttribute != null) {
 			metaAttribute.setValue(newType, deriveType);
 		}
+		
+		Attribute omAttribute = originalType.getMetaType().getMetaAttribute(OriginalType.META_ATTRIBUTE_CODE);
+		OriginalType originalMetaType = (OriginalType) omAttribute.getValue(originalType);
+		if (originalMetaType==null) {
+			originalMetaType= new OriginalType();
+			omAttribute.setValue(originalType, originalMetaType);
+		}
+		originalMetaType.addDerivedType(newType.getRepository().getId(),newType);
+		
 		logger.info("finished init of " + newType.getCode());
 	}
 
@@ -86,6 +96,8 @@ public abstract class AbstractTypeTransformationBuilder<A, B> {
 		} else {
 			selfReference.setTypeConverter(createTypeCreator(targetType));
 		}
+		selfReference.setEntityTypeB(targetType);
+		selfReference.setEntityTypeA(getSourceType());
 		if (superTransformation != null) {
 			EntityTypeTransformation<A, B> superEntityTypeTransformation = (EntityTypeTransformation<A, B>) superTransformation;
 			selfReference.setSuperTransformation(superEntityTypeTransformation);
@@ -94,8 +106,6 @@ public abstract class AbstractTypeTransformationBuilder<A, B> {
 		for (AttributeTransformationBuilder transformation : transformations) {
 			selfReference.addTransformation(transformation.create(targetType));
 		}
-		selfReference.setEntityTypeB(targetType);
-		selfReference.setEntityTypeA(getSourceType());
 		addDerivation(selfReference, targetType, getSourceType());
 		return selfReference;
 	}

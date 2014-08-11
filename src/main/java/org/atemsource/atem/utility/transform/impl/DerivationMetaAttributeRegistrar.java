@@ -7,15 +7,14 @@
  ******************************************************************************/
 package org.atemsource.atem.utility.transform.impl;
 
-import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
-import org.atemsource.atem.utility.transform.api.meta.DerivedType;
-import org.atemsource.atem.utility.transform.api.meta.OriginalType;
 import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.extension.EntityTypeRepositoryPostProcessor;
 import org.atemsource.atem.api.extension.MetaAttributeService;
 import org.atemsource.atem.api.type.EntityType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.spi.EntityTypeCreationContext;
+import org.atemsource.atem.utility.transform.api.meta.DerivedAttribute;
+import org.atemsource.atem.utility.transform.api.meta.DerivedType;
 
 /**
 * This registrar registers the meta attribute for derived types and attributes.
@@ -39,9 +38,6 @@ public class DerivationMetaAttributeRegistrar implements EntityTypeRepositoryPos
 		metaAttributeService.addSingleMetaAttribute(DerivedObject.META_ATTRIBUTE_CODE,
 			entityTypeCreationContext.getEntityTypeReference(EntityType.class),
 			entityTypeCreationContext.getEntityTypeReference(DerivedType.class));
-		metaAttributeService.addSingleMetaAttribute(OriginalType.META_ATTRIBUTE_CODE,
-				entityTypeCreationContext.getEntityTypeReference(EntityType.class),
-				entityTypeCreationContext.getEntityTypeReference(DerivedType.class));
 	}
 
 	public void setMetaAttributeService(MetaAttributeService metaAttributeService)

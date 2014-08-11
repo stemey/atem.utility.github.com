@@ -19,7 +19,6 @@ import org.atemsource.atem.api.type.PrimitiveType;
 import org.atemsource.atem.impl.meta.DerivedObject;
 import org.atemsource.atem.utility.path.AttributePathBuilderFactory;
 import org.atemsource.atem.utility.transform.api.meta.DerivedType;
-import org.atemsource.atem.utility.transform.api.meta.OriginalType;
 import org.atemsource.atem.utility.transform.impl.EntityTypeTransformation;
 import org.atemsource.atem.utility.transform.impl.builder.CollectionAttributeTransformationBuilder;
 import org.atemsource.atem.utility.transform.impl.builder.MapAttributeTransformationBuilder;
@@ -64,13 +63,6 @@ public abstract class AbstractTypeTransformationBuilder<A, B> {
 			metaAttribute.setValue(newType, deriveType);
 		}
 		
-		Attribute omAttribute = originalType.getMetaType().getMetaAttribute(OriginalType.META_ATTRIBUTE_CODE);
-		OriginalType originalMetaType = (OriginalType) omAttribute.getValue(originalType);
-		if (originalMetaType==null) {
-			originalMetaType= new OriginalType();
-			omAttribute.setValue(originalType, originalMetaType);
-		}
-		originalMetaType.addDerivedType(newType.getRepository().getId(),newType);
 		
 		logger.info("finished init of " + newType.getCode());
 	}

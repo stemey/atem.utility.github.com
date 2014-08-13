@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
+import org.atemsource.atem.api.attribute.AssociationAttribute;
+import org.atemsource.atem.api.attribute.Attribute;
 import org.atemsource.atem.api.attribute.relation.SingleAttribute;
 import org.atemsource.atem.api.service.FindByIdService;
 import org.atemsource.atem.api.service.IdentityAttributeService;
@@ -24,7 +26,7 @@ import org.atemsource.atem.utility.transform.service.CreationService;
 public class TransformUtils {
 	public static <A, B> B findTargetEntity(
 			UniTransformation<A, B> transformation, A source, B target,
-			TransformationContext context) {
+			TransformationContext context, Attribute<?,?> attribute, Object targetParent) {
 
 		EntityType<A> entityTypeByA = context.getEntityTypeByA(source);
 		if (entityTypeByA == null) {
@@ -87,12 +89,19 @@ public class TransformUtils {
 			target = null;
 		}
 
-		if (target == null && entityTypeByA != null) {
+		if ( target == null && entityTypeByA != null) {
+			if (attribute!=null ) {
+				if (attribute instanceof AssociationAttribute) {
+					AssociationAttribute associationAttribute=(AssociationAttribute) attribute;
+					target=(B) associationAttribute.createTarget((EntityType) typeB, targetParent);
+				}
+			}else{
 			CreationService<B, A> creationService = ((EntityType<B>) typeB)
 					.getService(CreationService.class);
 			if (creationService != null) {
 				target = creationService.create((EntityType<B>) typeB,
 						entityTypeByA, source);
+			}
 			}
 		}
 

@@ -23,6 +23,9 @@ public class JacksonTransformationContext extends SimpleTransformationContext {
 	public JacksonTransformationContext(EntityTypeRepository entityTypeRepository) {
 		super(entityTypeRepository);
 		genericType = entityTypeRepository.getEntityType(ObjectNode.class);
+		if (genericType==null) {
+			throw new IllegalStateException("cannot find generic type");
+		}
 	}
 
 	/**

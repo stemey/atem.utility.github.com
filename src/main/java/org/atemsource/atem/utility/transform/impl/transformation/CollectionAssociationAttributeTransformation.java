@@ -10,6 +10,7 @@ package org.atemsource.atem.utility.transform.impl.transformation;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.atemsource.atem.api.attribute.AssociationAttribute;
 import org.atemsource.atem.api.attribute.CollectionAttribute;
 import org.atemsource.atem.api.infrastructure.exception.TechnicalException;
 import org.atemsource.atem.utility.path.AttributePath;
@@ -74,7 +75,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends
 		if (baseValueA == null) {
 			return;
 		}
-		
+
 		if (associationType != null) {
 			try {
 				attributeB.setValue(b, associationType.newInstance());
@@ -84,7 +85,7 @@ public class CollectionAssociationAttributeTransformation<A, B> extends
 				throw new TechnicalException("cannot instantiate collection", e);
 			}
 
-		}else {
+		} else {
 			attributeB.clear(b);
 		}
 
@@ -102,14 +103,20 @@ public class CollectionAssociationAttributeTransformation<A, B> extends
 
 		if (associatedEntities != null) {
 			Iterator<Object> iterator = attributeA.getIterator(a);
-			for (;iterator.hasNext();) {
+			for (; iterator.hasNext();) {
 				Object valueA = iterator.next();
 				if (filter == null || filter.isInluded(valueA)) {
-					Object valueB;
+					Object valueB = null;
 					if (converter != null) {
-						// TODO converter needs to call
-						// attribute.createTarget(type);
-						valueB = converter.convert(valueA, ctx);
+						//TODO we need to find the 
+						if ( attributeB instanceof AssociationAttribute && attributeB.isComposition()) {
+						valueB = ((AssociationAttribute) attributeB)
+								.createTarget(getTypeB(), b);
+						converter.merge(valueA, valueB, ctx);
+						}
+						if (valueB==null) {
+							valueB = converter.convert(valueA, ctx);
+						}
 					} else {
 						valueB = valueA;
 					}

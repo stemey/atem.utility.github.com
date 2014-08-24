@@ -89,6 +89,9 @@ public abstract class AbstractTypeTransformationBuilder<A, B> {
 			selfReference.setTypeConverter(createTypeCreator(targetType));
 		}
 		selfReference.setEntityTypeB(targetType);
+		if (getSourceType()==null) {
+			throw new IllegalStateException("source type of transformation is null");
+		}
 		selfReference.setEntityTypeA(getSourceType());
 		if (superTransformation != null) {
 			EntityTypeTransformation<A, B> superEntityTypeTransformation = (EntityTypeTransformation<A, B>) superTransformation;

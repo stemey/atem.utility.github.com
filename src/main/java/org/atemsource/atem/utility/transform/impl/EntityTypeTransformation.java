@@ -141,6 +141,9 @@ public class EntityTypeTransformation<A, B> implements Transformation<A, B> {
 					return null;
 				}
 				EntityType<A> entityType = ctx.getEntityTypeByA(a);
+				if (entityType==null) {
+					entityType=entityTypeA;
+				}
 				if (finder != null) {
 
 					UniTransformation<A, B> ab = finder.getAB(a, ctx);

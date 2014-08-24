@@ -22,6 +22,7 @@ public class DynamicTypeTransformationBuilder<A,B> extends AbstractTypeTransform
 	}
 	public void setSourceTypeBuilder(EntityTypeBuilder sourceTypeBuilder) {
 		this.sourceTypeBuilder = sourceTypeBuilder;
+		getReference().setEntityTypeA((EntityType) sourceTypeBuilder.getReference());
 	}
 	@Override
 	protected EntityType<A> getSourceType() {
